@@ -10,7 +10,7 @@
 - [网易云音乐](https://music.163.com) / [QQ音乐](https://y.qq.com) / [咪咕音乐](http://music.migu.cn/v3) / [酷狗音乐](http://www.kugou.com) / [酷我音乐](http://www.kuwo.cn/) 一站式音乐搜索和下载。
 - 单曲、专辑、歌单以及歌手热门歌曲，只需一步，就能搞定！
 - 支持自动嵌入音乐标签/下载歌词。
-- 利用goroutines的先天优势实现快速批量下载。
+- 利用goroutines的先天优势快速批量下载。
 - 支持库调用和RESTful API。
 
 ## 下载安装

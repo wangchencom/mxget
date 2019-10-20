@@ -307,8 +307,10 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			lyric, _ := a.GetSongLyric(s.Mid)
-			s.Lyric = lyric
+			lyric, err := a.GetSongLyric(s.Mid)
+			if err == nil {
+				s.Lyric = lyric
+			}
 			c.Done()
 		}(s)
 	}
