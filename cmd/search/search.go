@@ -37,10 +37,18 @@ func Run(cmd *cobra.Command, args []string) {
 	for i, s := range result.Songs {
 		fmt.Printf("[%02d] %s - %s - %s\n", i+1, s.Name, s.Artist, s.Id)
 	}
-	fmt.Printf(`
+
+	if from != "" {
+		fmt.Printf(`
 Command: 
     mxget song -s %s --id [id]
 `, from)
+	} else {
+		fmt.Print(`
+Command: 
+    mxget song --id [id]
+`)
+	}
 }
 
 func init() {
