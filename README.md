@@ -59,6 +59,8 @@ $ mxget playlist --from nc --id 156934569
 $ mxget artist --from nc --id 1045123
 ```
 
+- 自动更新音乐标签/下载歌词
+
 如果你希望 `mxget` 为你自动更新音乐标签，可使用 `--tag` 指令，如：
 
 ```sh
@@ -138,7 +140,7 @@ Tip：使用前你须对作者开发的另一款网络请求库 [sreq](https://g
 
 ### 作为API服务部署
 
-`mxget` 提供了简易的RESTful API，允许你基于 `mxget` 开发web应用。启动服务：
+`mxget` 提供了简易的RESTful API，允许你基于其开发web应用。启动服务：
 
 ```sh
 $ mxget serve
