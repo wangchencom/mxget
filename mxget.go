@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/winterssy/mxget/cmd"
 	"os"
+
+	"github.com/winterssy/mxget/cmd"
 )
 
 func main() {

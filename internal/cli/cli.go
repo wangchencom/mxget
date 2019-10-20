@@ -2,6 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"github.com/bogem/id3v2"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
@@ -9,10 +14,6 @@ import (
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"runtime"
 )
 
 func ConcurrentDownload(client provider.API, savePath string, songs ...*provider.Song) {
