@@ -3,10 +3,8 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
-	"sync"
-	"time"
-
 	"github.com/winterssy/sreq"
+	"sync"
 )
 
 const (
@@ -116,9 +114,7 @@ func (p *Playlist) String() string {
 
 func Client() *sreq.Client {
 	once.Do(func() {
-		hc := sreq.DefaultHTTPClient()
-		hc.Timeout = 30 * time.Second
-		client = sreq.New(hc)
+		client = sreq.New(nil)
 		client.SetDefaultRequestOpts(
 			sreq.WithHeaders(sreq.Headers{
 				"User-Agent": UserAgent,
