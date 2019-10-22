@@ -1,6 +1,6 @@
 # mxget
 
-`mxget` 是一款用Go语言编写的命令行程序，是 [music-get](https://github.com/winterssy/music-get) 的升级版，开发的初衷是为程序员提供更优雅的音乐下载体验。
+`mxget` 是一款用Go语言编写的命令行程序，整合各大音乐平台的资源，开发的初衷是为程序员提供更优雅的音乐下载体验。
 
 [![Actions Status](https://github.com/winterssy/mxget/workflows/Build/badge.svg)](https://github.com/winterssy/mxget/actions)
 [![Actions Status](https://github.com/winterssy/mxget/workflows/Publish%20Docker/badge.svg)](https://github.com/winterssy/mxget/actions)
@@ -10,7 +10,7 @@
 - [网易云音乐](https://music.163.com) / [QQ音乐](https://y.qq.com) / [咪咕音乐](http://music.migu.cn/v3) / [酷狗音乐](http://www.kugou.com) / [酷我音乐](http://www.kuwo.cn/) 一站式音乐搜索和下载。
 - 单曲、专辑、歌单以及歌手热门歌曲，只需一步，就能搞定！
 - 支持自动嵌入音乐标签/下载歌词。
-- 利用goroutines的先天优势快速批量下载。
+- 利用Goroutines的先天优势快速并发下载。
 - 支持库调用和RESTful API。
 
 ## 下载安装
@@ -23,7 +23,7 @@ go get -u github.com/winterssy/mxget
 
 > `mxget` 并不是为破解音乐平台的数字版权限制而生的，仅提供试听版音质下载，如果你喜欢高音质/无损资源，请支持正版。
 
-**本项目不提供可执行程序下载，也不提供任何线上demo演示，如须使用请自行编译。**
+**本项目不提供可执行程序下载，也不提供线上demo演示，如须使用请自行编译。**
 
 ### 作为CLI使用
 
@@ -34,6 +34,8 @@ go get -u github.com/winterssy/mxget
 ```sh
 $ mxget search --from nc -k Faded
 ```
+
+>如果你的搜索关键词包含空格，请用双引号 `""` 包围起来。
 
 - 下载歌曲
 
@@ -81,11 +83,11 @@ $ mxget song --from nc --id 36990266 --lyric
 $ mxget config --cwd [directory]
 ```
 
->  **注：** `directory` 必须为绝对路径。
+>  `directory` 必须为绝对路径。
 
 - 设置默认音乐平台
 
-`mxget` 允许你设置默认使用的音乐平台，如：
+`mxget` 默认使用的音乐平台为网易云音乐，你可以通过以下命令更改：
 
 ```sh
 $ mxget config --from qq
@@ -103,15 +105,17 @@ $ mxget config --from qq
 |  酷狗音乐  |  `kugou` / `kg`  |  1003  |
 |  酷我音乐  |  `kuwo` / `kw`   |  1004  |
 
-音乐id为各平台为对应资源分配的唯一id，当使用 `mxget` 进行搜索时，歌曲id会显示在每条结果的后面，你也可以通过各音乐平台的web版搜索相关资源，然后从其URL中获取音乐id。值得注意的是，酷狗音乐对应的歌曲id即为文件哈希 `hash` 。
+音乐id为音乐平台为对应资源分配的唯一id，当使用 `mxget` 进行搜索时，歌曲id会显示在每条结果的后面。你也可以通过各大音乐平台的网页版在线搜索相关资源，然后从结果详情页的URL中获取其音乐id。值得注意的是，酷狗音乐对应的歌曲id即为文件哈希 `hash` 。
 
-- 多任务并发下载
+- 多任务下载
 
-`mxget` 支持快速批量下载，你可以通过 `--limit` 参数指定同时下载的任务数，最大32。如不指定默认为CPU核心数。
+`mxget` 支持多任务快速并发下载，你可以通过 `--limit` 参数指定同时下载的任务数，如不指定默认为CPU核心数。
 
 ```sh
 $ mxget playlist --from nc --id 156934569 --limit 16
 ```
+
+> 尽管 `mxget` 允许设置的最高并发数是32，但使用时建议不要超过16，请根据网络状况适当调整。
 
 ### 作为库调用
 
@@ -153,7 +157,7 @@ $ docker pull winterssy/mxget
 $ docker run -d --name mxget -p 8080:8080 winterssy/mxget
 ```
 
-请求方法均为 `GET` ，示例：
+请求方法均为 `GET` ，统一调用路径为 `/api/{platform}/{type}/{param}` ，示例：
 
 - 从QQ音乐获取 `周杰伦` 的搜索结果
 

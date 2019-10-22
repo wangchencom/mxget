@@ -3,8 +3,9 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/winterssy/sreq"
 	"sync"
+
+	"github.com/winterssy/sreq"
 )
 
 const (
