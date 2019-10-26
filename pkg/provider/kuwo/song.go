@@ -97,7 +97,7 @@ func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, GetSongPlayAPI,
+	err := a.Request(sreq.MethodGet, GetSongURLAPI,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

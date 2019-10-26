@@ -80,7 +80,7 @@ func (a *API) GetSongURL(songMid string, mediaMid string) (string, error) {
 		return "", fmt.Errorf("get song url: %d", item.SubCode)
 	}
 
-	return fmt.Sprintf(SongPlayURL, item.FileName, item.Vkey), nil
+	return fmt.Sprintf(SongURL, item.FileName, item.Vkey), nil
 }
 
 func GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, error) {

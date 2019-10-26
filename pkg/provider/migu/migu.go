@@ -13,18 +13,18 @@ var (
 )
 
 const (
-	SearchAPI          = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/search_all.do?isCopyright=1&isCorrect=1"
-	GetSongIdAPI       = "http://music.migu.cn/v3/api/music/audioPlayer/songs?type=1"
-	GetSongInfo        = "https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/querySongBySongId.do?contentId=0"
-	GetSongPlayInfoAPI = "https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/listen-url?copyrightId=0&netType=01&toneFlag=HQ"
-	GetSongLyricAPI    = "http://music.migu.cn/v3/api/music/audioPlayer/getLyric"
-	GetSongPicAPI      = "http://music.migu.cn/v3/api/music/audioPlayer/getSongPic"
-	GetArtistInfoAPI   = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2002"
-	GetArtistSongAPI   = "https://app.c.nf.migu.cn/MIGUM3.0/v1.0/template/singerSongs/release?templateVersion=2"
-	GetAlbumAPI        = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2003"
-	GetPlaylistAPI     = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2021"
+	SearchAPI        = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/search_all.do?isCopyright=1&isCorrect=1"
+	GetSongIdAPI     = "http://music.migu.cn/v3/api/music/audioPlayer/songs?type=1"
+	GetSongAPI       = "https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/querySongBySongId.do?contentId=0"
+	GetSongURLAPI    = "https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/listen-url?copyrightId=0&netType=01&toneFlag=HQ"
+	GetSongLyricAPI  = "http://music.migu.cn/v3/api/music/audioPlayer/getLyric"
+	GetSongPicAPI    = "http://music.migu.cn/v3/api/music/audioPlayer/getSongPic"
+	GetArtistInfoAPI = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2002"
+	GetArtistSongAPI = "https://app.c.nf.migu.cn/MIGUM3.0/v1.0/template/singerSongs/release?templateVersion=2"
+	GetAlbumAPI      = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2003"
+	GetPlaylistAPI   = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/resourceinfo.do?needSimple=01&resourceType=2021"
 
-	SongPlayURL = "https://app.pd.nf.migu.cn/MIGUM2.0/v1.0/content/sub/listenSong.do?contentId=%s&copyrightId=0&netType=01&resourceType=%s&toneFlag=%s&channel=0"
+	SongURL = "https://app.pd.nf.migu.cn/MIGUM2.0/v1.0/content/sub/listenSong.do?contentId=%s&copyrightId=0&netType=01&resourceType=%s&toneFlag=%s&channel=0"
 
 	SongDefaultBR = 128
 )

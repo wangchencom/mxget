@@ -12,7 +12,7 @@ import (
 const (
 	SearchAPI          = "http://mobilecdn.kugou.com/api/v3/search/song"
 	GetSongAPI         = "http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo"
-	GetSongPlayInfoAPI = "http://trackercdn.kugou.com/i/v2/?pid=2&behavior=play&cmd=25"
+	GetSongURLAPI      = "http://trackercdn.kugou.com/i/v2/?pid=2&behavior=play&cmd=25"
 	GetSongLyricAPI    = "http://m.kugou.com/app/i/krc.php?cmd=100&timelength=1"
 	GetArtistInfoAPI   = "http://mobilecdn.kugou.com/api/v3/singer/info"
 	GetArtistSongAPI   = "http://mobilecdn.kugou.com/api/v3/singer/song"

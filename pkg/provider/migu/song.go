@@ -93,7 +93,7 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, GetSongInfo,
+	err := a.Request(sreq.MethodGet, GetSongAPI,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -118,7 +118,7 @@ func (a *API) GetSongURL(contentId string, br int) string {
 	default:
 		_br = 320
 	}
-	return fmt.Sprintf(SongPlayURL, contentId, "E", codeRate[_br])
+	return fmt.Sprintf(SongURL, contentId, "E", codeRate[_br])
 }
 
 func GetSongURLRaw(contentId, resourceType string) (*SongURLResponse, error) {
@@ -134,7 +134,7 @@ func (a *API) GetSongURLRaw(contentId, resourceType string) (*SongURLResponse, e
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, GetSongPlayInfoAPI,
+	err := a.Request(sreq.MethodGet, GetSongURLAPI,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

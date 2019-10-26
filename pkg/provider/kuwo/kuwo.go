@@ -11,7 +11,7 @@ import (
 const (
 	SearchAPI        = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord"
 	GetSongAPI       = "http://www.kuwo.cn/api/www/music/musicInfo"
-	GetSongPlayAPI   = "http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3"
+	GetSongURLAPI    = "http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3"
 	GetSongLyricAPI  = "http://www.kuwo.cn/newh5/singles/songinfoandlrc"
 	GetArtistInfoAPI = "http://www.kuwo.cn/api/www/artist/artist"
 	GetArtistSongAPI = "http://www.kuwo.cn/api/www/artist/artistMusic"
