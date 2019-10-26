@@ -19,7 +19,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURL(t *testing.T) {
-	url, err := GetSongURL("002Zkt5S2z8JZx")
+	url, err := GetSongURL("002Zkt5S2z8JZx", "002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}

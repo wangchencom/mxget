@@ -62,12 +62,12 @@ func (a *API) GetSongRaw(songMid string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURL(songMid string) (string, error) {
-	return std.GetSongURL(songMid)
+func GetSongURL(songMid string, mediaMid string) (string, error) {
+	return std.GetSongURL(songMid, mediaMid)
 }
 
-func (a *API) GetSongURL(songMid string) (string, error) {
-	resp, err := a.GetSongURLRaw(songMid)
+func (a *API) GetSongURL(songMid string, mediaMid string) (string, error) {
+	resp, err := a.GetSongURLRaw(songMid, mediaMid)
 	if err != nil {
 		return "", err
 	}
@@ -83,15 +83,15 @@ func (a *API) GetSongURL(songMid string) (string, error) {
 	return fmt.Sprintf(SongPlayURL, item.FileName, item.Vkey), nil
 }
 
-func GetSongURLRaw(songMid string) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(songMid)
+func GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, error) {
+	return std.GetSongURLRaw(songMid, mediaMid)
 }
 
 // 获取歌曲播放地址
-func (a *API) GetSongURLRaw(songMid string) (*SongURLResponse, error) {
+func (a *API) GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, error) {
 	params := sreq.Params{
 		"songmid":  songMid,
-		"filename": "M500" + songMid + ".mp3",
+		"filename": "M500" + mediaMid + ".mp3",
 	}
 
 	resp := new(SongURLResponse)

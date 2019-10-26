@@ -45,6 +45,9 @@ type (
 		Action struct {
 			Switch int `json:"switch"`
 		} `json:"action"`
+		File struct {
+			MediaMid string `json:"media_mid"`
+		} `json:"file"`
 		Artist string `json:"-"`
 		Lyric  string `json:"-"`
 		PicURL string `json:"-"`
@@ -221,7 +224,7 @@ func (a *API) patchSongURL(songs ...*Song) {
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			url, err := a.GetSongURL(s.Mid)
+			url, err := a.GetSongURL(s.Mid, s.File.MediaMid)
 			if err == nil {
 				s.URL = url
 			}
