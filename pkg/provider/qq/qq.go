@@ -57,7 +57,7 @@ type (
 			Song struct {
 				TotalNum int     `json:"totalnum"`
 				List     []*Song `json:"list"`
-			}
+			} `json:"song"`
 		} `json:"data"`
 	}
 
