@@ -65,8 +65,8 @@ type (
 			SQHash string `json:"sqhash"`
 		} `json:"extra"`
 		URL       string `json:"url"`
-		Lyric     string `json:"-"`
 		AlbumName string `json:"-"`
+		Lyric     string `json:"-"`
 	}
 
 	SongResponse struct {
@@ -283,7 +283,7 @@ func (a *API) patchAlbumInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src []*Song) []*provider.Song {
+func (a *API) resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{

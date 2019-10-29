@@ -27,7 +27,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 
 	a.patchSongURL(SongDefaultBR, resp.Data.MusicList...)
 	a.patchSongLyric(resp.Data.MusicList...)
-	songs := a.resolve(resp.Data.MusicList)
+	songs := a.resolve(resp.Data.MusicList...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(resp.Data.Name),
 		PicURL: resp.Data.Img700,

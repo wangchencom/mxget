@@ -47,9 +47,7 @@ type (
 		File struct {
 			MediaMid string `json:"media_mid"`
 		} `json:"file"`
-		Artist string `json:"-"`
 		Lyric  string `json:"-"`
-		PicURL string `json:"-"`
 		URL    string `json:"-"`
 	}
 
@@ -118,7 +116,6 @@ type (
 			List       []struct {
 				MusicData *Song `json:"musicData"`
 			} `json:"list"`
-			PicURL string `json:"-"`
 		} `json:"data"`
 	}
 
@@ -133,7 +130,6 @@ type (
 			GetAlbumInfo struct {
 				FAlbumMid  string `json:"Falbum_mid"`
 				FAlbumName string `json:"Falbum_name"`
-				PicURL     string `json:"-"`
 			} `json:"getAlbumInfo"`
 			GetSongInfo []*Song `json:"getSongInfo"`
 		} `json:"data"`
@@ -205,17 +201,6 @@ func Client() provider.API {
 
 func (a *API) Platform() int {
 	return provider.QQ
-}
-
-func (a *API) patchSongInfo(songs ...*Song) {
-	for _, s := range songs {
-		artists := make([]string, 0, len(s.Singer))
-		for _, a := range s.Singer {
-			artists = append(artists, strings.TrimSpace(a.Name))
-		}
-		s.Artist = strings.Join(artists, "/")
-		s.PicURL = fmt.Sprintf(AlbumPicURL, s.Album.Mid)
-	}
 }
 
 func (a *API) patchSongURL(songs ...*Song) {
@@ -319,22 +304,18 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchArtistInfo(artistResp *ArtistResponse) {
-	artistResp.Data.PicURL = fmt.Sprintf(ArtistPicURL, artistResp.Data.SingerMid)
-}
-
-func (a *API) patchAlbumInfo(albumResp *AlbumResponse) {
-	albumResp.Data.GetAlbumInfo.PicURL = fmt.Sprintf(AlbumPicURL, albumResp.Data.GetAlbumInfo.FAlbumMid)
-}
-
-func (a *API) resolve(src []*Song) []*provider.Song {
+func (a *API) resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
+		artists := make([]string, 0, len(s.Singer))
+		for _, a := range s.Singer {
+			artists = append(artists, strings.TrimSpace(a.Name))
+		}
 		songs = append(songs, &provider.Song{
 			Name:     strings.TrimSpace(s.Title),
-			Artist:   s.Artist,
+			Artist:   strings.Join(artists, "/"),
 			Album:    strings.TrimSpace(s.Album.Name),
-			PicURL:   s.PicURL,
+			PicURL:   fmt.Sprintf(AlbumPicURL, s.Album.Mid),
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
 			URL:      s.URL,

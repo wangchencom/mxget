@@ -33,7 +33,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	a.patchSongInfo(albumSong.Data.Info...)
 	a.patchAlbumInfo(albumSong.Data.Info...)
 	a.patchSongLyric(albumSong.Data.Info...)
-	songs := a.resolve(albumSong.Data.Info)
+	songs := a.resolve(albumSong.Data.Info...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(albumInfo.Data.AlbumName),
 		PicURL: strings.ReplaceAll(albumInfo.Data.ImgURL, "{size}", "480"),

@@ -25,14 +25,12 @@ func (a *API) GetAlbum(albumMid string) (*provider.Album, error) {
 	}
 
 	_songs := resp.Data.GetSongInfo
-	a.patchSongInfo(_songs...)
 	a.patchSongURL(_songs...)
 	a.patchSongLyric(_songs...)
-	a.patchAlbumInfo(resp)
-	songs := a.resolve(_songs)
+	songs := a.resolve(_songs...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Data.GetAlbumInfo.FAlbumName),
-		PicURL: resp.Data.GetAlbumInfo.PicURL,
+		PicURL: fmt.Sprintf(AlbumPicURL, resp.Data.GetAlbumInfo.FAlbumMid),
 		Count:  n,
 		Songs:  songs,
 	}, nil

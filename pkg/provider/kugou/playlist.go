@@ -33,7 +33,7 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 	a.patchSongInfo(playlistSong.Data.Info...)
 	a.patchAlbumInfo(playlistSong.Data.Info...)
 	a.patchSongLyric(playlistSong.Data.Info...)
-	songs := a.resolve(playlistSong.Data.Info)
+	songs := a.resolve(playlistSong.Data.Info...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(playlistInfo.Data.SpecialName),
 		PicURL: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),

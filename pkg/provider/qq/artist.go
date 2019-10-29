@@ -30,14 +30,12 @@ func (a *API) GetArtist(singerMid string) (*provider.Artist, error) {
 		_songs = append(_songs, i.MusicData)
 	}
 
-	a.patchSongInfo(_songs...)
 	a.patchSongURL(_songs...)
 	a.patchSongLyric(_songs...)
-	a.patchArtistInfo(resp)
-	songs := a.resolve(_songs)
+	songs := a.resolve(_songs...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(resp.Data.SingerName),
-		PicURL: resp.Data.PicURL,
+		PicURL: fmt.Sprintf(ArtistPicURL, resp.Data.SingerMid),
 		Count:  n,
 		Songs:  songs,
 	}, nil

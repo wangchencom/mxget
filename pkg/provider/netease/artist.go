@@ -30,10 +30,9 @@ func (a *API) GetArtist(artistId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist: no data")
 	}
 
-	a.patchSongInfo(resp.HotSongs...)
 	a.patchSongURL(SongDefaultBR, resp.HotSongs...)
 	a.patchSongLyric(resp.HotSongs...)
-	songs := a.resolve(resp.HotSongs)
+	songs := a.resolve(resp.HotSongs...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(resp.Artist.Name),
 		PicURL: resp.Artist.PicURL,

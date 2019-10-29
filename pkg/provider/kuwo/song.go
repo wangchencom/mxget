@@ -31,15 +31,8 @@ func (a *API) GetSong(mid string) (*provider.Song, error) {
 
 	a.patchSongURL(SongDefaultBR, &resp.Data)
 	a.patchSongLyric(&resp.Data)
-	return &provider.Song{
-		Name:     strings.TrimSpace(resp.Data.Name),
-		Artist:   strings.TrimSpace(strings.ReplaceAll(resp.Data.Artist, "&", "/")),
-		Album:    strings.TrimSpace(resp.Data.Album),
-		PicURL:   resp.Data.AlbumPic,
-		Lyric:    resp.Data.Lyric,
-		Playable: resp.Data.URL != "",
-		URL:      resp.Data.URL,
-	}, nil
+	songs := a.resolve(&resp.Data)
+	return songs[0], nil
 }
 
 func GetSongRaw(mid string) (*SongResponse, error) {

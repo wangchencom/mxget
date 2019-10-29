@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"strings"
-
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
 )
@@ -24,18 +22,10 @@ func (a *API) GetSong(songMid string) (*provider.Song, error) {
 	}
 
 	_song := resp.Data[0]
-	a.patchSongInfo(_song)
 	a.patchSongURL(_song)
 	a.patchSongLyric(_song)
-	return &provider.Song{
-		Name:     strings.TrimSpace(_song.Title),
-		Artist:   _song.Artist,
-		Album:    strings.TrimSpace(_song.Album.Name),
-		PicURL:   _song.PicURL,
-		Lyric:    _song.Lyric,
-		Playable: _song.URL != "",
-		URL:      _song.URL,
-	}, nil
+	songs := a.resolve(_song)
+	return songs[0], nil
 }
 
 func GetSongRaw(songMid string) (*SongResponse, error) {

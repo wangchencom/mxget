@@ -68,10 +68,9 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		wg.Wait()
 	}
 
-	a.patchSongInfo(resp.Playlist.Tracks...)
 	a.patchSongURL(SongDefaultBR, resp.Playlist.Tracks...)
 	a.patchSongLyric(resp.Playlist.Tracks...)
-	songs := a.resolve(resp.Playlist.Tracks)
+	songs := a.resolve(resp.Playlist.Tracks...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(resp.Playlist.Name),
 		PicURL: resp.Playlist.PicURL,

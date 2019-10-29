@@ -41,7 +41,6 @@ type (
 		Artists []Artist `json:"ar"`
 		Album   Album    `json:"al"`
 		Track   int      `json:"no"`
-		Artist  string   `json:"-"`
 		Lyric   string   `json:"-"`
 		URL     string   `json:"-"`
 	}
@@ -228,16 +227,6 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Request(method, url, opts...)
 }
 
-func (a *API) patchSongInfo(songs ...*Song) {
-	for _, s := range songs {
-		artists := make([]string, 0, len(s.Artists))
-		for _, a := range s.Artists {
-			artists = append(artists, strings.TrimSpace(a.Name))
-		}
-		s.Artist = strings.Join(artists, "/")
-	}
-}
-
 func (a *API) patchSongURL(br int, songs ...*Song) {
 	ids := make([]int, 0, len(songs))
 	for _, s := range songs {
@@ -271,12 +260,16 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src []*Song) []*provider.Song {
+func (a *API) resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
+		artists := make([]string, 0, len(s.Artists))
+		for _, a := range s.Artists {
+			artists = append(artists, strings.TrimSpace(a.Name))
+		}
 		songs = append(songs, &provider.Song{
 			Name:     strings.TrimSpace(s.Name),
-			Artist:   s.Artist,
+			Artist:   strings.Join(artists, "/"),
 			Album:    strings.TrimSpace(s.Album.Name),
 			PicURL:   s.Album.PicURL,
 			Lyric:    s.Lyric,

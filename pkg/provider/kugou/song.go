@@ -4,11 +4,9 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
-	"math/rand"
-	"strings"
-
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
+	"math/rand"
 )
 
 func GetSong(hash string) (*provider.Song, error) {
@@ -23,15 +21,8 @@ func (a *API) GetSong(hash string) (*provider.Song, error) {
 
 	a.patchAlbumInfo(&resp.Song)
 	a.patchSongLyric(&resp.Song)
-	return &provider.Song{
-		Name:     strings.TrimSpace(resp.SongName),
-		Artist:   strings.TrimSpace(strings.ReplaceAll(resp.ChoricSinger, "、", "/")),
-		Album:    strings.TrimSpace(resp.AlbumName),
-		PicURL:   strings.ReplaceAll(resp.AlbumImg, "{size}", "480"),
-		Lyric:    resp.Lyric,
-		Playable: resp.URL != "",
-		URL:      resp.URL,
-	}, nil
+	songs := a.resolve(&resp.Song)
+	return songs[0], nil
 }
 
 func GetSongRaw(hash string) (*SongResponse, error) {

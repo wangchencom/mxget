@@ -225,7 +225,7 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src []*Song) []*provider.Song {
+func (a *API) resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{
