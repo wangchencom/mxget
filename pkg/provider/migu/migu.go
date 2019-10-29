@@ -91,7 +91,6 @@ type (
 		Album        string    `json:"album"`
 		AlbumImgs    []ImgItem `json:"albumImgs"`
 		LrcURL       string    `json:"lrcUrl"`
-		PicURL       string    `json:"-"`
 		Lyric        string    `json:"-"`
 		URL          string    `json:"-"`
 	}
@@ -127,7 +126,6 @@ type (
 		SingerId     string    `json:"singerId"`
 		Singer       string    `json:"singer"`
 		Imgs         []ImgItem `json:"imgs"`
-		PicURL       string    `json:"-"`
 	}
 
 	ArtistInfoResponse struct {
@@ -152,7 +150,6 @@ type (
 		Title        string    `json:"title"`
 		ImgItems     []ImgItem `json:"imgItems"`
 		SongItems    []*Song   `json:"songItems"`
-		PicURL       string    `json:"-"`
 	}
 
 	AlbumResponse struct {
@@ -267,23 +264,24 @@ func (a *API) picURL(imgs []ImgItem) string {
 	return ""
 }
 
-func (a *API) patchSongInfo(songs ...*Song) {
-	c := concurrency.New(32)
-	for _, s := range songs {
-		c.Add(1)
-		go func(s *Song) {
-			picURL, err := a.GetSongPic(s.SongId)
-			if err == nil {
-				if !strings.HasPrefix(picURL, "http:") {
-					picURL = "http:" + picURL
-				}
-				s.PicURL = picURL
-			}
-			c.Done()
-		}(s)
-	}
-	c.Wait()
-}
+// 网页版API限流，并发请求经常503
+// func (a *API) patchSongInfo(songs ...*Song) {
+// 	c := concurrency.New(32)
+// 	for _, s := range songs {
+// 		c.Add(1)
+// 		go func(s *Song) {
+// 			picURL, err := a.GetSongPic(s.SongId)
+// 			if err == nil {
+// 				if !strings.HasPrefix(picURL, "http:") {
+// 					picURL = "http:" + picURL
+// 				}
+// 				s.PicURL = picURL
+// 			}
+// 			c.Done()
+// 		}(s)
+// 	}
+// 	c.Wait()
+// }
 
 func (a *API) patchSongURL(br int, songs ...*Song) {
 	for _, s := range songs {
@@ -296,7 +294,7 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			lyric, err := a.GetSongLyric(s.CopyrightId)
+			lyric, err := a.Request(sreq.MethodGet, s.LrcURL).Text()
 			if err == nil {
 				s.Lyric = lyric
 			}
@@ -306,22 +304,14 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchArtistInfo(artist *ArtistInfo) {
-	artist.PicURL = a.picURL(artist.Imgs)
-}
-
-func (a *API) patchAlbumInfo(album *Album) {
-	album.PicURL = a.picURL(album.ImgItems)
-}
-
-func (a *API) resolve(src []*Song) []*provider.Song {
+func (a *API) resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singer, "|", "/")),
 			Album:    strings.TrimSpace(s.Album),
-			PicURL:   s.PicURL,
+			PicURL:   a.picURL(s.AlbumImgs),
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
 			URL:      s.URL,

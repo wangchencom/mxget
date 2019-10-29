@@ -23,7 +23,6 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist info: no data")
 	}
 
-	a.patchArtistInfo(&artistInfo.Resource[0])
 	artistSong, err := a.GetArtistSongRaw(singerId, 1, 50)
 	if err != nil {
 		return nil, err
@@ -40,13 +39,12 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		_songs = append(_songs, &itemList[i].Song)
 	}
 
-	a.patchSongInfo(_songs...)
 	a.patchSongURL(SongDefaultBR, _songs...)
 	a.patchSongLyric(_songs...)
-	songs := a.resolve(_songs)
+	songs := a.resolve(_songs...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(artistInfo.Resource[0].Singer),
-		PicURL: artistInfo.Resource[0].PicURL,
+		PicURL: a.picURL(artistInfo.Resource[0].Imgs),
 		Count:  len(songs),
 		Songs:  songs,
 	}, nil

@@ -22,10 +22,9 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		return nil, errors.New("get playlist: no data")
 	}
 
-	a.patchSongInfo(resp.Resource[0].SongItems...)
 	a.patchSongURL(SongDefaultBR, resp.Resource[0].SongItems...)
 	a.patchSongLyric(resp.Resource[0].SongItems...)
-	songs := a.resolve(resp.Resource[0].SongItems)
+	songs := a.resolve(resp.Resource[0].SongItems...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(resp.Resource[0].Title),
 		PicURL: resp.Resource[0].ImgItem.Img,

@@ -23,14 +23,12 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album: no data")
 	}
 
-	a.patchAlbumInfo(&resp.Resource[0])
-	a.patchSongInfo(resp.Resource[0].SongItems...)
 	a.patchSongURL(SongDefaultBR, resp.Resource[0].SongItems...)
 	a.patchSongLyric(resp.Resource[0].SongItems...)
-	songs := a.resolve(resp.Resource[0].SongItems)
+	songs := a.resolve(resp.Resource[0].SongItems...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Resource[0].Title),
-		PicURL: resp.Resource[0].PicURL,
+		PicURL: a.picURL(resp.Resource[0].ImgItems),
 		Count:  len(songs),
 		Songs:  songs,
 	}, nil

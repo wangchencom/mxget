@@ -3,8 +3,6 @@ package migu
 import (
 	"errors"
 	"fmt"
-	"strings"
-
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
 )
@@ -69,17 +67,9 @@ func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
 
 	_song := resp.Resource[0]
 	a.patchSongURL(SongDefaultBR, _song)
-	a.patchSongInfo(_song)
 	a.patchSongLyric(_song)
-	return &provider.Song{
-		Name:     strings.TrimSpace(_song.SongName),
-		Artist:   strings.TrimSpace(strings.ReplaceAll(_song.Singer, "|", "/")),
-		Album:    strings.TrimSpace(_song.Album),
-		PicURL:   _song.PicURL,
-		Lyric:    _song.Lyric,
-		Playable: _song.URL != "",
-		URL:      _song.URL,
-	}, nil
+	songs := a.resolve(_song)
+	return songs[0], nil
 }
 
 func GetSongRaw(songId string) (*SongResponse, error) {
