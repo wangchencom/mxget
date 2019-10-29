@@ -59,7 +59,7 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get playlist info: %s", resp.Error)
 	}
 
@@ -85,7 +85,7 @@ func (a *API) GetPlaylistSongRaw(specialId string, page int, pageSize int) (*Pla
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get playlist song: %s", resp.Error)
 	}
 

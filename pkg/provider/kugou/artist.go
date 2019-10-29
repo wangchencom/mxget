@@ -59,7 +59,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get artist info: %s", resp.Error)
 	}
 
@@ -85,7 +85,7 @@ func (a *API) GetArtistSongRaw(singerId string, page int, pageSize int) (*Artist
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get artist song: %s", resp.Error)
 	}
 

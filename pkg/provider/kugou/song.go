@@ -51,7 +51,7 @@ func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get song: %s", resp.Error)
 	}
 

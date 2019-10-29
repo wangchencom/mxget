@@ -63,7 +63,7 @@ type (
 			PQHash string `json:"128hash"`
 			HQHash string `json:"320hash"`
 			SQHash string `json:"sqhash"`
-		}
+		} `json:"extra"`
 		URL       string `json:"url"`
 		Lyric     string `json:"-"`
 		AlbumName string `json:"-"`

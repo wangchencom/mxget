@@ -59,7 +59,7 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get album info: %s", resp.Error)
 	}
 
@@ -85,7 +85,7 @@ func (a *API) GetAlbumSongRaw(albumId string, page int, pageSize int) (*AlbumSon
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("get album song: %s", resp.Error)
 	}
 

@@ -55,7 +55,7 @@ func (a *API) SearchSongRaw(keyword string, page int, pageSize int) (*SongSearch
 	if err != nil {
 		return nil, err
 	}
-	if resp.Status != 1 {
+	if resp.ErrCode != 0 {
 		return nil, fmt.Errorf("search song: %s", resp.Error)
 	}
 

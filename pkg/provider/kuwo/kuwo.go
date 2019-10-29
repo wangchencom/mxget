@@ -1,6 +1,7 @@
 package kuwo
 
 import (
+	"net/http"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -179,9 +180,16 @@ func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Respon
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
 	defaultOpts := []sreq.RequestOption{
 		sreq.WithHeaders(sreq.Headers{
+			"csrf":    "0",
 			"Origin":  "http://www.kuwo.cn",
 			"Referer": "http://www.kuwo.cn",
 		}),
+		sreq.WithCookies(
+			&http.Cookie{
+				Name:  "kw_token",
+				Value: "0",
+			},
+		),
 	}
 	opts = append(opts, defaultOpts...)
 	return a.Client.Request(method, url, opts...)
