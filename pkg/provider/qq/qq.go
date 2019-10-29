@@ -47,8 +47,8 @@ type (
 		File struct {
 			MediaMid string `json:"media_mid"`
 		} `json:"file"`
-		Lyric  string `json:"-"`
-		URL    string `json:"-"`
+		Lyric string `json:"-"`
+		URL   string `json:"-"`
 	}
 
 	SongSearchResponse struct {
@@ -58,7 +58,7 @@ type (
 				TotalNum int     `json:"totalnum"`
 				List     []*Song `json:"list"`
 			}
-		}
+		} `json:"data"`
 	}
 
 	SongResponse struct {
