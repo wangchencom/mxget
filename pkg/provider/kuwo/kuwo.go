@@ -178,19 +178,29 @@ func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Respon
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
+	// csrf 必须跟 kw_token 保持一致
+	csrf := "0"
+	cookie, err := a.Client.FilterCookie(url, "kw_token")
+	if err == nil {
+		csrf = cookie.Value
+	}
+
 	defaultOpts := []sreq.RequestOption{
 		sreq.WithHeaders(sreq.Headers{
-			"csrf":    "0",
+			"csrf":    csrf,
 			"Origin":  "http://www.kuwo.cn",
 			"Referer": "http://www.kuwo.cn",
 		}),
-		sreq.WithCookies(
+	}
+	if err != nil {
+		defaultOpts = append(defaultOpts, sreq.WithCookies(
 			&http.Cookie{
 				Name:  "kw_token",
-				Value: "0",
+				Value: csrf,
 			},
-		),
+		), )
 	}
+
 	opts = append(opts, defaultOpts...)
 	return a.Client.Request(method, url, opts...)
 }
