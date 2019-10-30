@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
-	"strconv"
 )
 
 func GetSong(songId string) (*provider.Song, error) {

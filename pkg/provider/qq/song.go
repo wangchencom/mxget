@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
 )

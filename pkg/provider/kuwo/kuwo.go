@@ -1,11 +1,12 @@
 package kuwo
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
-	"net/http"
-	"strings"
 )
 
 const (

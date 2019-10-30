@@ -3,6 +3,7 @@ package migu
 import (
 	"errors"
 	"fmt"
+
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
 )
