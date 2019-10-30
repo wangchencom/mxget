@@ -215,14 +215,20 @@ func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Respon
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
-	cookie, _ := createCookie()
 	defaultOpts := []sreq.RequestOption{
 		sreq.WithHeaders(sreq.Headers{
 			"Origin":  "https://music.163.com",
 			"Referer": "https://music.163.com",
 		}),
-		sreq.WithCookies(cookie),
 	}
+
+	// 如果已经登录，不需要额外设置cookie，cookie jar会自动管理
+	_, err := a.Client.FilterCookie(url, "MUSIC_U")
+	if err != nil {
+		cookie, _ := createCookie()
+		defaultOpts = append(defaultOpts, sreq.WithCookies(cookie))
+	}
+
 	opts = append(opts, defaultOpts...)
 	return a.Client.Request(method, url, opts...)
 }
