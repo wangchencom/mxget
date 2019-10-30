@@ -1,12 +1,11 @@
 package kuwo
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
+	"net/http"
+	"strings"
 )
 
 const (
@@ -181,7 +180,12 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	// csrf 必须跟 kw_token 保持一致
 	csrf := "0"
 	cookie, err := a.Client.FilterCookie(url, "kw_token")
-	if err == nil {
+	if err != nil {
+		opts = append(opts, sreq.WithCookies(&http.Cookie{
+			Name:  "kw_token",
+			Value: csrf,
+		}))
+	} else {
 		csrf = cookie.Value
 	}
 
@@ -191,14 +195,6 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 			"Origin":  "http://www.kuwo.cn",
 			"Referer": "http://www.kuwo.cn",
 		}),
-	}
-	if err != nil {
-		defaultOpts = append(defaultOpts, sreq.WithCookies(
-			&http.Cookie{
-				Name:  "kw_token",
-				Value: csrf,
-			},
-		), )
 	}
 
 	opts = append(opts, defaultOpts...)
