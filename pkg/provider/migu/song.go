@@ -68,7 +68,10 @@ func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
 
 	_song := resp.Resource[0]
 	a.patchSongURL(SongDefaultBR, _song)
-	a.patchSongLyric(_song)
+	lyric, err := a.GetSongLyric(_song.CopyrightId)
+	if err == nil {
+		_song.Lyric = lyric
+	}
 	songs := a.resolve(_song)
 	return songs[0], nil
 }
