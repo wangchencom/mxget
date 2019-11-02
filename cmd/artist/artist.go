@@ -18,17 +18,17 @@ var CmdArtist = &cobra.Command{
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	platform := settings.Cfg.MusicPlatform
+	platformId := settings.Cfg.MusicPlatform
 	if from != "" {
-		p := settings.Platform(from)
-		if !settings.VerifyPlatform(p) {
+		pid := settings.GetPlatformId(from)
+		if pid == 0 {
 			easylog.Fatalf("Unexpected music platform: %q", from)
 		}
-		platform = p
+		platformId = pid
 	}
 
-	client := settings.Client(platform)
-	easylog.Infof("Fetch artist %s from %s", id, settings.Site(platform))
+	client := settings.GetClient(platformId)
+	easylog.Infof("Fetch artist %s from %s", id, settings.GetSite(platformId))
 	artist, err := client.GetArtist(id)
 	if err != nil {
 		easylog.Fatal(err)

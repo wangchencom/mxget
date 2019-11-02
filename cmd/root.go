@@ -40,7 +40,7 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(settings.Load)
+	cobra.OnInitialize(settings.Init)
 
 	CmdRoot.AddCommand(search.CmdSearch)
 	CmdRoot.AddCommand(song.CmdSong)

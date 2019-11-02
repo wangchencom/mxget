@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
@@ -21,20 +22,24 @@ var CmdSet = &cobra.Command{
 
 func Run(cmd *cobra.Command, args []string) {
 	if cwd == "" && from == "" {
-		fmt.Printf("download dir: %s\n", settings.Cfg.DownloadDir)
-		fmt.Printf("music platform: %d\n", settings.Cfg.MusicPlatform)
+		fmt.Print(fmt.Sprintf(`
+Current settings:
+    download dir -> %s
+    music platform -> %d [%s]
+`, settings.Cfg.DownloadDir, settings.Cfg.MusicPlatform, settings.GetSite(settings.Cfg.MusicPlatform)))
 		return
 	}
 
 	if cwd != "" {
+		cwd = filepath.Clean(cwd)
 		if err := os.MkdirAll(cwd, 0755); err != nil {
-			easylog.Fatalf("Failed to make download dir: %q: %v", cwd, err)
+			easylog.Fatalf("Can't make download dir: %v", err)
 		}
 		settings.Cfg.DownloadDir = cwd
 	}
 	if from != "" {
-		platform := settings.Platform(from)
-		if !settings.VerifyPlatform(platform) {
+		platform := settings.GetPlatformId(from)
+		if platform == 0 {
 			easylog.Fatalf("Unexpected music platform: %q", from)
 		}
 		settings.Cfg.MusicPlatform = platform

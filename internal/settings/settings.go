@@ -2,12 +2,12 @@ package settings
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
+	"github.com/winterssy/easylog"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/provider/kugou"
 	"github.com/winterssy/mxget/pkg/provider/kuwo"
@@ -17,20 +17,18 @@ import (
 )
 
 const (
-	configFileName       = "mxget.json"
-	hiddenConfigFileName = "." + configFileName
-	downloadDir          = "./downloads"
+	downloadDir = "./downloads"
 )
 
 var (
-	CfgPath = makeConfigPath()
-	Cfg     *Config
-	Limit   int
-	Tag     bool
-	Lyric   bool
-	Force   bool
-
-	errorConfigFileNotFound = errors.New("config file not found")
+	Cfg = &Config{
+		DownloadDir:   downloadDir,
+		MusicPlatform: provider.NetEase,
+	}
+	Limit int
+	Tag   bool
+	Lyric bool
+	Force bool
 )
 
 var (
@@ -67,107 +65,99 @@ type (
 	Config struct {
 		DownloadDir   string `json:"download_dir"`
 		MusicPlatform int    `json:"music_platform"`
+
+		others   map[string]interface{} `json:"-"`
+		filePath string                 `json:"-"`
 	}
 )
+
+func GetPlatformId(platformFlag string) int {
+	return platform[platformFlag]
+}
+
+func GetClient(platformId int) provider.API {
+	return client[platformId]
+}
+
+func GetSite(platformId int) string {
+	return site[platformId]
+}
+
+func Init() {
+	err := Cfg.setup()
+	if err != nil {
+		Cfg.Reset()
+		easylog.Fatalf("Can't initialize settings, reset to defaults: %v", err)
+	}
+}
+
+func (c *Config) setup() error {
+	c.getCfgFile()
+	err := c.loadCfgFile()
+	if err != nil {
+		return err
+	}
+	err = c.check()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Config) getCfgFile() {
+	var cfgDir string
+	xdgDir := os.Getenv("XDG_CONFIG_HOME")
+	if xdgDir == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			cfgDir = "."
+		} else {
+			cfgDir = filepath.Join(home, ".config", "mxget")
+		}
+	} else {
+		cfgDir = filepath.Join(xdgDir, "mxget")
+	}
+
+	if os.MkdirAll(cfgDir, 0755) != nil {
+		c.filePath = ".mxget.json"
+	}
+
+	c.filePath = filepath.Join(cfgDir, "mxget.json")
+}
+
+func (c *Config) loadCfgFile() error {
+	_, err := os.Stat(c.filePath)
+	if err == nil {
+		b, err := ioutil.ReadFile(c.filePath)
+		if err != nil {
+			return err
+		}
+		return json.Unmarshal(b, c)
+	}
+	return c.Save()
+}
+
+func (c *Config) check() error {
+	err := os.MkdirAll(c.DownloadDir, 0755)
+	if GetSite(c.MusicPlatform) == "" {
+		c.MusicPlatform = provider.NetEase
+		return fmt.Errorf("unexpected music platform: %d", c.MusicPlatform)
+	}
+	if err != nil {
+		c.DownloadDir = downloadDir
+		return fmt.Errorf("cant't make download dir: %w", err)
+	}
+	return nil
+}
 
 func (c *Config) Save() error {
 	b, err := json.MarshalIndent(c, "", "\t")
 	if err != nil {
 		return err
 	}
-
-	return ioutil.WriteFile(CfgPath, b, 0644)
+	return ioutil.WriteFile(c.filePath, b, 0644)
 }
 
-func Load() {
-	conf, err := load()
-	if err != nil {
-		if err == errorConfigFileNotFound {
-			conf = &Config{
-				DownloadDir:   downloadDir,
-				MusicPlatform: provider.NetEase,
-			}
-			err = conf.Save()
-			if err != nil {
-				easylog.Errorf("Failed to make config file: %v", err)
-			}
-		} else {
-			easylog.Fatalf("Failed to load config file: %v", err)
-		}
-	}
-
-	if !VerifyPlatform(conf.MusicPlatform) {
-		easylog.Errorf("Unexpected music platform: %d", conf.MusicPlatform)
-		easylog.Infof("Reset to default")
-		conf.MusicPlatform = provider.NetEase
-		_ = conf.Save()
-	}
-
-	if err := os.MkdirAll(conf.DownloadDir, 0755); err != nil {
-		easylog.Errorf("Failed to make download dir: %v", err)
-		easylog.Infof("Reset to default")
-		conf.DownloadDir = downloadDir
-		_ = conf.Save()
-	}
-	Cfg = conf
-}
-
-func load() (*Config, error) {
-	b, err := ioutil.ReadFile(CfgPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, errorConfigFileNotFound
-		}
-		return nil, err
-	}
-
-	conf := new(Config)
-	err = json.Unmarshal(b, conf)
-	return conf, err
-}
-
-func makeConfigPath() string {
-	var cfgDir string
-	var cfgPath string
-
-	homeDir, err := os.UserHomeDir()
-	if err == nil {
-		cfgDir = filepath.Join(homeDir, ".config", "mxget")
-		cfgPath = filepath.Join(cfgDir, configFileName)
-	}
-
-	_, err = os.Stat(cfgPath)
-	if err == nil {
-		return cfgPath
-	}
-
-	if cfgPath != "" {
-		err := os.MkdirAll(cfgDir, 0755)
-		if err == nil {
-			return cfgPath
-		}
-	}
-
-	return hiddenConfigFileName
-}
-
-func Platform(flag string) int {
-	return platform[flag]
-}
-
-func Client(platform int) provider.API {
-	return client[platform]
-}
-
-func Site(platform int) string {
-	return site[platform]
-}
-
-func VerifyPlatform(platform int) bool {
-	switch platform {
-	case provider.NetEase, provider.QQ, provider.MiGu, provider.KuGou, provider.KuWo:
-		return true
-	default:
-		return false
-	}
+func (c *Config) Reset() {
+	_ = c.Save()
 }
