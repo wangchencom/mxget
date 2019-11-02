@@ -38,11 +38,11 @@ Current settings:
 		settings.Cfg.DownloadDir = cwd
 	}
 	if from != "" {
-		platform := settings.GetPlatformId(from)
-		if platform == 0 {
+		pid := settings.GetPlatformId(from)
+		if pid == 0 {
 			easylog.Fatalf("Unexpected music platform: %q", from)
 		}
-		settings.Cfg.MusicPlatform = platform
+		settings.Cfg.MusicPlatform = pid
 	}
 
 	_ = settings.Cfg.Save()

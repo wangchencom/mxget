@@ -19,16 +19,16 @@ var CmdSearch = &cobra.Command{
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	platform := settings.Cfg.MusicPlatform
+	platformId := settings.Cfg.MusicPlatform
 	if from != "" {
-		p := settings.GetPlatformId(from)
-		if p == 0 {
+		pid := settings.GetPlatformId(from)
+		if pid == 0 {
 			easylog.Fatalf("Unexpected music platform: %q", from)
 		}
-		platform = p
+		platformId = pid
 	}
 
-	client := settings.GetClient(platform)
+	client := settings.GetClient(platformId)
 	result, err := client.SearchSong(keyword)
 	if err != nil {
 		easylog.Fatal(err)
