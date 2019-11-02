@@ -46,7 +46,6 @@ func getArtist(c *gin.Context, client provider.API) {
 
 	c.JSON(200, &provider.Response{
 		Code:     200,
-		Msg:      "ok",
 		Data:     data,
 		Platform: client.Platform(),
 	})
