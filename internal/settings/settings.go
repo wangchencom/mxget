@@ -3,11 +3,11 @@ package settings
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/winterssy/easylog"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/provider/kugou"
 	"github.com/winterssy/mxget/pkg/provider/kuwo"
