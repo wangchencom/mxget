@@ -5,8 +5,11 @@ import (
 	"strings"
 )
 
+var (
+	re = regexp.MustCompile(`[\\/:*?"<>|]`)
+)
+
 func TrimInvalidFilePathChars(path string) string {
-	re := regexp.MustCompile(`[\\/:*?"<>|]`)
 	path = re.ReplaceAllString(path, " ")
 	return strings.TrimSpace(path)
 }
