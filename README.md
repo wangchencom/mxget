@@ -138,9 +138,9 @@ func main() {
 }
 ```
 
-Tip：使用前你须对作者开发的另一款网络请求库 [sreq](https://github.com/winterssy/sreq) 有所了解，更多细节请阅读 `mxget` 的源码。
+Tip：使用前你须对作者开发的另一款网络请求库 **[sreq](https://github.com/winterssy/sreq)** 有所了解，更多细节请阅读 `mxget` 的源码。
 
-> 网易云音乐API的加解密算法参考 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 并用Golang实现，但 `mxget` 并未移植原项目的所有API，如开发者需要，可fork本项目实现，很简单。
+> 网易云音乐API的加解密算法参考 **[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)** 并用Golang实现，但 `mxget` 并未移植原项目的所有API，如开发者需要，可fork本项目实现，很简单。
 
 ### 作为API服务部署
 
@@ -157,7 +157,7 @@ $ docker pull winterssy/mxget
 $ docker run -d --name mxget -p 8080:8080 winterssy/mxget
 ```
 
-> Tip：**[pymxget](https://github.com/wintersy/pymxget)** 作为服务部署的性能表现更好，追求速度的话建议使用 `pymxget` 。
+> Tip：**[pymxget](https://github.com/winterssy/pymxget)** 作为服务部署的性能表现更好，追求速度的话建议使用 `pymxget` 。
 
 请求方法均为 `GET` ，统一调用路径为 `/api/{platform}/{type}/{param}` ，示例：
 
