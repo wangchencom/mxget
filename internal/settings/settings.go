@@ -97,10 +97,12 @@ func (c *Config) setup() error {
 	if err != nil {
 		return err
 	}
+
 	err = c.check()
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -134,19 +136,22 @@ func (c *Config) loadCfgFile() error {
 		}
 		return json.Unmarshal(b, c)
 	}
+
 	return c.Save()
 }
 
 func (c *Config) check() error {
-	err := os.MkdirAll(c.DownloadDir, 0755)
 	if GetSite(c.MusicPlatform) == "" {
 		c.MusicPlatform = provider.NetEase
 		return fmt.Errorf("unexpected music platform: %d", c.MusicPlatform)
 	}
+
+	err := os.MkdirAll(c.DownloadDir, 0755)
 	if err != nil {
 		c.DownloadDir = downloadDir
 		return fmt.Errorf("cant't make download dir: %w", err)
 	}
+
 	return nil
 }
 
@@ -155,6 +160,7 @@ func (c *Config) Save() error {
 	if err != nil {
 		return err
 	}
+
 	return ioutil.WriteFile(c.filePath, b, 0644)
 }
 

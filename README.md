@@ -2,6 +2,8 @@
 
 `mxget` 是一款用Go语言编写的命令行程序，整合各大音乐平台的资源，开发的初衷是为程序员提供更优雅的音乐下载体验。
 
+> Python版：**[pymxget](https://github.com/winterssy/pymxget)**
+
 [![Actions Status](https://github.com/winterssy/mxget/workflows/Build/badge.svg)](https://github.com/winterssy/mxget/actions)
 [![Actions Status](https://github.com/winterssy/mxget/workflows/Publish%20Docker/badge.svg)](https://github.com/winterssy/mxget/actions)
 
@@ -21,9 +23,7 @@ go get -u github.com/winterssy/mxget
 
 ## 使用说明
 
-> `mxget` 并不是为破解音乐平台的数字版权限制而生的，仅提供试听版音质下载，如果你喜欢高音质/无损资源，请支持正版。
-
-**本项目不提供可执行程序下载，也不提供线上demo演示，如须使用请自行编译。**
+> `mxget` 并不是为破解音乐平台的数字版权限制而生的，仅提供试听版音质下载，如果你喜欢高音质/无损资源，请支持正版。本项目不提供可执行程序下载，如须开箱即用，可选择 **[pymxget](https://github.com/winterssy/pymxget)** 。
 
 ### 作为CLI使用
 
@@ -157,6 +157,8 @@ $ docker pull winterssy/mxget
 $ docker run -d --name mxget -p 8080:8080 winterssy/mxget
 ```
 
+> Tip：**[pymxget](https://github.com/wintersy/pymxget)** 作为服务部署的性能表现更好，追求速度的话建议使用 `pymxget` 。
+
 请求方法均为 `GET` ，统一调用路径为 `/api/{platform}/{type}/{param}` ，示例：
 
 - 从QQ音乐获取 `周杰伦` 的搜索结果
@@ -192,10 +194,6 @@ $ curl -X GET "http://127.0.0.1:8080/api/kuwo/artist/336" -H "accept: applicatio
 **注：** 由于音乐平台的限制，`mxget` 的API服务仅在本地测试通过。如果你将 `mxget` 部署到公网，特别是海外VPS上，开发者不保证能工作，遇到的问题需要你自行解决。
 
 ## FAQ
-
-- 为什么不提供可执行程序下载？
-
-> `mxget` 的目标群体是程序员，它的编译方式很简单，如果你不会说明不适合使用 `mxget` ，感谢你对本项目的关注 。提高使用门槛同时也能避免一些不必要的问题和麻烦。
 
 - 抓取（Fetch）歌单数据耗时较长？
 
