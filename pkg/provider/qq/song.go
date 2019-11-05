@@ -1,7 +1,6 @@
 package qq
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -178,12 +177,12 @@ func (a *API) GetSongLyric(songMid string) (string, error) {
 		return "", err
 	}
 
-	lyric, err := base64.StdEncoding.DecodeString(resp.Lyric)
-	if err != nil {
-		return "", err
-	}
+	// lyric, err := base64.StdEncoding.DecodeString(resp.Lyric)
+	// if err != nil {
+	// 	return "", err
+	// }
 
-	return string(lyric), nil
+	return resp.Lyric, nil
 }
 
 func GetSongLyricRaw(songMid string) (*SongLyricResponse, error) {
