@@ -2,8 +2,8 @@ package kuwo
 
 import "testing"
 
-func TestAPI_SearchSong(t *testing.T) {
-	result, err := SearchSong("周杰伦")
+func TestAPI_SearchSongs(t *testing.T) {
+	result, err := SearchSongs("周杰伦")
 	if err != nil {
 		t.Fatal(err)
 	}

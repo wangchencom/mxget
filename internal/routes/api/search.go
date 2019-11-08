@@ -34,7 +34,7 @@ func SearchSongFromKuWo(c *gin.Context) {
 
 func searchSong(c *gin.Context, client provider.API) {
 	keyword := strings.TrimSpace(c.Param("keyword"))
-	data, err := client.SearchSong(keyword)
+	data, err := client.SearchSongs(keyword)
 	if err != nil {
 		c.JSON(500, &provider.Response{
 			Code:     500,

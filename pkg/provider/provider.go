@@ -79,7 +79,7 @@ type (
 		// 平台标识
 		Platform() int
 		// 搜索歌曲
-		SearchSong(keyword string) (*SearchSongsResult, error)
+		SearchSongs(keyword string) (*SearchSongsResult, error)
 		// 获取单曲
 		GetSong(id string) (*Song, error)
 		// 获取歌手

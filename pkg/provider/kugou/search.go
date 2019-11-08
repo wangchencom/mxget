@@ -9,12 +9,12 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func SearchSong(keyword string) (*provider.SearchSongsResult, error) {
-	return std.SearchSong(keyword)
+func SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
+	return std.SearchSongs(keyword)
 }
 
-func (a *API) SearchSong(keyword string) (*provider.SearchSongsResult, error) {
-	resp, err := a.SearchSongRaw(keyword, 1, 50)
+func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
+	resp, err := a.SearchSongsRaw(keyword, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -36,12 +36,12 @@ func (a *API) SearchSong(keyword string) (*provider.SearchSongsResult, error) {
 	}, nil
 }
 
-func SearchSongRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
-	return std.SearchSongRaw(keyword, page, pageSize)
+func SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
+	return std.SearchSongsRaw(keyword, page, pageSize)
 }
 
 // 搜索歌曲
-func (a *API) SearchSongRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
+func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	params := sreq.Params{
 		"keyword":  keyword,
 		"page":     strconv.Itoa(page),
@@ -56,7 +56,7 @@ func (a *API) SearchSongRaw(keyword string, page int, pageSize int) (*SearchSong
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("search song: %s", resp.Error)
+		return nil, fmt.Errorf("search songs: %s", resp.Error)
 	}
 
 	return resp, nil

@@ -2,8 +2,8 @@ package kugou
 
 import "testing"
 
-func TestAPI_SearchSong(t *testing.T) {
-	result, err := SearchSong("五月天")
+func TestAPI_SearchSongs(t *testing.T) {
+	result, err := SearchSongs("五月天")
 	if err != nil {
 		t.Fatal(err)
 	}

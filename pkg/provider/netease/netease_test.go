@@ -2,8 +2,8 @@ package netease
 
 import "testing"
 
-func TestAPI_SearchSong(t *testing.T) {
-	result, err := SearchSong("Alan Walker")
+func TestAPI_SearchSongs(t *testing.T) {
+	result, err := SearchSongs("Alan Walker")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -29,7 +29,7 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 
 	client := settings.GetClient(platformId)
-	result, err := client.SearchSong(keyword)
+	result, err := client.SearchSongs(keyword)
 	if err != nil {
 		easylog.Fatal(err)
 	}

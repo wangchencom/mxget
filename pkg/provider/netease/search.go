@@ -9,12 +9,12 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func SearchSong(keyword string) (*provider.SearchSongsResult, error) {
-	return std.SearchSong(keyword)
+func SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
+	return std.SearchSongs(keyword)
 }
 
-func (a *API) SearchSong(keyword string) (*provider.SearchSongsResult, error) {
-	resp, err := a.SearchSongRaw(keyword, 0, 50)
+func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
+	resp, err := a.SearchSongsRaw(keyword, 0, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -40,12 +40,12 @@ func (a *API) SearchSong(keyword string) (*provider.SearchSongsResult, error) {
 	}, nil
 }
 
-func SearchSongRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
-	return std.SearchSongRaw(keyword, offset, limit)
+func SearchSongsRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
+	return std.SearchSongsRaw(keyword, offset, limit)
 }
 
 // 搜索歌曲
-func (a *API) SearchSongRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
+func (a *API) SearchSongsRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
 	// type: 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户,
 	// 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频
 	data := map[string]interface{}{
@@ -63,7 +63,7 @@ func (a *API) SearchSongRaw(keyword string, offset int, limit int) (*SearchSongs
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("search song: %s", resp.Msg)
+		return nil, fmt.Errorf("search songs: %s", resp.Msg)
 	}
 
 	return resp, nil
