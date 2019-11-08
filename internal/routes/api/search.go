@@ -12,27 +12,27 @@ import (
 	"github.com/winterssy/mxget/pkg/provider/qq"
 )
 
-func SearchSongFromNetEase(c *gin.Context) {
-	searchSong(c, netease.Client())
+func SearchSongsFromNetEase(c *gin.Context) {
+	searchSongs(c, netease.Client())
 }
 
-func SearchSongFromQQ(c *gin.Context) {
-	searchSong(c, qq.Client())
+func SearchSongsFromQQ(c *gin.Context) {
+	searchSongs(c, qq.Client())
 }
 
-func SearchSongFromMiGu(c *gin.Context) {
-	searchSong(c, migu.Client())
+func SearchSongsFromMiGu(c *gin.Context) {
+	searchSongs(c, migu.Client())
 }
 
-func SearchSongFromKuGou(c *gin.Context) {
-	searchSong(c, kugou.Client())
+func SearchSongsFromKuGou(c *gin.Context) {
+	searchSongs(c, kugou.Client())
 }
 
-func SearchSongFromKuWo(c *gin.Context) {
-	searchSong(c, kuwo.Client())
+func SearchSongsFromKuWo(c *gin.Context) {
+	searchSongs(c, kuwo.Client())
 }
 
-func searchSong(c *gin.Context, client provider.API) {
+func searchSongs(c *gin.Context, client provider.API) {
 	keyword := strings.TrimSpace(c.Param("keyword"))
 	data, err := client.SearchSongs(keyword)
 	if err != nil {
