@@ -40,6 +40,7 @@ func GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 	return std.GetAlbumRaw(albumId)
 }
 
+// 获取专辑
 func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 	token, err := a.getToken(APIGetAlbum)
 	if err != nil {

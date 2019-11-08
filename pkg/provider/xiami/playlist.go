@@ -68,6 +68,7 @@ func GetPlaylistDetailRaw(playlistId string, page int, pageSize int) (*PlaylistD
 	return std.GetPlaylistDetailRaw(playlistId, page, pageSize)
 }
 
+// 获取歌单详情，包含歌单信息跟歌曲
 func (a *API) GetPlaylistDetailRaw(playlistId string, page int, pageSize int) (*PlaylistDetailResponse, error) {
 	token, err := a.getToken(APIGetPlaylistDetail)
 	if err != nil {
@@ -99,6 +100,7 @@ func GetPlaylistSongsRaw(playlistId string, page int, pageSize int) (*PlaylistSo
 	return std.GetPlaylistSongsRaw(playlistId, page, pageSize)
 }
 
+// 获取歌单歌曲，不包含歌单信息
 func (a *API) GetPlaylistSongsRaw(playlistId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	token, err := a.getToken(APIGetPlaylistSongs)
 	if err != nil {

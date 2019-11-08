@@ -39,6 +39,7 @@ func SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsRespons
 	return std.SearchSongsRaw(keyword, page, pageSize)
 }
 
+// 搜索歌曲
 func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	token, err := a.getToken(APISearch)
 	if err != nil {

@@ -29,6 +29,7 @@ func GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	return std.GetSongDetailRaw(songId)
 }
 
+// 获取单曲详情
 func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	token, err := a.getToken(APIGetSongDetail)
 	if err != nil {
@@ -79,6 +80,7 @@ func GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 	return std.GetSongLyricRaw(songId)
 }
 
+// 获取歌词
 func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 	token, err := a.getToken(APIGetSongLyric)
 	if err != nil {
@@ -106,6 +108,7 @@ func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 	return resp, nil
 }
 
+// 批量获取歌曲，上限200首
 func (a *API) GetSongsRaw(songIds ...string) (*SongsResponse, error) {
 	token, err := a.getToken(APIGetSongs)
 	if err != nil {

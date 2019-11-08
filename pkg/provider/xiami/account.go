@@ -12,7 +12,7 @@ func LoginRaw(account string, password string) (*LoginResponse, error) {
 	return std.LoginRaw(account, password)
 }
 
-// account 可为邮箱/手机号码
+// 登录接口，account 可为邮箱/手机号码
 func (a *API) LoginRaw(account string, password string) (*LoginResponse, error) {
 	token, err := a.getToken(APILogin)
 	if err != nil {

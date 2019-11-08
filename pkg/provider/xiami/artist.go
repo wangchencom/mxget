@@ -45,6 +45,7 @@ func GetArtistInfoRaw(artistId string) (*ArtistInfoResponse, error) {
 	return std.GetArtistInfoRaw(artistId)
 }
 
+// 获取歌手信息
 func (a *API) GetArtistInfoRaw(artistId string) (*ArtistInfoResponse, error) {
 	token, err := a.getToken(APIGetArtistInfo)
 	if err != nil {
@@ -76,6 +77,7 @@ func GetArtistSongsRaw(artistId string, page int, pageSize int) (*ArtistSongsRes
 	return std.GetArtistSongsRaw(artistId, page, pageSize)
 }
 
+// 获取歌手歌曲
 func (a *API) GetArtistSongsRaw(artistId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	token, err := a.getToken(APIGetArtistSongs)
 	if err != nil {
