@@ -47,7 +47,7 @@ type (
 		FileSize   string `json:"fileSize"`
 		Format     string `json:"format"`
 		ListenFile string `json:"listenFile,omitempty"`
-		Quality    string `json:"quality,omitempty"`
+		Quality    string `json:"quality"`
 		URL        string `json:"url,omitempty"`
 	}
 
