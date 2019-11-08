@@ -20,6 +20,7 @@ const (
 	APIGetAlbum          = "https://acs.m.xiami.com/h5/mtop.alimusic.music.albumservice.getalbumdetail/1.0/?appKey=23649156"
 	APIGetPlaylistDetail = "https://h5api.m.xiami.com/h5/mtop.alimusic.music.list.collectservice.getcollectdetail/1.0/?appKey=23649156"
 	APIGetPlaylistSongs  = "https://h5api.m.xiami.com/h5/mtop.alimusic.music.list.collectservice.getcollectsongs/1.0/?appKey=23649156"
+	APILogin             = "https://h5api.m.xiami.com/h5/mtop.alimusic.xuser.facade.xiamiuserservice.login/1.0/?appKey=23649156"
 
 	SongRequestLimit = 200
 )
@@ -176,6 +177,20 @@ type (
 		} `json:"data"`
 	}
 
+	LoginResponse struct {
+		CommonResponse
+		Data struct {
+			Data struct {
+				AccessToken    string `json:"accessToken"`
+				Expires        string `json:"expires"`
+				NickName       string `json:"nickName"`
+				RefreshExpires string `json:"refreshExpires"`
+				RefreshToken   string `json:"refreshToken"`
+				UserId         string `json:"userId"`
+			} `json:"data"`
+		} `json:"data"`
+	}
+
 	API struct {
 		Client *sreq.Client
 	}
@@ -210,6 +225,10 @@ func (p *PlaylistDetailResponse) String() string {
 }
 
 func (p *PlaylistSongsResponse) String() string {
+	return provider.ToJSON(p, false)
+}
+
+func (p *LoginResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
