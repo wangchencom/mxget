@@ -36,6 +36,7 @@ var (
 	platform = map[string]int{
 		"netease": provider.NetEase,
 		"nc":      provider.NetEase,
+		"tencent": provider.QQ,
 		"qq":      provider.QQ,
 		"migu":    provider.MiGu,
 		"mg":      provider.MiGu,
