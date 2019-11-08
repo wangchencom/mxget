@@ -14,6 +14,7 @@ import (
 	"github.com/winterssy/mxget/pkg/provider/migu"
 	"github.com/winterssy/mxget/pkg/provider/netease"
 	"github.com/winterssy/mxget/pkg/provider/qq"
+	"github.com/winterssy/mxget/pkg/provider/xiami"
 )
 
 const (
@@ -42,6 +43,8 @@ var (
 		"kg":      provider.KuGou,
 		"kuwo":    provider.KuGou,
 		"kw":      provider.KuWo,
+		"xiami":   provider.XiaMi,
+		"xm":      provider.XiaMi,
 	}
 
 	client = map[int]provider.API{
@@ -50,6 +53,7 @@ var (
 		provider.MiGu:    migu.Client(),
 		provider.KuGou:   kugou.Client(),
 		provider.KuWo:    kuwo.Client(),
+		provider.XiaMi:   xiami.Client(),
 	}
 
 	site = map[int]string{
@@ -58,6 +62,7 @@ var (
 		provider.MiGu:    "music.migu.cn",
 		provider.KuGou:   "kugou.com",
 		provider.KuWo:    "kuwo.cn",
+		provider.XiaMi:   "xiami.com",
 	}
 )
 

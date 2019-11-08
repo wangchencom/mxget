@@ -1,6 +1,6 @@
 # mxget
 
-`mxget` 是一款用Go语言编写的命令行程序，整合各大音乐平台的资源，开发的初衷是为程序员提供更优雅的音乐下载体验。
+`mxget` 是用Go语言编写的一款命令行程序，它能帮助你轻松找到你喜欢的音乐。
 
 > Python版：**[pymxget](https://github.com/winterssy/pymxget)**
 
@@ -9,11 +9,26 @@
 
 ## 功能特性
 
-- [网易云音乐](https://music.163.com) / [QQ音乐](https://y.qq.com) / [咪咕音乐](http://music.migu.cn/v3) / [酷狗音乐](http://www.kugou.com) / [酷我音乐](http://www.kuwo.cn/) 一站式音乐搜索和下载。
+- 聚合国内各大音乐平台的资源，支持在线搜索和下载试听。
 - 单曲、专辑、歌单以及歌手热门歌曲，只需一步，就能搞定！
 - 支持自动嵌入音乐标签/下载歌词。
 - 利用Goroutines的先天优势快速并发下载。
 - 支持库调用和RESTful API。
+
+## 重要说明
+
+`mxget` 开发的初衷只是为了免去你须要频繁在各大网站切换听歌的烦恼，而不是为了破解音乐平台的数字版权限制。它无法下载受版权保护的数字音乐，音频也仅提供试听版音质（128kbps）下载。如果你喜欢高音质/无损资源，请支持正版。
+
+## 支持的音乐平台
+
+|                音乐平台                 |      在线搜索      |      下载单曲      |      下载专辑      |      下载歌单      |  下载歌手热门歌曲  |   音乐标签/歌词    |
+| :-------------------------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: |
+| **[网易云音乐](https://music.163.com)** | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+|     **[QQ音乐](https://y.qq.com)**      | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| **[咪咕音乐](http://music.migu.cn/v3)** | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+|  **[酷狗音乐](http://www.kugou.com)**   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+|   **[酷我音乐](http://www.kuwo.cn/)**   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+|  **[虾米音乐](https://www.xiami.com)**  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 
 ## 下载安装
 
@@ -23,7 +38,7 @@ go get -u github.com/winterssy/mxget
 
 ## 使用说明
 
-> `mxget` 并不是为破解音乐平台的数字版权限制而生的，仅提供试听版音质下载，如果你喜欢高音质/无损资源，请支持正版。本项目不提供可执行程序下载，如须开箱即用，可选择 **[pymxget](https://github.com/winterssy/pymxget)** 。
+> 本项目不提供可执行程序下载，如须开箱即用，可选择 **[pymxget](https://github.com/winterssy/pymxget)** 。
 
 ### 作为CLI使用
 
@@ -104,6 +119,7 @@ $ mxget config --from qq
 |  咪咕音乐  |  `migu` / `mg`   |  1002  |
 |  酷狗音乐  |  `kugou` / `kg`  |  1003  |
 |  酷我音乐  |  `kuwo` / `kw`   |  1004  |
+|  虾米音乐  |  `xiami` / `xm`  |  1005  |
 
 音乐id为音乐平台为对应资源分配的唯一id，当使用 `mxget` 进行搜索时，歌曲id会显示在每条结果的后面。你也可以通过各大音乐平台的网页版在线搜索相关资源，然后从结果详情页的URL中获取其音乐id。值得注意的是，酷狗音乐对应的歌曲id即为文件哈希 `hash` 。
 

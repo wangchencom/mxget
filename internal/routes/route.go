@@ -42,4 +42,11 @@ func Init(router *gin.Engine) {
 	r.GET("/kuwo/artist/:id", api.GetArtistFromKuWo)
 	r.GET("/kuwo/album/:id", api.GetAlbumFromKuWo)
 	r.GET("/kuwo/playlist/:id", api.GetPlaylistFromKuWo)
+
+	// 虾米音乐
+	r.GET("/xiami/search/:keyword", api.SearchSongsFromXiaMi)
+	r.GET("/xiami/song/:id", api.GetSongFromXiaMi)
+	r.GET("/xiami/artist/:id", api.GetArtistFromXiaMi)
+	r.GET("/xiami/album/:id", api.GetAlbumFromXiaMi)
+	r.GET("/xiami/playlist/:id", api.GetPlaylistFromXiaMi)
 }

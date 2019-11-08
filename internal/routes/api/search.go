@@ -10,6 +10,7 @@ import (
 	"github.com/winterssy/mxget/pkg/provider/migu"
 	"github.com/winterssy/mxget/pkg/provider/netease"
 	"github.com/winterssy/mxget/pkg/provider/qq"
+	"github.com/winterssy/mxget/pkg/provider/xiami"
 )
 
 func SearchSongsFromNetEase(c *gin.Context) {
@@ -30,6 +31,10 @@ func SearchSongsFromKuGou(c *gin.Context) {
 
 func SearchSongsFromKuWo(c *gin.Context) {
 	searchSongs(c, kuwo.Client())
+}
+
+func SearchSongsFromXiaMi(c *gin.Context) {
+	searchSongs(c, xiami.Client())
 }
 
 func searchSongs(c *gin.Context, client provider.API) {
