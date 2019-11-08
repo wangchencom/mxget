@@ -154,7 +154,7 @@ func (a *API) GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, 
 // 		"data": string(enc),
 // 	}
 // 	resp := new(SongURLResponse)
-// 	err := a.request(sreq.MethodGet, APIGetSongURL,
+// 	err := a.Request(sreq.MethodGet, APIGetSongURL,
 // 		sreq.WithQuery(params),
 // 	).JSON(resp)
 // 	if err != nil {

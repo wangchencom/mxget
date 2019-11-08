@@ -12,7 +12,7 @@ import (
 const (
 	APISearch  = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
 	APIGetSong = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
-	// APIGetSongURL   = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
+	// APIGetSongURL = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
 	APIGetSongURL   = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
 	APIGetSongLyric = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
 	APIGetArtist    = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
@@ -220,33 +220,25 @@ func (a *API) patchSongURL(songs ...*Song) {
 
 // func (a *API) patchSongURL(songs ...*Song) {
 // 	n := len(songs)
-// 	// n=0 时直接返回，防止goroutine泄漏
-// 	if n == 0 {
-// 		return
+// 	songMids := make([]string, 0, n)
+// 	for _, s := range songs {
+// 		songMids = append(songMids, s.Mid)
 // 	}
 //
 // 	type result struct {
 // 		resp *SongURLResponse
 // 		err  error
 // 	}
+//
 // 	urlMap := make(map[string]string, n)
 // 	queue := make(chan *result)
-// 	c := concurrency.New(32)
+// 	wg := new(sync.WaitGroup)
 // 	// url长度限制，每次请求的歌曲数不能太多，分批获取
 // 	for i := 0; i < n; i += SongURLRequestLimit {
-// 		j := i + SongURLRequestLimit
-// 		if j > n {
-// 			j = n
-// 		}
-//
-// 		songMids := make([]string, 0, j-i)
-// 		for k := i; k < j; k++ {
-// 			songMids = append(songMids, songs[k].Mid)
-// 		}
-//
-// 		c.Add(1)
+// 		ids := songMids[i:utils.Min(i+SongURLRequestLimit, n)]
+// 		wg.Add(1)
 // 		go func() {
-// 			resp, err := a.GetSongURLRaw(songMids...)
+// 			resp, err := a.GetSongURLRaw(ids...)
 // 			queue <- &result{
 // 				resp: resp,
 // 				err:  err,
@@ -264,10 +256,10 @@ func (a *API) patchSongURL(songs ...*Song) {
 // 					}
 // 				}
 // 			}
-// 			c.Done()
+// 			wg.Done()
 // 		}
 // 	}()
-// 	c.Wait()
+// 	wg.Wait()
 //
 // 	for _, s := range songs {
 // 		s.URL = urlMap[s.Mid]

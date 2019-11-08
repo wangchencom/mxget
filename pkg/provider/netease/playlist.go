@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -31,46 +32,41 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		return nil, errors.New("get playlist: no data")
 	}
 
-	ids := make([]int, 0, n)
-	for _, t := range resp.Playlist.TrackIds {
-		ids = append(ids, t.Id)
-	}
-
+	tracks := resp.Playlist.Tracks
 	if n > SongRequestLimit {
+		extra := n - SongRequestLimit
+		trackIds := make([]int, 0, extra)
+		for i := SongRequestLimit; i < n; i++ {
+			trackIds = append(trackIds, resp.Playlist.TrackIds[i].Id)
+		}
+
 		queue := make(chan []*Song)
 		wg := new(sync.WaitGroup)
-		for i := SongRequestLimit; i < n; i += SongRequestLimit {
-			j := i + SongRequestLimit
-			if j > n {
-				j = n
-			}
-
-			ids := make([]int, 0, j-i)
-			for k := i; k < j; k++ {
-				ids = append(ids, resp.Playlist.TrackIds[k].Id)
-			}
-
+		for i := 0; i < extra; i += SongRequestLimit {
+			songIds := trackIds[i:utils.Min(i+SongRequestLimit, extra)]
 			wg.Add(1)
 			go func() {
-				resp, _ := a.GetSongRaw(ids...)
+				resp, err := a.GetSongRaw(songIds...)
+				if err != nil {
+					wg.Done()
+					return
+				}
 				queue <- resp.Songs
 			}()
 		}
 
 		go func() {
 			for s := range queue {
-				if len(s) != 0 {
-					resp.Playlist.Tracks = append(resp.Playlist.Tracks, s...)
-				}
+				resp.Playlist.Tracks = append(tracks, s...)
 				wg.Done()
 			}
 		}()
 		wg.Wait()
 	}
 
-	a.patchSongURL(SongDefaultBR, resp.Playlist.Tracks...)
-	a.patchSongLyric(resp.Playlist.Tracks...)
-	songs := resolve(resp.Playlist.Tracks...)
+	a.patchSongURL(SongDefaultBR, tracks...)
+	a.patchSongLyric(tracks...)
+	songs := resolve(tracks...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(resp.Playlist.Name),
 		PicURL: resp.Playlist.PicURL,
