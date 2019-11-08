@@ -1,6 +1,6 @@
 # mxget
 
-`mxget` 是用Go语言编写的一款命令行程序，它能帮助你轻松找到你喜欢的音乐。
+通过命令行在线搜索你喜欢的音乐，下载并试听。
 
 > Python版：**[pymxget](https://github.com/winterssy/pymxget)**
 
@@ -17,18 +17,18 @@
 
 ## 重要说明
 
-`mxget` 开发的初衷只是为了免去你须要频繁在各大网站切换听歌的烦恼，而不是为了破解音乐平台的数字版权限制。它无法下载受版权保护的数字音乐，音频也仅提供试听版音质（128kbps）下载。如果你喜欢高音质/无损资源，请支持正版。
+`mxget` 开发的初衷只是免去你须要频繁在各大网站切换听歌的烦恼，而不是为了破解音乐平台的数字版权限制。它无法下载受版权保护的数字音乐，音频也仅提供标准音质（128kbps）下载。如果你喜欢高音质/无损资源，请支持正版。**请勿将本项目用于商业或者其它非法用途，因此造成的责任/风险由使用者个人承担！**
 
 ## 支持的音乐平台
 
-|                音乐平台                 |      在线搜索      |      下载单曲      |      下载专辑      |      下载歌单      |  下载歌手热门歌曲  |   音乐标签/歌词    |
-| :-------------------------------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: | :----------------: |
-| **[网易云音乐](https://music.163.com)** | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-|     **[QQ音乐](https://y.qq.com)**      | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| **[咪咕音乐](http://music.migu.cn/v3)** | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-|  **[酷狗音乐](http://www.kugou.com)**   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-|   **[酷我音乐](http://www.kuwo.cn/)**   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-|  **[虾米音乐](https://www.xiami.com)**  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+|                音乐平台                 |     音乐标识     | 识别码 |
+| :-------------------------------------: | :--------------: | :----: |
+| **[网易云音乐](https://music.163.com)** | `netease` / `nc` |  1000  |
+|     **[QQ音乐](https://y.qq.com)**      | `tencent` / `qq` |  1001  |
+| **[咪咕音乐](http://music.migu.cn/v3)** |  `migu` / `mg`   |  1002  |
+|  **[酷狗音乐](http://www.kugou.com)**   |  `kugou` / `kg`  |  1003  |
+|   **[酷我音乐](http://www.kuwo.cn/)**   |  `kuwo` / `kw`   |  1004  |
+|  **[虾米音乐](https://www.xiami.com)**  |  `xiami` / `xm`  |  1005  |
 
 ## 下载安装
 
@@ -110,18 +110,9 @@ $ mxget config --from qq
 
 这样，如果你不通过 `--from` 指令指定音乐平台，`mxget` 便会使用默认值。
 
-在上述命令中，你会经常用到 `--from` 以及 `--id` 这两个指令，它们分别表示音乐平台标识和音乐id。`mxget` 使用的平台标识如下：
+在上述命令中，你会经常用到 `--from` 以及 `--id` 这两个指令，它们分别表示音乐平台标识和音乐id。
 
-|  音乐平台  |     音乐标识     | 识别码 |
-| :--------: | :--------------: | :----: |
-| 网易云音乐 | `netease` / `nc` |  1000  |
-|   QQ音乐   |       `qq`       |  1001  |
-|  咪咕音乐  |  `migu` / `mg`   |  1002  |
-|  酷狗音乐  |  `kugou` / `kg`  |  1003  |
-|  酷我音乐  |  `kuwo` / `kw`   |  1004  |
-|  虾米音乐  |  `xiami` / `xm`  |  1005  |
-
-音乐id为音乐平台为对应资源分配的唯一id，当使用 `mxget` 进行搜索时，歌曲id会显示在每条结果的后面。你也可以通过各大音乐平台的网页版在线搜索相关资源，然后从结果详情页的URL中获取其音乐id。值得注意的是，酷狗音乐对应的歌曲id即为文件哈希 `hash` 。
+> 音乐id为音乐平台为对应资源分配的唯一id，当使用 `mxget` 进行搜索时，歌曲id会显示在每条结果的后面。你也可以通过各大音乐平台的网页版在线搜索相关资源，然后从结果详情页的URL中获取其音乐id。值得注意的是，酷狗音乐对应的歌曲id即为文件哈希 `hash` 。
 
 - 多任务下载
 
