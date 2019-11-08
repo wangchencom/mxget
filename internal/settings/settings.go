@@ -33,7 +33,7 @@ var (
 )
 
 var (
-	platform = map[string]int{
+	platformIds = map[string]int{
 		"netease": provider.NetEase,
 		"nc":      provider.NetEase,
 		"tencent": provider.QQ,
@@ -48,7 +48,7 @@ var (
 		"xm":      provider.XiaMi,
 	}
 
-	client = map[int]provider.API{
+	clients = map[int]provider.API{
 		provider.NetEase: netease.Client(),
 		provider.QQ:      qq.Client(),
 		provider.MiGu:    migu.Client(),
@@ -57,7 +57,7 @@ var (
 		provider.XiaMi:   xiami.Client(),
 	}
 
-	site = map[int]string{
+	sites = map[int]string{
 		provider.NetEase: "music.163.com",
 		provider.QQ:      "y.qq.com",
 		provider.MiGu:    "music.migu.cn",
@@ -72,21 +72,22 @@ type (
 		DownloadDir   string `json:"download_dir"`
 		MusicPlatform int    `json:"music_platform"`
 
+		// 预留字段，其它设置项
 		others   map[string]interface{} `json:"-"`
 		filePath string                 `json:"-"`
 	}
 )
 
 func GetPlatformId(platformFlag string) int {
-	return platform[platformFlag]
+	return platformIds[platformFlag]
 }
 
 func GetClient(platformId int) provider.API {
-	return client[platformId]
+	return clients[platformId]
 }
 
 func GetSite(platformId int) string {
-	return site[platformId]
+	return sites[platformId]
 }
 
 func Init() {
@@ -170,6 +171,7 @@ func (c *Config) Save() error {
 	return ioutil.WriteFile(c.filePath, b, 0644)
 }
 
+// 在配置初始化异常时调用，重置异常配置为默认值
 func (c *Config) Reset() {
 	_ = c.Save()
 }
