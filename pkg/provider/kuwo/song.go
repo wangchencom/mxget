@@ -14,19 +14,9 @@ func GetSong(mid string) (*provider.Song, error) {
 }
 
 func (a *API) GetSong(mid string) (*provider.Song, error) {
-	params := sreq.Params{
-		"mid": mid,
-	}
-
-	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, APIGetSong,
-		sreq.WithQuery(params),
-	).JSON(resp)
+	resp, err := a.GetSongRaw(mid)
 	if err != nil {
 		return nil, err
-	}
-	if resp.Code != 200 {
-		return nil, fmt.Errorf("get song: %s", resp.Msg)
 	}
 
 	a.patchSongURL(SongDefaultBR, &resp.Data)

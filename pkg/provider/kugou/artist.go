@@ -20,7 +20,7 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, err
 	}
 
-	artistSong, err := a.GetArtistSongRaw(singerId, 1, 50)
+	artistSong, err := a.GetArtistSongsRaw(singerId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -66,12 +66,12 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	return resp, nil
 }
 
-func GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
-	return std.GetArtistSongRaw(singerId, page, pageSize)
+func GetArtistSongsRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
+	return std.GetArtistSongsRaw(singerId, page, pageSize)
 }
 
 // 获取歌手歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
+func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	params := sreq.Params{
 		"singerid": singerId,
 		"page":     strconv.Itoa(page),

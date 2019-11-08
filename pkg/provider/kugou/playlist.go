@@ -20,7 +20,7 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 		return nil, err
 	}
 
-	playlistSong, err := a.GetPlaylistSongRaw(specialId, 1, -1)
+	playlistSong, err := a.GetPlaylistSongsRaw(specialId, 1, -1)
 	if err != nil {
 		return nil, err
 	}
@@ -66,12 +66,12 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 	return resp, nil
 }
 
-func GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
-	return std.GetPlaylistSongRaw(specialId, page, pageSize)
+func GetPlaylistSongsRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
+	return std.GetPlaylistSongsRaw(specialId, page, pageSize)
 }
 
 // 获取歌单歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
+func (a *API) GetPlaylistSongsRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	params := sreq.Params{
 		"specialid": specialId,
 		"page":      strconv.Itoa(page),
