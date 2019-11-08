@@ -23,16 +23,16 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist info: no data")
 	}
 
-	artistSong, err := a.GetArtistSongsRaw(singerId, 1, 50)
+	artistSongs, err := a.GetArtistSongsRaw(singerId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
-	if len(artistSong.Data.ContentItemList) == 0 ||
-		len(artistSong.Data.ContentItemList[0].ItemList) == 0 {
+	if len(artistSongs.Data.ContentItemList) == 0 ||
+		len(artistSongs.Data.ContentItemList[0].ItemList) == 0 {
 		return nil, errors.New("get artist song: no data")
 	}
 
-	itemList := artistSong.Data.ContentItemList[0].ItemList
+	itemList := artistSongs.Data.ContentItemList[0].ItemList
 	n := len(itemList)
 	_songs := make([]*Song, 0, n/2)
 	for i := 0; i < n; i += 2 {

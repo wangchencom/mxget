@@ -20,20 +20,20 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 		return nil, err
 	}
 
-	playlistSong, err := a.GetPlaylistSongsRaw(specialId, 1, -1)
+	playlistSongs, err := a.GetPlaylistSongsRaw(specialId, 1, -1)
 	if err != nil {
 		return nil, err
 	}
 
-	n := len(playlistSong.Data.Info)
+	n := len(playlistSongs.Data.Info)
 	if n == 0 {
 		return nil, errors.New("get playlist song: no data")
 	}
 
-	a.patchSongInfo(playlistSong.Data.Info...)
-	a.patchAlbumInfo(playlistSong.Data.Info...)
-	a.patchSongLyric(playlistSong.Data.Info...)
-	songs := resolve(playlistSong.Data.Info...)
+	a.patchSongInfo(playlistSongs.Data.Info...)
+	a.patchAlbumInfo(playlistSongs.Data.Info...)
+	a.patchSongLyric(playlistSongs.Data.Info...)
+	songs := resolve(playlistSongs.Data.Info...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(playlistInfo.Data.SpecialName),
 		PicURL: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),

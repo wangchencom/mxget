@@ -20,20 +20,20 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, err
 	}
 
-	artistSong, err := a.GetArtistSongsRaw(singerId, 1, 50)
+	artistSongs, err := a.GetArtistSongsRaw(singerId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
 
-	n := len(artistSong.Data.Info)
+	n := len(artistSongs.Data.Info)
 	if n == 0 {
 		return nil, errors.New("get artist song: no data")
 	}
 
-	a.patchSongInfo(artistSong.Data.Info...)
-	a.patchAlbumInfo(artistSong.Data.Info...)
-	a.patchSongLyric(artistSong.Data.Info...)
-	songs := resolve(artistSong.Data.Info...)
+	a.patchSongInfo(artistSongs.Data.Info...)
+	a.patchAlbumInfo(artistSongs.Data.Info...)
+	a.patchSongLyric(artistSongs.Data.Info...)
+	songs := resolve(artistSongs.Data.Info...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(artistInfo.Data.SingerName),
 		PicURL: strings.ReplaceAll(artistInfo.Data.ImgURL, "{size}", "480"),
