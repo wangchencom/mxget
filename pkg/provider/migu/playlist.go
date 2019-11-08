@@ -24,7 +24,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 
 	a.patchSongURL(SongDefaultBR, resp.Resource[0].SongItems...)
 	a.patchSongLyric(resp.Resource[0].SongItems...)
-	songs := a.resolve(resp.Resource[0].SongItems...)
+	songs := resolve(resp.Resource[0].SongItems...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(resp.Resource[0].Title),
 		PicURL: resp.Resource[0].ImgItem.Img,
@@ -44,7 +44,7 @@ func (a *API) GetPlaylistRaw(playlistId string) (*PlaylistResponse, error) {
 	}
 
 	resp := new(PlaylistResponse)
-	err := a.Request(sreq.MethodGet, GetPlaylistAPI,
+	err := a.Request(sreq.MethodGet, APIGetPlaylist,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

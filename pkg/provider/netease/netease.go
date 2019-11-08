@@ -9,17 +9,17 @@ import (
 )
 
 const (
-	LinuxAPI          = "https://music.163.com/api/linux/forward"
-	SearchAPI         = "https://music.163.com/weapi/search/get"
-	GetSongAPI        = "https://music.163.com/weapi/v3/song/detail"
-	GetSongURLAPI     = "https://music.163.com/weapi/song/enhance/player/url"
-	GetArtistAPI      = "https://music.163.com/weapi/v1/artist/%d"
-	GetAlbumAPI       = "https://music.163.com/weapi/v1/album/%d"
-	GetPlaylistAPI    = "https://music.163.com/weapi/v3/playlist/detail"
-	EmailLoginAPI     = "https://music.163.com/weapi/login"
-	CellphoneLoginAPI = "https://music.163.com/weapi/login/cellphone"
-	RefreshLoginAPI   = "https://music.163.com/weapi/login/token/refresh"
-	LogoutAPI         = "https://music.163.com/weapi/logout"
+	APILinux          = "https://music.163.com/api/linux/forward"
+	APISearch         = "https://music.163.com/weapi/search/get"
+	APIGetSong        = "https://music.163.com/weapi/v3/song/detail"
+	APIGetSongURL     = "https://music.163.com/weapi/song/enhance/player/url"
+	APIGetArtist      = "https://music.163.com/weapi/v1/artist/%d"
+	APIGetAlbum       = "https://music.163.com/weapi/v1/album/%d"
+	APIGetPlaylist    = "https://music.163.com/weapi/v3/playlist/detail"
+	APIEmailLogin     = "https://music.163.com/weapi/login"
+	APICellphoneLogin = "https://music.163.com/weapi/login/cellphone"
+	APIRefreshLogin   = "https://music.163.com/weapi/login/token/refresh"
+	APILogout         = "https://music.163.com/weapi/logout"
 
 	SongRequestLimit = 1000
 	SongDefaultBR    = 128
@@ -45,7 +45,7 @@ type (
 		URL     string   `json:"-"`
 	}
 
-	SongSearchResponse struct {
+	SearchSongsResponse struct {
 		CommonResponse
 		Result struct {
 			Songs []*struct {
@@ -158,7 +158,7 @@ func (e *LoginResponse) String() string {
 	return provider.ToJSON(e, false)
 }
 
-func (s *SongSearchResponse) String() string {
+func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
@@ -266,7 +266,7 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src ...*Song) []*provider.Song {
+func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		artists := make([]string, 0, len(s.Artists))

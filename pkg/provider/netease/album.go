@@ -32,7 +32,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 
 	a.patchSongURL(SongDefaultBR, resp.Songs...)
 	a.patchSongLyric(resp.Songs...)
-	songs := a.resolve(resp.Songs...)
+	songs := resolve(resp.Songs...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Album.Name),
 		PicURL: resp.Album.PicURL,
@@ -48,7 +48,7 @@ func GetAlbumRaw(id int) (*AlbumResponse, error) {
 // 获取专辑
 func (a *API) GetAlbumRaw(id int) (*AlbumResponse, error) {
 	resp := new(AlbumResponse)
-	err := a.Request(sreq.MethodPost, fmt.Sprintf(GetAlbumAPI, id),
+	err := a.Request(sreq.MethodPost, fmt.Sprintf(APIGetAlbum, id),
 		sreq.WithForm(weapi(struct{}{})),
 	).JSON(resp)
 	if err != nil {

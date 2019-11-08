@@ -10,14 +10,14 @@ import (
 )
 
 const (
-	SearchAPI  = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
-	GetSongAPI = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
-	// GetSongURLAPI   = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
-	GetSongURLAPI   = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
-	GetSongLyricAPI = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
-	GetArtistAPI    = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
-	GetAlbumAPI     = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_detail_cp.fcg?format=json&platform=yqq&newsong=1"
-	GetPlaylistAPI  = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_playlist_cp.fcg?format=json&platform=yqq&newsong=1"
+	APISearch  = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
+	APIGetSong = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
+	// APIGetSongURL   = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
+	APIGetSongURL   = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
+	APIGetSongLyric = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
+	APIGetArtist    = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
+	APIGetAlbum     = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_detail_cp.fcg?format=json&platform=yqq&newsong=1"
+	APIGetPlaylist  = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_playlist_cp.fcg?format=json&platform=yqq&newsong=1"
 
 	SongURL      = "http://mobileoc.music.tc.qq.com/%s?guid=0&uin=0&vkey=%s"
 	ArtistPicURL = "https://y.gtimg.cn/music/photo_new/T001R800x800M000%s.jpg"
@@ -51,7 +51,7 @@ type (
 		URL   string `json:"-"`
 	}
 
-	SongSearchResponse struct {
+	SearchSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Song struct {
@@ -153,7 +153,7 @@ type (
 	}
 )
 
-func (s *SongSearchResponse) String() string {
+func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
@@ -304,7 +304,7 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src ...*Song) []*provider.Song {
+func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		artists := make([]string, 0, len(s.Singer))

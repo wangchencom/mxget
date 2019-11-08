@@ -35,7 +35,7 @@ func (a *API) GetSongIdRaw(copyrightId string) (*SongIdResponse, error) {
 	}
 
 	resp := new(SongIdResponse)
-	err := a.Request(sreq.MethodGet, GetSongIdAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongId,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -72,7 +72,7 @@ func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
 	if err == nil {
 		_song.Lyric = lyric
 	}
-	songs := a.resolve(_song)
+	songs := resolve(_song)
 	return songs[0], nil
 }
 
@@ -87,7 +87,7 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, GetSongAPI,
+	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -128,7 +128,7 @@ func (a *API) GetSongURLRaw(contentId, resourceType string) (*SongURLResponse, e
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, GetSongURLAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongURL,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -164,7 +164,7 @@ func (a *API) GetSongPicRaw(songId string) (*SongPicResponse, error) {
 	}
 
 	resp := new(SongPicResponse)
-	err := a.Request(sreq.MethodGet, GetSongPicAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongPic,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -200,7 +200,7 @@ func (a *API) GetSongLyricRaw(copyrightId string) (*SongLyricResponse, error) {
 	}
 
 	resp := new(SongLyricResponse)
-	err := a.Request(sreq.MethodGet, GetSongLyricAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongLyric,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

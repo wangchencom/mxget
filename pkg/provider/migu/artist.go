@@ -41,10 +41,10 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 
 	a.patchSongURL(SongDefaultBR, _songs...)
 	a.patchSongLyric(_songs...)
-	songs := a.resolve(_songs...)
+	songs := resolve(_songs...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(artistInfo.Resource[0].Singer),
-		PicURL: a.picURL(artistInfo.Resource[0].Imgs),
+		PicURL: picURL(artistInfo.Resource[0].Imgs),
 		Count:  len(songs),
 		Songs:  songs,
 	}, nil
@@ -61,7 +61,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	}
 
 	resp := new(ArtistInfoResponse)
-	err := a.Request(sreq.MethodGet, GetArtistInfoAPI,
+	err := a.Request(sreq.MethodGet, APIGetArtistInfo,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -74,20 +74,20 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	return resp, nil
 }
 
-func GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongResponse, error) {
+func GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	return std.GetArtistSongRaw(singerId, page, pageSize)
 }
 
 // 获取歌手歌曲，page: 页码；pageSize: 每页数量
-func (a *API) GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongResponse, error) {
+func (a *API) GetArtistSongRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	params := sreq.Params{
 		"singerId": singerId,
 		"pageNo":   strconv.Itoa(page),
 		"pageSize": strconv.Itoa(pageSize),
 	}
 
-	resp := new(ArtistSongResponse)
-	err := a.Request(sreq.MethodGet, GetArtistSongAPI,
+	resp := new(ArtistSongsResponse)
+	err := a.Request(sreq.MethodGet, APIGetArtistSongs,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

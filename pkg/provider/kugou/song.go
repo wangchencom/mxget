@@ -4,9 +4,10 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"math/rand"
+
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
-	"math/rand"
 )
 
 func GetSong(hash string) (*provider.Song, error) {
@@ -21,7 +22,7 @@ func (a *API) GetSong(hash string) (*provider.Song, error) {
 
 	a.patchAlbumInfo(&resp.Song)
 	a.patchSongLyric(&resp.Song)
-	songs := a.resolve(&resp.Song)
+	songs := resolve(&resp.Song)
 	return songs[0], nil
 }
 
@@ -36,7 +37,7 @@ func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, GetSongAPI,
+	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -80,7 +81,7 @@ func (a *API) GetSongURLRaw(hash string) (*SongURLResponse, error) {
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, GetSongURLAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongURL,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -107,7 +108,7 @@ func (a *API) GetSongLyric(hash string) (string, error) {
 	params := sreq.Params{
 		"hash": hash,
 	}
-	return a.Request(sreq.MethodGet, GetSongLyricAPI,
+	return a.Request(sreq.MethodGet, APIGetSongLyric,
 		sreq.WithQuery(params),
 	).Text()
 }

@@ -29,7 +29,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	_songs := playlist.SongList
 	a.patchSongURL(_songs...)
 	a.patchSongLyric(_songs...)
-	songs := a.resolve(_songs...)
+	songs := resolve(_songs...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(playlist.DissName),
 		PicURL: playlist.PicURL,
@@ -49,7 +49,7 @@ func (a *API) GetPlaylistRaw(playlistId string) (*PlaylistResponse, error) {
 	}
 
 	resp := new(PlaylistResponse)
-	err := a.Request(sreq.MethodGet, GetPlaylistAPI,
+	err := a.Request(sreq.MethodGet, APIGetPlaylist,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

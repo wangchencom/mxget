@@ -10,16 +10,16 @@ import (
 )
 
 const (
-	SearchAPI          = "http://mobilecdn.kugou.com/api/v3/search/song"
-	GetSongAPI         = "http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo"
-	GetSongURLAPI      = "http://trackercdn.kugou.com/i/v2/?pid=2&behavior=play&cmd=25"
-	GetSongLyricAPI    = "http://m.kugou.com/app/i/krc.php?cmd=100&timelength=1"
-	GetArtistInfoAPI   = "http://mobilecdn.kugou.com/api/v3/singer/info"
-	GetArtistSongAPI   = "http://mobilecdn.kugou.com/api/v3/singer/song"
-	GetAlbumInfoAPI    = "http://mobilecdn.kugou.com/api/v3/album/info"
-	GetAlbumSongAPI    = "http://mobilecdn.kugou.com/api/v3/album/song"
-	GetPlaylistInfoAPI = "http://mobilecdn.kugou.com/api/v3/special/info"
-	GetPlaylistSongAPI = "http://mobilecdn.kugou.com/api/v3/special/song"
+	APISearch           = "http://mobilecdn.kugou.com/api/v3/search/song"
+	APIGetSong          = "http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo"
+	APIGetSongURL       = "http://trackercdn.kugou.com/i/v2/?pid=2&behavior=play&cmd=25"
+	APIGetSongLyric     = "http://m.kugou.com/app/i/krc.php?cmd=100&timelength=1"
+	APIGetArtistInfo    = "http://mobilecdn.kugou.com/api/v3/singer/info"
+	APIGetArtistSongs   = "http://mobilecdn.kugou.com/api/v3/singer/song"
+	APIGetAlbumInfo     = "http://mobilecdn.kugou.com/api/v3/album/info"
+	APIGetAlbumSongs    = "http://mobilecdn.kugou.com/api/v3/album/song"
+	APIGetPlaylistInfo  = "http://mobilecdn.kugou.com/api/v3/special/info"
+	APIGetPlaylistSongs = "http://mobilecdn.kugou.com/api/v3/special/song"
 )
 
 var (
@@ -33,7 +33,7 @@ type (
 		ErrCode int    `json:"errcode"`
 	}
 
-	SongSearchResponse struct {
+	SearchSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Total int `json:"total"`
@@ -92,7 +92,7 @@ type (
 		Data ArtistInfo `json:"data"`
 	}
 
-	ArtistSongResponse struct {
+	ArtistSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Info []*Song `json:"info"`
@@ -110,7 +110,7 @@ type (
 		Data AlbumInfo `json:"data"`
 	}
 
-	AlbumSongResponse struct {
+	AlbumSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Info []*Song `json:"info"`
@@ -128,7 +128,7 @@ type (
 		Data PlaylistInfo `json:"data"`
 	}
 
-	PlaylistSongResponse struct {
+	PlaylistSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Info []*Song `json:"info"`
@@ -140,7 +140,7 @@ type (
 	}
 )
 
-func (s *SongSearchResponse) String() string {
+func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
@@ -156,7 +156,7 @@ func (a *ArtistInfoResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
-func (a *ArtistSongResponse) String() string {
+func (a *ArtistSongsResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
@@ -164,7 +164,7 @@ func (a *AlbumInfoResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
-func (a *AlbumSongResponse) String() string {
+func (a *AlbumSongsResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
@@ -172,7 +172,7 @@ func (p *PlaylistInfoResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
-func (p *PlaylistSongResponse) String() string {
+func (p *PlaylistSongsResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
@@ -283,7 +283,7 @@ func (a *API) patchAlbumInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src ...*Song) []*provider.Song {
+func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{

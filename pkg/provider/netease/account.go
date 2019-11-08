@@ -23,7 +23,7 @@ func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, erro
 	}
 
 	resp := new(LoginResponse)
-	err := a.Request(sreq.MethodPost, EmailLoginAPI,
+	err := a.Request(sreq.MethodPost, APIEmailLogin,
 		sreq.WithForm(weapi(data)),
 	).JSON(resp)
 	if err != nil {
@@ -52,7 +52,7 @@ func (a *API) CellphoneLoginRaw(countryCode int, phone int, password string) (*L
 	}
 
 	resp := new(LoginResponse)
-	err := a.Request(sreq.MethodPost, CellphoneLoginAPI,
+	err := a.Request(sreq.MethodPost, APICellphoneLogin,
 		sreq.WithForm(weapi(data)),
 	).JSON(resp)
 	if err != nil {
@@ -72,7 +72,7 @@ func RefreshLoginRaw() (*CommonResponse, error) {
 // 刷新登录状态
 func (a *API) RefreshLoginRaw() (*CommonResponse, error) {
 	resp := new(CommonResponse)
-	err := a.Request(sreq.MethodPost, RefreshLoginAPI,
+	err := a.Request(sreq.MethodPost, APIRefreshLogin,
 		sreq.WithForm(weapi(struct{}{})),
 	).JSON(resp)
 	if err != nil {
@@ -92,7 +92,7 @@ func LogoutRaw() (*CommonResponse, error) {
 // 退出登录
 func (a *API) LogoutRaw() (*CommonResponse, error) {
 	resp := new(CommonResponse)
-	err := a.Request(sreq.MethodPost, LogoutAPI,
+	err := a.Request(sreq.MethodPost, APILogout,
 		sreq.WithForm(weapi(struct{}{})),
 	).JSON(resp)
 	if err != nil {

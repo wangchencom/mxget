@@ -19,7 +19,7 @@ func (a *API) GetSong(mid string) (*provider.Song, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, GetSongAPI,
+	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -31,7 +31,7 @@ func (a *API) GetSong(mid string) (*provider.Song, error) {
 
 	a.patchSongURL(SongDefaultBR, &resp.Data)
 	a.patchSongLyric(&resp.Data)
-	songs := a.resolve(&resp.Data)
+	songs := resolve(&resp.Data)
 	return songs[0], nil
 }
 
@@ -46,7 +46,7 @@ func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, GetSongAPI,
+	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -90,7 +90,7 @@ func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, GetSongURLAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongURL,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -139,7 +139,7 @@ func (a *API) GetSongLyricRaw(mid int) (*SongLyricResponse, error) {
 	}
 
 	resp := new(SongLyricResponse)
-	err := a.Request(sreq.MethodGet, GetSongLyricAPI,
+	err := a.Request(sreq.MethodGet, APIGetSongLyric,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

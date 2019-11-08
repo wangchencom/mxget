@@ -27,7 +27,7 @@ func (a *API) GetAlbum(albumMid string) (*provider.Album, error) {
 	_songs := resp.Data.GetSongInfo
 	a.patchSongURL(_songs...)
 	a.patchSongLyric(_songs...)
-	songs := a.resolve(_songs...)
+	songs := resolve(_songs...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Data.GetAlbumInfo.FAlbumName),
 		PicURL: fmt.Sprintf(AlbumPicURL, resp.Data.GetAlbumInfo.FAlbumMid),
@@ -47,7 +47,7 @@ func (a *API) GetAlbumRaw(albumMid string) (*AlbumResponse, error) {
 	}
 
 	resp := new(AlbumResponse)
-	err := a.Request(sreq.MethodGet, GetAlbumAPI,
+	err := a.Request(sreq.MethodGet, APIGetAlbum,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

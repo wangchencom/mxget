@@ -25,10 +25,10 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 
 	a.patchSongURL(SongDefaultBR, resp.Resource[0].SongItems...)
 	a.patchSongLyric(resp.Resource[0].SongItems...)
-	songs := a.resolve(resp.Resource[0].SongItems...)
+	songs := resolve(resp.Resource[0].SongItems...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Resource[0].Title),
-		PicURL: a.picURL(resp.Resource[0].ImgItems),
+		PicURL: picURL(resp.Resource[0].ImgItems),
 		Count:  len(songs),
 		Songs:  songs,
 	}, nil
@@ -45,7 +45,7 @@ func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 	}
 
 	resp := new(AlbumResponse)
-	err := a.Request(sreq.MethodGet, GetAlbumAPI,
+	err := a.Request(sreq.MethodGet, APIGetAlbum,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

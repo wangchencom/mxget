@@ -55,17 +55,17 @@ type (
 		Songs  []*Song `json:"songs,omitempty"`
 	}
 
-	SearchSongData struct {
+	SearchSongsData struct {
 		Id     string `json:"id"`
 		Name   string `json:"name"`
 		Artist string `json:"artist"`
 		Album  string `json:"album"`
 	}
 
-	SearchResult struct {
-		Keyword string            `json:"keyword"`
-		Count   int               `json:"count"`
-		Songs   []*SearchSongData `json:"songs,omitempty"`
+	SearchSongsResult struct {
+		Keyword string             `json:"keyword"`
+		Count   int                `json:"count"`
+		Songs   []*SearchSongsData `json:"songs,omitempty"`
 	}
 
 	Response struct {
@@ -79,7 +79,7 @@ type (
 		// 平台标识
 		Platform() int
 		// 搜索歌曲
-		SearchSong(keyword string) (*SearchResult, error)
+		SearchSong(keyword string) (*SearchSongsResult, error)
 		// 获取单曲
 		GetSong(id string) (*Song, error)
 		// 获取歌手
@@ -93,7 +93,7 @@ type (
 	}
 )
 
-func (s *SearchResult) String() string {
+func (s *SearchSongsResult) String() string {
 	return ToJSON(s, false)
 }
 

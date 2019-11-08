@@ -32,7 +32,7 @@ func (a *API) GetArtist(singerMid string) (*provider.Artist, error) {
 
 	a.patchSongURL(_songs...)
 	a.patchSongLyric(_songs...)
-	songs := a.resolve(_songs...)
+	songs := resolve(_songs...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(resp.Data.SingerName),
 		PicURL: fmt.Sprintf(ArtistPicURL, resp.Data.SingerMid),
@@ -54,7 +54,7 @@ func (a *API) GetArtistRaw(singerMid string, page int, pageSize int) (*ArtistRes
 	}
 
 	resp := new(ArtistResponse)
-	err := a.Request(sreq.MethodGet, GetArtistAPI,
+	err := a.Request(sreq.MethodGet, APIGetArtist,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

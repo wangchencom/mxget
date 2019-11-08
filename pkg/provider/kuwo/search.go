@@ -10,47 +10,47 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func SearchSong(keyword string) (*provider.SearchResult, error) {
+func SearchSong(keyword string) (*provider.SearchSongsResult, error) {
 	return std.SearchSong(keyword)
 }
 
-func (a *API) SearchSong(keyword string) (*provider.SearchResult, error) {
+func (a *API) SearchSong(keyword string) (*provider.SearchSongsResult, error) {
 	resp, err := a.SearchSongRaw(keyword, 1, 50)
 	if err != nil {
 		return nil, err
 	}
 
 	n := len(resp.Data.List)
-	songs := make([]*provider.SearchSongData, 0, n)
+	songs := make([]*provider.SearchSongsData, 0, n)
 	for _, s := range resp.Data.List {
-		songs = append(songs, &provider.SearchSongData{
+		songs = append(songs, &provider.SearchSongsData{
 			Id:     strconv.Itoa(s.RId),
 			Name:   strings.TrimSpace(s.Name),
 			Artist: strings.TrimSpace(strings.ReplaceAll(s.Artist, "&", "/")),
 			Album:  strings.TrimSpace(s.Album),
 		})
 	}
-	return &provider.SearchResult{
+	return &provider.SearchSongsResult{
 		Keyword: keyword,
 		Count:   n,
 		Songs:   songs,
 	}, nil
 }
 
-func SearchSongRaw(keyword string, page int, pageSize int) (*SongSearchResponse, error) {
+func SearchSongRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	return std.SearchSongRaw(keyword, page, pageSize)
 }
 
 // 搜索歌曲
-func (a *API) SearchSongRaw(keyword string, page int, pageSize int) (*SongSearchResponse, error) {
+func (a *API) SearchSongRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	params := sreq.Params{
 		"key": keyword,
 		"pn":  strconv.Itoa(page),
 		"rn":  strconv.Itoa(pageSize),
 	}
 
-	resp := new(SongSearchResponse)
-	err := a.Request(sreq.MethodGet, SearchAPI,
+	resp := new(SearchSongsResponse)
+	err := a.Request(sreq.MethodGet, APISearch,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

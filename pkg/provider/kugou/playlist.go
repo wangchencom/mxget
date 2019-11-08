@@ -33,7 +33,7 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 	a.patchSongInfo(playlistSong.Data.Info...)
 	a.patchAlbumInfo(playlistSong.Data.Info...)
 	a.patchSongLyric(playlistSong.Data.Info...)
-	songs := a.resolve(playlistSong.Data.Info...)
+	songs := resolve(playlistSong.Data.Info...)
 	return &provider.Playlist{
 		Name:   strings.TrimSpace(playlistInfo.Data.SpecialName),
 		PicURL: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),
@@ -53,7 +53,7 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 	}
 
 	resp := new(PlaylistInfoResponse)
-	err := a.Request(sreq.MethodGet, GetPlaylistInfoAPI,
+	err := a.Request(sreq.MethodGet, APIGetPlaylistInfo,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -66,20 +66,20 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 	return resp, nil
 }
 
-func GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongResponse, error) {
+func GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	return std.GetPlaylistSongRaw(specialId, page, pageSize)
 }
 
 // 获取歌单歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongResponse, error) {
+func (a *API) GetPlaylistSongRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	params := sreq.Params{
 		"specialid": specialId,
 		"page":      strconv.Itoa(page),
 		"pagesize":  strconv.Itoa(pageSize),
 	}
 
-	resp := new(PlaylistSongResponse)
-	err := a.Request(sreq.MethodGet, GetPlaylistSongAPI,
+	resp := new(PlaylistSongsResponse)
+	err := a.Request(sreq.MethodGet, APIGetPlaylistSongs,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

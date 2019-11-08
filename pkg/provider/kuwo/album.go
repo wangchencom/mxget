@@ -27,7 +27,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 
 	a.patchSongURL(SongDefaultBR, resp.Data.MusicList...)
 	a.patchSongLyric(resp.Data.MusicList...)
-	songs := a.resolve(resp.Data.MusicList...)
+	songs := resolve(resp.Data.MusicList...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.Data.Album),
 		PicURL: resp.Data.Pic,
@@ -48,7 +48,7 @@ func (a *API) GetAlbumRaw(albumId string, page int, pageSize int) (*AlbumRespons
 		"rn":      strconv.Itoa(pageSize),
 	}
 	resp := new(AlbumResponse)
-	err := a.Request(sreq.MethodGet, GetAlbumAPI,
+	err := a.Request(sreq.MethodGet, APIGetAlbum,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

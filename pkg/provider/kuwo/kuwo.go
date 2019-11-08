@@ -10,14 +10,14 @@ import (
 )
 
 const (
-	SearchAPI        = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord"
-	GetSongAPI       = "http://www.kuwo.cn/api/www/music/musicInfo"
-	GetSongURLAPI    = "http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3"
-	GetSongLyricAPI  = "http://www.kuwo.cn/newh5/singles/songinfoandlrc"
-	GetArtistInfoAPI = "http://www.kuwo.cn/api/www/artist/artist"
-	GetArtistSongAPI = "http://www.kuwo.cn/api/www/artist/artistMusic"
-	GetAlbumAPI      = "http://www.kuwo.cn/api/www/album/albumInfo"
-	GetPlaylistAPI   = "http://www.kuwo.cn/api/www/playlist/playListInfo"
+	APISearch         = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord"
+	APIGetSong        = "http://www.kuwo.cn/api/www/music/musicInfo"
+	APIGetSongURL     = "http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3"
+	APIGetSongLyric   = "http://www.kuwo.cn/newh5/singles/songinfoandlrc"
+	APIGetArtistInfo  = "http://www.kuwo.cn/api/www/artist/artist"
+	APIGetArtistSongs = "http://www.kuwo.cn/api/www/artist/artistMusic"
+	APIGetAlbum       = "http://www.kuwo.cn/api/www/album/albumInfo"
+	APIGetPlaylist    = "http://www.kuwo.cn/api/www/playlist/playListInfo"
 
 	SongDefaultBR = 128
 )
@@ -47,7 +47,7 @@ type (
 		URL             string `json:"-"`
 	}
 
-	SongSearchResponse struct {
+	SearchSongsResponse struct {
 		CommonResponse
 		Data struct {
 			Total string  `json:"total"`
@@ -87,7 +87,7 @@ type (
 		Data ArtistInfo `json:"data"`
 	}
 
-	ArtistSongResponse struct {
+	ArtistSongsResponse struct {
 		CommonResponse
 		Data struct {
 			List []*Song `json:"list"`
@@ -119,7 +119,7 @@ type (
 	}
 )
 
-func (s *SongSearchResponse) String() string {
+func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
@@ -139,7 +139,7 @@ func (a *ArtistInfoResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
-func (a *ArtistSongResponse) String() string {
+func (a *ArtistSongsResponse) String() string {
 	return provider.ToJSON(a, false)
 }
 
@@ -232,7 +232,7 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) resolve(src ...*Song) []*provider.Song {
+func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{

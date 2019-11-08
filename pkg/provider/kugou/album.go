@@ -33,7 +33,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	a.patchSongInfo(albumSong.Data.Info...)
 	a.patchAlbumInfo(albumSong.Data.Info...)
 	a.patchSongLyric(albumSong.Data.Info...)
-	songs := a.resolve(albumSong.Data.Info...)
+	songs := resolve(albumSong.Data.Info...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(albumInfo.Data.AlbumName),
 		PicURL: strings.ReplaceAll(albumInfo.Data.ImgURL, "{size}", "480"),
@@ -53,7 +53,7 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	}
 
 	resp := new(AlbumInfoResponse)
-	err := a.Request(sreq.MethodGet, GetAlbumInfoAPI,
+	err := a.Request(sreq.MethodGet, APIGetAlbumInfo,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -66,20 +66,20 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	return resp, nil
 }
 
-func GetAlbumSongRaw(albumId string, page int, pageSize int) (*AlbumSongResponse, error) {
+func GetAlbumSongRaw(albumId string, page int, pageSize int) (*AlbumSongsResponse, error) {
 	return std.GetAlbumSongRaw(albumId, page, pageSize)
 }
 
 // 获取专辑歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetAlbumSongRaw(albumId string, page int, pageSize int) (*AlbumSongResponse, error) {
+func (a *API) GetAlbumSongRaw(albumId string, page int, pageSize int) (*AlbumSongsResponse, error) {
 	params := sreq.Params{
 		"albumid":  albumId,
 		"page":     strconv.Itoa(page),
 		"pagesize": strconv.Itoa(pageSize),
 	}
 
-	resp := new(AlbumSongResponse)
-	err := a.Request(sreq.MethodGet, GetAlbumSongAPI,
+	resp := new(AlbumSongsResponse)
+	err := a.Request(sreq.MethodGet, APIGetAlbumSongs,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
