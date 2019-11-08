@@ -173,8 +173,6 @@ $ docker pull winterssy/mxget
 $ docker run -d --name mxget -p 8080:8080 winterssy/mxget
 ```
 
-> Tip：**[pymxget](https://github.com/winterssy/pymxget)** 作为服务部署的性能表现更好，追求速度的话建议使用 `pymxget` 。
-
 请求方法均为 `GET` ，统一调用路径为 `/api/{platform}/{type}/{param}` ，示例：
 
 - 从QQ音乐获取 `周杰伦` 的搜索结果
