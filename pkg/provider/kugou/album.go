@@ -27,7 +27,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 
 	n := len(albumSongs.Data.Info)
 	if n == 0 {
-		return nil, errors.New("get album song: no data")
+		return nil, errors.New("get album songs: no data")
 	}
 
 	a.patchSongInfo(albumSongs.Data.Info...)
@@ -86,7 +86,7 @@ func (a *API) GetAlbumSongsRaw(albumId string, page int, pageSize int) (*AlbumSo
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get album song: %s", resp.Error)
+		return nil, fmt.Errorf("get album songs: %s", resp.Error)
 	}
 
 	return resp, nil

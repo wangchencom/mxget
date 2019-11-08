@@ -27,7 +27,7 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 
 	n := len(playlistSongs.Data.Info)
 	if n == 0 {
-		return nil, errors.New("get playlist song: no data")
+		return nil, errors.New("get playlist songs: no data")
 	}
 
 	a.patchSongInfo(playlistSongs.Data.Info...)
@@ -86,7 +86,7 @@ func (a *API) GetPlaylistSongsRaw(specialId string, page int, pageSize int) (*Pl
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get playlist song: %s", resp.Error)
+		return nil, fmt.Errorf("get playlist songs: %s", resp.Error)
 	}
 
 	return resp, nil

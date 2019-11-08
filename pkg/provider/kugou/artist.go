@@ -27,7 +27,7 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 
 	n := len(artistSongs.Data.Info)
 	if n == 0 {
-		return nil, errors.New("get artist song: no data")
+		return nil, errors.New("get artist songs: no data")
 	}
 
 	a.patchSongInfo(artistSongs.Data.Info...)
@@ -86,7 +86,7 @@ func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*Artis
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get artist song: %s", resp.Error)
+		return nil, fmt.Errorf("get artist songs: %s", resp.Error)
 	}
 
 	return resp, nil

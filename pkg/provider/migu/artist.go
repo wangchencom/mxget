@@ -29,7 +29,7 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 	}
 	if len(artistSongs.Data.ContentItemList) == 0 ||
 		len(artistSongs.Data.ContentItemList[0].ItemList) == 0 {
-		return nil, errors.New("get artist song: no data")
+		return nil, errors.New("get artist songs: no data")
 	}
 
 	itemList := artistSongs.Data.ContentItemList[0].ItemList
@@ -94,7 +94,7 @@ func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*Artis
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get artist song: %s", resp.Info)
+		return nil, fmt.Errorf("get artist songs: %s", resp.Info)
 	}
 
 	return resp, nil
