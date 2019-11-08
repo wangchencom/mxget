@@ -266,12 +266,13 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 }
 
 func (a *API) getToken(url string) (string, error) {
-	token, err := a.Client.FilterCookie(url, "_m_h5_tk")
-	if err == nil {
-		return strings.Split(token.Value, "_")[0], nil
+	const XiaMiToken = "_m_h5_tk"
+	token, err := a.Client.FilterCookie(url, XiaMiToken)
+	if err != nil {
+		// 如果在cookie jar中没有找到对应cookie，发送预请求获取
+		token, err = a.Request(sreq.MethodGet, url).Cookie(XiaMiToken)
 	}
 
-	token, err = a.Request(sreq.MethodGet, url).Cookie("_m_h5_tk")
 	if err != nil {
 		return "", fmt.Errorf("can't get token: %w", err)
 	}
