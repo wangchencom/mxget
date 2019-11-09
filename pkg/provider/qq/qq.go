@@ -251,11 +251,14 @@ func (a *API) patchSongURLV2(songs ...*Song) {
 	go func() {
 		for r := range queue {
 			if r.err == nil {
-				// 随机获取一个sip
-				sip := r.resp.Req0.Data.Sip[rand.Intn(len(r.resp.Req0.Data.Sip))]
-				for _, i := range r.resp.Req0.Data.MidURLInfo {
-					if i.PURL != "" {
-						urlMap[i.SongMid] = sip + i.PURL
+				n := len(r.resp.Req0.Data.Sip)
+				if n > 0 {
+					// 随机获取一个sip
+					sip := r.resp.Req0.Data.Sip[rand.Intn(n)]
+					for _, i := range r.resp.Req0.Data.MidURLInfo {
+						if i.PURL != "" {
+							urlMap[i.SongMid] = sip + i.PURL
+						}
 					}
 				}
 			}

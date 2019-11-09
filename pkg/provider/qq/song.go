@@ -117,12 +117,14 @@ func (a *API) GetSongURLV2(songMid string) (string, error) {
 	if len(resp.Req0.Data.MidURLInfo) == 0 {
 		return "", errors.New("get song url: no data")
 	}
-	if len(resp.Req0.Data.Sip) == 0 {
+
+	n := len(resp.Req0.Data.Sip)
+	if n == 0 {
 		return "", errors.New("get song url: no sip")
 	}
 
 	// 随机获取一个sip
-	sip := resp.Req0.Data.Sip[rand.Intn(len(resp.Req0.Data.Sip))]
+	sip := resp.Req0.Data.Sip[rand.Intn(n)]
 	urlInfo := resp.Req0.Data.MidURLInfo[0]
 	if urlInfo.PURL == "" {
 		return "", errors.New("get song url: copyright protection")
