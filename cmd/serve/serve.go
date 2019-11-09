@@ -21,6 +21,7 @@ func Run(cmd *cobra.Command, args []string) {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
 	routes.Init(app)
+	fmt.Printf("Server started at http://0.0.0.0:%d...\n", port)
 	app.Run(fmt.Sprintf(":%d", port))
 }
 
