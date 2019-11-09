@@ -285,9 +285,11 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			lyric, err := a.Request(sreq.MethodGet, s.LrcURL).Text()
-			if err == nil {
-				s.Lyric = lyric
+			if s.LrcURL != "" {
+				lyric, err := a.Request(sreq.MethodGet, s.LrcURL).Text()
+				if err == nil {
+					s.Lyric = lyric
+				}
 			}
 			c.Done()
 		}(s)

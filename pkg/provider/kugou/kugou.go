@@ -273,9 +273,11 @@ func (a *API) patchAlbumInfo(songs ...*Song) {
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			resp, err := a.GetAlbumInfoRaw(strconv.Itoa(s.AlbumId))
-			if err == nil {
-				s.AlbumName = resp.Data.AlbumName
+			if s.AlbumId != 0 {
+				resp, err := a.GetAlbumInfoRaw(strconv.Itoa(s.AlbumId))
+				if err == nil {
+					s.AlbumName = resp.Data.AlbumName
+				}
 			}
 			c.Done()
 		}(s)
