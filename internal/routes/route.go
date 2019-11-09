@@ -50,10 +50,10 @@ func Init(router *gin.Engine) {
 	r.GET("/xiami/album/:id", api.GetAlbumFromXiaMi)
 	r.GET("/xiami/playlist/:id", api.GetPlaylistFromXiaMi)
 
-	// 百度音乐
-	r.GET("/baidu/search/:keyword", api.SearchSongsFromBaiDu)
-	r.GET("/baidu/song/:id", api.GetSongFromBaiDu)
-	r.GET("/baidu/artist/:id", api.GetArtistFromBaiDu)
-	r.GET("/baidu/album/:id", api.GetAlbumFromBaiDu)
-	r.GET("/baidu/playlist/:id", api.GetPlaylistFromBaiDu)
+	// 千千音乐
+	r.GET("/qianqian/search/:keyword", api.SearchSongsFromBaiDu)
+	r.GET("/qianqian/song/:id", api.GetSongFromBaiDu)
+	r.GET("/qianqian/artist/:id", api.GetArtistFromBaiDu)
+	r.GET("/qianqian/album/:id", api.GetAlbumFromBaiDu)
+	r.GET("/qianqian/playlist/:id", api.GetPlaylistFromBaiDu)
 }
