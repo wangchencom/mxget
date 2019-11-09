@@ -163,7 +163,7 @@ func (a *API) GetSongsURLV2Raw(songMids ...string) (*SongURLResponseV2, error) {
 		"data": string(enc),
 	}
 	resp := new(SongURLResponseV2)
-	err := a.Request(sreq.MethodGet, APIGetSongURLV2,
+	err := a.Request(sreq.MethodGet, APIGetSongsURLV2,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {

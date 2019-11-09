@@ -13,14 +13,14 @@ import (
 )
 
 const (
-	APISearch       = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
-	APIGetSong      = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
-	APIGetSongURLV1 = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
-	APIGetSongURLV2 = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
-	APIGetSongLyric = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
-	APIGetArtist    = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
-	APIGetAlbum     = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_detail_cp.fcg?format=json&platform=yqq&newsong=1"
-	APIGetPlaylist  = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_playlist_cp.fcg?format=json&platform=yqq&newsong=1"
+	APISearch        = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
+	APIGetSong       = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
+	APIGetSongURLV1  = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
+	APIGetSongsURLV2 = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
+	APIGetSongLyric  = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
+	APIGetArtist     = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
+	APIGetAlbum      = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_detail_cp.fcg?format=json&platform=yqq&newsong=1"
+	APIGetPlaylist   = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_playlist_cp.fcg?format=json&platform=yqq&newsong=1"
 
 	SongURL      = "http://mobileoc.music.tc.qq.com/%s?guid=0&uin=0&vkey=%s"
 	ArtistPicURL = "https://y.gtimg.cn/music/photo_new/T001R800x800M000%s.jpg"
