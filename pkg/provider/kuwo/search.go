@@ -21,6 +21,10 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 	}
 
 	n := len(resp.Data.List)
+	if n == 0 {
+		return nil, errors.New("search songs: no data")
+	}
+
 	songs := make([]*provider.SearchSongsData, 0, n)
 	for _, s := range resp.Data.List {
 		songs = append(songs, &provider.SearchSongsData{

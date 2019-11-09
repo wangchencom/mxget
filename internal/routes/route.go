@@ -49,4 +49,11 @@ func Init(router *gin.Engine) {
 	r.GET("/xiami/artist/:id", api.GetArtistFromXiaMi)
 	r.GET("/xiami/album/:id", api.GetAlbumFromXiaMi)
 	r.GET("/xiami/playlist/:id", api.GetPlaylistFromXiaMi)
+
+	// 百度音乐
+	r.GET("/baidu/search/:keyword", api.SearchSongsFromBaiDu)
+	r.GET("/baidu/song/:id", api.GetSongFromBaiDu)
+	r.GET("/baidu/artist/:id", api.GetArtistFromBaiDu)
+	r.GET("/baidu/album/:id", api.GetAlbumFromBaiDu)
+	r.GET("/baidu/playlist/:id", api.GetPlaylistFromBaiDu)
 }

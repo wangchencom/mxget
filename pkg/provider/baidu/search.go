@@ -1,4 +1,4 @@
-package qq
+package baidu
 
 import (
 	"errors"
@@ -20,22 +20,18 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		return nil, err
 	}
 
-	n := len(resp.Data.Song.List)
+	n := len(resp.Result.SongInfo.SongList)
 	if n == 0 {
 		return nil, errors.New("search songs: no data")
 	}
 
 	songs := make([]*provider.SearchSongsData, 0, n)
-	for _, s := range resp.Data.Song.List {
-		artists := make([]string, 0, len(s.Singer))
-		for _, a := range s.Singer {
-			artists = append(artists, strings.TrimSpace(a.Name))
-		}
+	for _, s := range resp.Result.SongInfo.SongList {
 		songs = append(songs, &provider.SearchSongsData{
-			Id:     s.Mid,
+			Id:     s.SongId,
 			Name:   strings.TrimSpace(s.Title),
-			Artist: strings.Join(artists, "/"),
-			Album:  strings.TrimSpace(s.Album.Name),
+			Artist: strings.TrimSpace(strings.ReplaceAll(s.Author, ",", "/")),
+			Album:  strings.TrimSpace(s.AlbumTitle),
 		})
 	}
 	return &provider.SearchSongsResult{
@@ -52,9 +48,9 @@ func SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsRespons
 // 搜索歌曲
 func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	params := sreq.Params{
-		"w": keyword,
-		"p": strconv.Itoa(page),
-		"n": strconv.Itoa(pageSize),
+		"query":     keyword,
+		"page_no":   strconv.Itoa(page),
+		"page_size": strconv.Itoa(pageSize),
 	}
 
 	resp := new(SearchSongsResponse)
@@ -64,8 +60,8 @@ func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSon
 	if err != nil {
 		return nil, err
 	}
-	if resp.Code != 0 {
-		return nil, fmt.Errorf("search songs: %d", resp.Code)
+	if resp.ErrorCode != 22000 {
+		return nil, fmt.Errorf("search songs: %s", resp.ErrorMessage)
 	}
 
 	return resp, nil

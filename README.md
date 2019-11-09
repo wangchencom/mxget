@@ -23,14 +23,15 @@
 
 ## 支持的音乐平台
 
-|                音乐平台                 |     音乐标识     | 识别码 |
-| :-------------------------------------: | :--------------: | :----: |
-| **[网易云音乐](https://music.163.com)** | `netease` / `nc` |  1000  |
-|     **[QQ音乐](https://y.qq.com)**      | `tencent` / `qq` |  1001  |
-| **[咪咕音乐](http://music.migu.cn/v3)** |  `migu` / `mg`   |  1002  |
-|  **[酷狗音乐](http://www.kugou.com)**   |  `kugou` / `kg`  |  1003  |
-|   **[酷我音乐](http://www.kuwo.cn/)**   |  `kuwo` / `kw`   |  1004  |
-|  **[虾米音乐](https://www.xiami.com)**  |  `xiami` / `xm`  |  1005  |
+|                音乐平台                 |          平台标识           | 专用识别码 |
+| :-------------------------------------: | :-------------------------: | :--------: |
+| **[网易云音乐](https://music.163.com)** |      `netease` / `nc`       |    1000    |
+|     **[QQ音乐](https://y.qq.com)**      |      `tencent` / `qq`       |    1001    |
+| **[咪咕音乐](http://music.migu.cn/v3)** |        `migu` / `mg`        |    1002    |
+|  **[酷狗音乐](http://www.kugou.com)**   |       `kugou` / `kg`        |    1003    |
+|   **[酷我音乐](http://www.kuwo.cn/)**   |        `kuwo` / `kw`        |    1004    |
+|  **[虾米音乐](https://www.xiami.com)**  |       `xiami` / `xm`        |    1005    |
+| **[千千音乐](http://music.taihe.com)**  | `qianqian` / `baidu` / `bd` |    1006    |
 
 ## 下载安装
 

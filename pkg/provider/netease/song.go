@@ -35,12 +35,12 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 	return songs[0], nil
 }
 
-func GetSongsRaw(songIds ...int) (*SongResponse, error) {
+func GetSongsRaw(songIds ...int) (*SongsResponse, error) {
 	return std.GetSongsRaw(songIds...)
 }
 
 // 批量获取歌曲详情，上限1000首
-func (a *API) GetSongsRaw(songIds ...int) (*SongResponse, error) {
+func (a *API) GetSongsRaw(songIds ...int) (*SongsResponse, error) {
 	n := len(songIds)
 	if n > SongRequestLimit {
 		songIds = songIds[:SongRequestLimit]
@@ -56,7 +56,7 @@ func (a *API) GetSongsRaw(songIds ...int) (*SongResponse, error) {
 		"c": string(enc),
 	}
 
-	resp := new(SongResponse)
+	resp := new(SongsResponse)
 	err := a.Request(sreq.MethodPost, APIGetSongs,
 		sreq.WithForm(weapi(data)),
 	).JSON(resp)

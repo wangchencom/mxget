@@ -2,6 +2,7 @@ package migu
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -21,6 +22,10 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 	}
 
 	n := len(resp.SongResultData.Result)
+	if n == 0 {
+		return nil, errors.New("search songs: no data")
+	}
+
 	songs := make([]*provider.SearchSongsData, 0, n)
 	for _, s := range resp.SongResultData.Result {
 		artists := make([]string, 0, len(s.Singers))

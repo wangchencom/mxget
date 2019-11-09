@@ -9,6 +9,7 @@ import (
 
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/provider/baidu"
 	"github.com/winterssy/mxget/pkg/provider/kugou"
 	"github.com/winterssy/mxget/pkg/provider/kuwo"
 	"github.com/winterssy/mxget/pkg/provider/migu"
@@ -34,18 +35,21 @@ var (
 
 var (
 	platformIds = map[string]int{
-		"netease": provider.NetEase,
-		"nc":      provider.NetEase,
-		"tencent": provider.QQ,
-		"qq":      provider.QQ,
-		"migu":    provider.MiGu,
-		"mg":      provider.MiGu,
-		"kugou":   provider.KuGou,
-		"kg":      provider.KuGou,
-		"kuwo":    provider.KuGou,
-		"kw":      provider.KuWo,
-		"xiami":   provider.XiaMi,
-		"xm":      provider.XiaMi,
+		"netease":  provider.NetEase,
+		"nc":       provider.NetEase,
+		"tencent":  provider.QQ,
+		"qq":       provider.QQ,
+		"migu":     provider.MiGu,
+		"mg":       provider.MiGu,
+		"kugou":    provider.KuGou,
+		"kg":       provider.KuGou,
+		"kuwo":     provider.KuGou,
+		"kw":       provider.KuWo,
+		"xiami":    provider.XiaMi,
+		"xm":       provider.XiaMi,
+		"qianqian": provider.BaiDu,
+		"baidu":    provider.BaiDu,
+		"bd":       provider.BaiDu,
 	}
 
 	clients = map[int]provider.API{
@@ -55,6 +59,7 @@ var (
 		provider.KuGou:   kugou.Client(),
 		provider.KuWo:    kuwo.Client(),
 		provider.XiaMi:   xiami.Client(),
+		provider.BaiDu:   baidu.Client(),
 	}
 
 	sites = map[int]string{
@@ -64,6 +69,7 @@ var (
 		provider.KuGou:   "kugou.com",
 		provider.KuWo:    "kuwo.cn",
 		provider.XiaMi:   "xiami.com",
+		provider.BaiDu:   "music.taihe.com",
 	}
 )
 

@@ -71,7 +71,7 @@ type (
 		Code int    `json:"code"`
 	}
 
-	SongResponse struct {
+	SongsResponse struct {
 		CommonResponse
 		Songs []*Song `json:"songs"`
 	}
@@ -162,7 +162,7 @@ func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
-func (s *SongResponse) String() string {
+func (s *SongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 

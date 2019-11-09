@@ -1,6 +1,7 @@
 package netease
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,6 +21,10 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 	}
 
 	n := len(resp.Result.Songs)
+	if n == 0 {
+		return nil, errors.New("search songs: no data")
+	}
+
 	songs := make([]*provider.SearchSongsData, 0, n)
 	for _, s := range resp.Result.Songs {
 		artists := make([]string, 0, len(s.Artists))

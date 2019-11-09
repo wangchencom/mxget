@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/provider/baidu"
 	"github.com/winterssy/mxget/pkg/provider/kugou"
 	"github.com/winterssy/mxget/pkg/provider/kuwo"
 	"github.com/winterssy/mxget/pkg/provider/migu"
@@ -35,6 +36,10 @@ func GetArtistFromKuWo(c *gin.Context) {
 
 func GetArtistFromXiaMi(c *gin.Context) {
 	getArtist(c, xiami.Client())
+}
+
+func GetArtistFromBaiDu(c *gin.Context) {
+	getArtist(c, baidu.Client())
 }
 
 func getArtist(c *gin.Context, client provider.API) {
