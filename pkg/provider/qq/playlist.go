@@ -27,7 +27,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		playlist.PicURL = playlist.Logo
 	}
 	_songs := playlist.SongList
-	a.patchSongURL(_songs...)
+	a.patchSongURLV1(_songs...)
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Playlist{

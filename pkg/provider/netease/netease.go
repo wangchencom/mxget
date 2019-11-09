@@ -11,8 +11,8 @@ import (
 const (
 	APILinux          = "https://music.163.com/api/linux/forward"
 	APISearch         = "https://music.163.com/weapi/search/get"
-	APIGetSong        = "https://music.163.com/weapi/v3/song/detail"
-	APIGetSongURL     = "https://music.163.com/weapi/song/enhance/player/url"
+	APIGetSongs       = "https://music.163.com/weapi/v3/song/detail"
+	APIGetSongsURL    = "https://music.163.com/weapi/song/enhance/player/url"
 	APIGetArtist      = "https://music.163.com/weapi/v1/artist/%d"
 	APIGetAlbum       = "https://music.163.com/weapi/v1/album/%d"
 	APIGetPlaylist    = "https://music.163.com/weapi/v3/playlist/detail"
@@ -239,7 +239,7 @@ func (a *API) patchSongURL(br int, songs ...*Song) {
 		ids = append(ids, s.Id)
 	}
 
-	resp, err := a.GetSongURLRaw(br, ids...)
+	resp, err := a.GetSongsURLRaw(br, ids...)
 	if err == nil && len(resp.Data) != 0 {
 		m := make(map[int]string, len(resp.Data))
 		for _, i := range resp.Data {

@@ -29,7 +29,7 @@ func GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	return std.GetSongDetailRaw(songId)
 }
 
-// 获取单曲详情
+// 获取歌曲详情
 func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	token, err := a.getToken(APIGetSongDetail)
 	if err != nil {

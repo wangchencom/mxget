@@ -46,7 +46,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 			songIds := trackIds[i:utils.Min(i+SongRequestLimit, extra)]
 			wg.Add(1)
 			go func() {
-				resp, err := a.GetSongRaw(songIds...)
+				resp, err := a.GetSongsRaw(songIds...)
 				if err != nil {
 					wg.Done()
 					return

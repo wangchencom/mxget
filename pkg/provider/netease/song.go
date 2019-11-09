@@ -20,7 +20,7 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 		return nil, err
 	}
 
-	resp, err := a.GetSongRaw(id)
+	resp, err := a.GetSongsRaw(id)
 	if err != nil {
 		return nil, err
 	}
@@ -35,20 +35,20 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 	return songs[0], nil
 }
 
-func GetSongRaw(ids ...int) (*SongResponse, error) {
-	return std.GetSongRaw(ids...)
+func GetSongsRaw(songIds ...int) (*SongResponse, error) {
+	return std.GetSongsRaw(songIds...)
 }
 
-// 获取歌曲信息
-func (a *API) GetSongRaw(ids ...int) (*SongResponse, error) {
-	n := len(ids)
+// 批量获取歌曲详情，上限1000首
+func (a *API) GetSongsRaw(songIds ...int) (*SongResponse, error) {
+	n := len(songIds)
 	if n > SongRequestLimit {
-		ids = ids[:SongRequestLimit]
+		songIds = songIds[:SongRequestLimit]
 		n = SongRequestLimit
 	}
 
 	c := make([]map[string]int, 0, n)
-	for _, id := range ids {
+	for _, id := range songIds {
 		c = append(c, map[string]int{"id": id})
 	}
 	enc, _ := json.Marshal(c)
@@ -57,14 +57,14 @@ func (a *API) GetSongRaw(ids ...int) (*SongResponse, error) {
 	}
 
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodPost, APIGetSong,
+	err := a.Request(sreq.MethodPost, APIGetSongs,
 		sreq.WithForm(weapi(data)),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("get song: %s", resp.Msg)
+		return nil, fmt.Errorf("get songs: %s", resp.Msg)
 	}
 
 	return resp, nil
@@ -75,7 +75,7 @@ func GetSongURL(id int, br int) (string, error) {
 }
 
 func (a *API) GetSongURL(id int, br int) (string, error) {
-	resp, err := a.GetSongURLRaw(br, id)
+	resp, err := a.GetSongsURLRaw(br, id)
 	if err != nil {
 		return "", err
 	}
@@ -89,12 +89,12 @@ func (a *API) GetSongURL(id int, br int) (string, error) {
 	return resp.Data[0].URL, nil
 }
 
-func GetSongURLRaw(br int, ids ...int) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(br, ids...)
+func GetSongsURLRaw(br int, songIds ...int) (*SongURLResponse, error) {
+	return std.GetSongsURLRaw(br, songIds...)
 }
 
-// 获取歌曲播放地址，br: 比特率，128/192/320/999
-func (a *API) GetSongURLRaw(br int, ids ...int) (*SongURLResponse, error) {
+// 批量获取歌曲播放地址，br: 比特率，128/192/320/999
+func (a *API) GetSongsURLRaw(br int, songIds ...int) (*SongURLResponse, error) {
 	var _br int
 	switch br {
 	case 128, 192, 320:
@@ -103,21 +103,21 @@ func (a *API) GetSongURLRaw(br int, ids ...int) (*SongURLResponse, error) {
 		_br = 999
 	}
 
-	enc, _ := json.Marshal(ids)
+	enc, _ := json.Marshal(songIds)
 	data := map[string]interface{}{
 		"br":  _br * 1000,
 		"ids": string(enc),
 	}
 
 	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodPost, APIGetSongURL,
+	err := a.Request(sreq.MethodPost, APIGetSongsURL,
 		sreq.WithForm(weapi(data)),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("get song url: %s", resp.Msg)
+		return nil, fmt.Errorf("get songs url: %s", resp.Msg)
 	}
 
 	return resp, nil

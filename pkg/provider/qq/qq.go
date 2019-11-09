@@ -2,18 +2,21 @@ package qq
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
+	"sync"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
 const (
-	APISearch  = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
-	APIGetSong = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
-	// APIGetSongURL = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
-	APIGetSongURL   = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
+	APISearch       = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
+	APIGetSong      = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
+	APIGetSongURLV1 = "http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0"
+	APIGetSongURLV2 = "https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&platform=yqq"
 	APIGetSongLyric = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?format=json&platform=yqq&nobase64=1"
 	APIGetArtist    = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?format=json&platform=yqq&newsong=1&order=listen"
 	APIGetAlbum     = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_album_detail_cp.fcg?format=json&platform=yqq&newsong=1"
@@ -66,7 +69,7 @@ type (
 		Data []*Song `json:"data"`
 	}
 
-	SongURLResponse struct {
+	SongURLResponseV1 struct {
 		Code    int    `json:"code"`
 		Cid     int    `json:"cid"`
 		ErrInfo string `json:"errinfo,omitempty"`
@@ -81,21 +84,21 @@ type (
 		} `json:"data"`
 	}
 
-	// SongURLResponse struct {
-	// 	CommonResponse
-	// 	Req0 struct {
-	// 		Data struct {
-	// 			MidURLInfo []struct {
-	// 				FileName string `json:"filename"`
-	// 				PURL     string `json:"purl"`
-	// 				SongMid  string `json:"songmid"`
-	// 				Vkey     string `json:"vkey"`
-	// 			} `json:"midurlinfo"`
-	// 			Sip        []string `json:"sip"`
-	// 			TestFile2g string   `json:"testfile2g"`
-	// 		} `json:"data"`
-	// 	} `json:"req0"`
-	// }
+	SongURLResponseV2 struct {
+		CommonResponse
+		Req0 struct {
+			Data struct {
+				MidURLInfo []struct {
+					FileName string `json:"filename"`
+					PURL     string `json:"purl"`
+					SongMid  string `json:"songmid"`
+					Vkey     string `json:"vkey"`
+				} `json:"midurlinfo"`
+				Sip        []string `json:"sip"`
+				TestFile2g string   `json:"testfile2g"`
+			} `json:"data"`
+		} `json:"req0"`
+	}
 
 	SongLyricResponse struct {
 		CommonResponse
@@ -161,7 +164,7 @@ func (s *SongResponse) String() string {
 	return provider.ToJSON(s, false)
 }
 
-func (s *SongURLResponse) String() string {
+func (s *SongURLResponseV2) String() string {
 	return provider.ToJSON(s, false)
 }
 
@@ -203,12 +206,12 @@ func (a *API) Platform() int {
 	return provider.QQ
 }
 
-func (a *API) patchSongURL(songs ...*Song) {
+func (a *API) patchSongURLV1(songs ...*Song) {
 	c := concurrency.New(32)
 	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
-			url, err := a.GetSongURL(s.Mid, s.File.MediaMid)
+			url, err := a.GetSongURLV1(s.Mid, s.File.MediaMid)
 			if err == nil {
 				s.URL = url
 			}
@@ -218,53 +221,53 @@ func (a *API) patchSongURL(songs ...*Song) {
 	c.Wait()
 }
 
-// func (a *API) patchSongURL(songs ...*Song) {
-// 	n := len(songs)
-// 	songMids := make([]string, 0, n)
-// 	for _, s := range songs {
-// 		songMids = append(songMids, s.Mid)
-// 	}
-//
-// 	type result struct {
-// 		resp *SongURLResponse
-// 		err  error
-// 	}
-//
-// 	urlMap := make(map[string]string, n)
-// 	queue := make(chan *result)
-// 	wg := new(sync.WaitGroup)
-// 	// url长度限制，每次请求的歌曲数不能太多，分批获取
-// 	for i := 0; i < n; i += SongURLRequestLimit {
-// 		ids := songMids[i:utils.Min(i+SongURLRequestLimit, n)]
-// 		wg.Add(1)
-// 		go func() {
-// 			resp, err := a.GetSongURLRaw(ids...)
-// 			queue <- &result{
-// 				resp: resp,
-// 				err:  err,
-// 			}
-// 		}()
-// 	}
-// 	go func() {
-// 		for r := range queue {
-// 			if r.err == nil {
-// 				// 随机获取一个sip
-// 				sip := r.resp.Req0.Data.Sip[rand.Intn(len(r.resp.Req0.Data.Sip))]
-// 				for _, i := range r.resp.Req0.Data.MidURLInfo {
-// 					if i.PURL != "" {
-// 						urlMap[i.SongMid] = sip + i.PURL
-// 					}
-// 				}
-// 			}
-// 			wg.Done()
-// 		}
-// 	}()
-// 	wg.Wait()
-//
-// 	for _, s := range songs {
-// 		s.URL = urlMap[s.Mid]
-// 	}
-// }
+func (a *API) patchSongURLV2(songs ...*Song) {
+	n := len(songs)
+	songMids := make([]string, 0, n)
+	for _, s := range songs {
+		songMids = append(songMids, s.Mid)
+	}
+
+	type result struct {
+		resp *SongURLResponseV2
+		err  error
+	}
+
+	urlMap := make(map[string]string, n)
+	queue := make(chan *result)
+	wg := new(sync.WaitGroup)
+	// url长度限制，每次请求的歌曲数不能太多，分批获取
+	for i := 0; i < n; i += SongURLRequestLimit {
+		ids := songMids[i:utils.Min(i+SongURLRequestLimit, n)]
+		wg.Add(1)
+		go func() {
+			resp, err := a.GetSongsURLV2Raw(ids...)
+			queue <- &result{
+				resp: resp,
+				err:  err,
+			}
+		}()
+	}
+	go func() {
+		for r := range queue {
+			if r.err == nil {
+				// 随机获取一个sip
+				sip := r.resp.Req0.Data.Sip[rand.Intn(len(r.resp.Req0.Data.Sip))]
+				for _, i := range r.resp.Req0.Data.MidURLInfo {
+					if i.PURL != "" {
+						urlMap[i.SongMid] = sip + i.PURL
+					}
+				}
+			}
+			wg.Done()
+		}
+	}()
+	wg.Wait()
+
+	for _, s := range songs {
+		s.URL = urlMap[s.Mid]
+	}
+}
 
 func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
 	return std.Request(method, url, opts...)

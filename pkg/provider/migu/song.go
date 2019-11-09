@@ -80,7 +80,7 @@ func GetSongRaw(songId string) (*SongResponse, error) {
 	return std.GetSongRaw(songId)
 }
 
-// 获取歌曲信息
+// 获取歌曲详情
 func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	params := sreq.Params{
 		"songId": songId,

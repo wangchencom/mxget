@@ -18,9 +18,16 @@ func TestAPI_GetSong(t *testing.T) {
 	t.Log(song)
 }
 
-func TestAPI_GetSongURL(t *testing.T) {
-	// url, err := GetSongURL("002Zkt5S2z8JZx")
-	url, err := GetSongURL("002Zkt5S2z8JZx", "002Zkt5S2z8JZx")
+func TestAPI_GetSongURLV1(t *testing.T) {
+	url, err := GetSongURLV1("002Zkt5S2z8JZx", "002Zkt5S2z8JZx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(url)
+}
+
+func TestAPI_GetSongURLV2(t *testing.T) {
+	url, err := GetSongURLV2("002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}

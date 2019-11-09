@@ -1,11 +1,18 @@
 package qq
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
 
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
+)
+
+const (
+	// 跟vkey配合获取歌曲下载地址，可为任意字符串
+	Guid = "0"
 )
 
 func GetSong(songMid string) (*provider.Song, error) {
@@ -22,7 +29,7 @@ func (a *API) GetSong(songMid string) (*provider.Song, error) {
 	}
 
 	_song := resp.Data[0]
-	a.patchSongURL(_song)
+	a.patchSongURLV1(_song)
 	a.patchSongLyric(_song)
 	songs := resolve(_song)
 	return songs[0], nil
@@ -32,7 +39,7 @@ func GetSongRaw(songMid string) (*SongResponse, error) {
 	return std.GetSongRaw(songMid)
 }
 
-// 获取歌曲信息
+// 获取歌曲详情
 func (a *API) GetSongRaw(songMid string) (*SongResponse, error) {
 	params := sreq.Params{
 		"songmid": songMid,
@@ -52,12 +59,12 @@ func (a *API) GetSongRaw(songMid string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURL(songMid string, mediaMid string) (string, error) {
-	return std.GetSongURL(songMid, mediaMid)
+func GetSongURLV1(songMid string, mediaMid string) (string, error) {
+	return std.GetSongURLV1(songMid, mediaMid)
 }
 
-func (a *API) GetSongURL(songMid string, mediaMid string) (string, error) {
-	resp, err := a.GetSongURLRaw(songMid, mediaMid)
+func (a *API) GetSongURLV1(songMid string, mediaMid string) (string, error) {
+	resp, err := a.GetSongURLV1Raw(songMid, mediaMid)
 	if err != nil {
 		return "", err
 	}
@@ -73,19 +80,19 @@ func (a *API) GetSongURL(songMid string, mediaMid string) (string, error) {
 	return fmt.Sprintf(SongURL, item.FileName, item.Vkey), nil
 }
 
-func GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(songMid, mediaMid)
+func GetSongURLV1Raw(songMid string, mediaMid string) (*SongURLResponseV1, error) {
+	return std.GetSongURLV1Raw(songMid, mediaMid)
 }
 
 // 获取歌曲播放地址
-func (a *API) GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, error) {
+func (a *API) GetSongURLV1Raw(songMid string, mediaMid string) (*SongURLResponseV1, error) {
 	params := sreq.Params{
 		"songmid":  songMid,
 		"filename": "M500" + mediaMid + ".mp3",
 	}
 
-	resp := new(SongURLResponse)
-	err := a.Request(sreq.MethodGet, APIGetSongURL,
+	resp := new(SongURLResponseV1)
+	err := a.Request(sreq.MethodGet, APIGetSongURLV1,
 		sreq.WithQuery(params),
 	).JSON(resp)
 	if err != nil {
@@ -98,74 +105,74 @@ func (a *API) GetSongURLRaw(songMid string, mediaMid string) (*SongURLResponse, 
 	return resp, nil
 }
 
-// func GetSongURL(songMid string) (string, error) {
-// 	return std.GetSongURL(songMid)
-// }
-//
-// func (a *API) GetSongURL(songMid string) (string, error) {
-// 	resp, err := a.GetSongURLRaw(songMid)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	if len(resp.Req0.Data.MidURLInfo) == 0 {
-// 		return "", errors.New("get song url: no data")
-// 	}
-// 	if len(resp.Req0.Data.Sip) == 0 {
-// 		return "", errors.New("get song url: no sip")
-// 	}
-//
-// 	// 随机获取一个sip
-// 	sip := resp.Req0.Data.Sip[rand.Intn(len(resp.Req0.Data.Sip))]
-// 	urlInfo := resp.Req0.Data.MidURLInfo[0]
-// 	if urlInfo.PURL == "" {
-// 		return "", errors.New("get song url: copyright protection")
-// 	}
-// 	return sip + urlInfo.PURL, nil
-// }
-//
-// func GetSongURLRaw(songMids ...string) (*SongURLResponse, error) {
-// 	return std.GetSongURLRaw(songMids...)
-// }
-//
-// // 获取歌曲播放地址
-// func (a *API) GetSongURLRaw(songMids ...string) (*SongURLResponse, error) {
-// 	if len(songMids) > SongURLRequestLimit {
-// 		songMids = songMids[:SongURLRequestLimit]
-// 	}
-//
-// 	param := map[string]interface{}{
-// 		"guid":      "7332953645",
-// 		"loginflag": 1,
-// 		"songmid":   songMids,
-// 		"uin":       "0",
-// 		"platform":  "20",
-// 	}
-// 	req0 := map[string]interface{}{
-// 		"module": "vkey.GetVkeyServer",
-// 		"method": "CgiGetVkey",
-// 		"param":  param,
-// 	}
-// 	data := map[string]interface{}{
-// 		"req0": req0,
-// 	}
-//
-// 	enc, _ := json.Marshal(data)
-// 	params := sreq.Params{
-// 		"data": string(enc),
-// 	}
-// 	resp := new(SongURLResponse)
-// 	err := a.Request(sreq.MethodGet, APIGetSongURL,
-// 		sreq.WithQuery(params),
-// 	).JSON(resp)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	if resp.Code != 0 {
-// 		return nil, fmt.Errorf("get song url: %d", resp.Code)
-// 	}
-//
-// 	return resp, nil
-// }
+func GetSongURLV2(songMid string) (string, error) {
+	return std.GetSongURLV2(songMid)
+}
+
+func (a *API) GetSongURLV2(songMid string) (string, error) {
+	resp, err := a.GetSongsURLV2Raw(songMid)
+	if err != nil {
+		return "", err
+	}
+	if len(resp.Req0.Data.MidURLInfo) == 0 {
+		return "", errors.New("get song url: no data")
+	}
+	if len(resp.Req0.Data.Sip) == 0 {
+		return "", errors.New("get song url: no sip")
+	}
+
+	// 随机获取一个sip
+	sip := resp.Req0.Data.Sip[rand.Intn(len(resp.Req0.Data.Sip))]
+	urlInfo := resp.Req0.Data.MidURLInfo[0]
+	if urlInfo.PURL == "" {
+		return "", errors.New("get song url: copyright protection")
+	}
+	return sip + urlInfo.PURL, nil
+}
+
+func GetSongsURLV2Raw(songMids ...string) (*SongURLResponseV2, error) {
+	return std.GetSongsURLV2Raw(songMids...)
+}
+
+// 批量获取歌曲播放地址
+func (a *API) GetSongsURLV2Raw(songMids ...string) (*SongURLResponseV2, error) {
+	if len(songMids) > SongURLRequestLimit {
+		songMids = songMids[:SongURLRequestLimit]
+	}
+
+	param := map[string]interface{}{
+		"guid":      Guid,
+		"loginflag": 1,
+		"songmid":   songMids,
+		"uin":       "0",
+		"platform":  "20",
+	}
+	req0 := map[string]interface{}{
+		"module": "vkey.GetVkeyServer",
+		"method": "CgiGetVkey",
+		"param":  param,
+	}
+	data := map[string]interface{}{
+		"req0": req0,
+	}
+
+	enc, _ := json.Marshal(data)
+	params := sreq.Params{
+		"data": string(enc),
+	}
+	resp := new(SongURLResponseV2)
+	err := a.Request(sreq.MethodGet, APIGetSongURLV2,
+		sreq.WithQuery(params),
+	).JSON(resp)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Code != 0 {
+		return nil, fmt.Errorf("get song url: %d", resp.Code)
+	}
+
+	return resp, nil
+}
 
 func GetSongLyric(songMid string) (string, error) {
 	return std.GetSongLyric(songMid)

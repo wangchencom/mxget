@@ -25,7 +25,7 @@ func (a *API) GetAlbum(albumMid string) (*provider.Album, error) {
 	}
 
 	_songs := resp.Data.GetSongInfo
-	a.patchSongURL(_songs...)
+	a.patchSongURLV1(_songs...)
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Album{

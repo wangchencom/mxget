@@ -29,7 +29,7 @@ func GetSongRaw(mid string) (*SongResponse, error) {
 	return std.GetSongRaw(mid)
 }
 
-// 获取歌曲信息
+// 获取歌曲详情
 func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
 	params := sreq.Params{
 		"mid": mid,

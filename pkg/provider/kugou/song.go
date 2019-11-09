@@ -30,7 +30,7 @@ func GetSongRaw(hash string) (*SongResponse, error) {
 	return std.GetSongRaw(hash)
 }
 
-// 获取歌曲信息
+// 获取歌曲详情
 func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	params := sreq.Params{
 		"hash": hash,

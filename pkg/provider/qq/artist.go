@@ -30,7 +30,7 @@ func (a *API) GetArtist(singerMid string) (*provider.Artist, error) {
 		_songs = append(_songs, i.MusicData)
 	}
 
-	a.patchSongURL(_songs...)
+	a.patchSongURLV1(_songs...)
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Artist{
