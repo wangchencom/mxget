@@ -38,7 +38,7 @@
 go get -u github.com/winterssy/mxget
 ```
 
-## 使用说明
+## 使用帮助
 
 > 本项目不提供可执行程序下载，如须开箱即用，可选择 **[pymxget](https://github.com/winterssy/pymxget)** 。
 
@@ -216,7 +216,7 @@ $ curl -X GET "http://127.0.0.1:8080/api/kuwo/artist/336" -H "accept: applicatio
 
 ## 免责声明
 
-- 本项目仅供学习研究使用，禁止商业用途。
+- 本项目仅供学习研究使用。
 - 本项目使用的接口如无特别说明均为官方接口，音乐版权归源音乐平台所有，侵删。
 
 ## License
