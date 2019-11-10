@@ -15,6 +15,15 @@ const (
 	IV    = "2012061402992850"
 )
 
+var (
+	key string
+)
+
+func init() {
+	hash := fmt.Sprintf("%X", md5.Sum([]byte(Input)))
+	key = hash[len(hash)/2:]
+}
+
 func aesCBCEncrypt(songId string) sreq.Params {
 	ts := fmt.Sprintf("%d", time.Now().UnixNano()/1e6)
 	params := sreq.Params{
@@ -22,8 +31,6 @@ func aesCBCEncrypt(songId string) sreq.Params {
 		"ts":     ts,
 	}
 
-	hash := fmt.Sprintf("%X", md5.Sum([]byte(Input)))
-	key := hash[len(hash)/2:]
 	e := base64.StdEncoding.EncodeToString(cryptography.AESCBCEncrypt([]byte(params.Encode()), []byte(key), []byte(IV)))
 	params.Set("e", e)
 
