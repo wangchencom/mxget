@@ -122,7 +122,7 @@ type (
 				ListPic   string `json:"list_pic"`
 			} `json:"info"`
 			SongList []*Song `json:"songlist"`
-		}
+		} `json:"result"`
 	}
 
 	API struct {

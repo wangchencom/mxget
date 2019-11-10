@@ -30,7 +30,7 @@ func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
 	songs := resolve(resp.SongList...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(resp.ArtistInfo.Name),
-		PicURL: resp.ArtistInfo.AvatarBig,
+		PicURL: strings.Split(resp.ArtistInfo.AvatarBig,"@")[0],
 		Count:  n,
 		Songs:  songs,
 	}, nil
