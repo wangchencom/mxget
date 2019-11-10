@@ -189,12 +189,10 @@ func (p *PlaylistResponse) String() string {
 func New(client *sreq.Client) *API {
 	if client == nil {
 		client = sreq.New(nil)
-		cookie, _ := createCookie()
 		client.SetDefaultRequestOpts(
 			sreq.WithHeaders(sreq.Headers{
 				"User-Agent": provider.UserAgent,
 			}),
-			sreq.WithCookies(cookie),
 		)
 	}
 	return &API{
