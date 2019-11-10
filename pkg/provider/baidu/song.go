@@ -18,7 +18,7 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 		return nil, err
 	}
 
-	resp.SongInfo.URL = resp.Bitrate.ShowLink
+	resp.SongInfo.URL = songURL(resp.SongURL.URL)
 	a.patchSongLyric(&resp.SongInfo)
 	songs := resolve(&resp.SongInfo)
 	return songs[0], nil
@@ -29,16 +29,13 @@ func GetSongRaw(songId string) (*SongResponse, error) {
 }
 
 func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
-	params := sreq.Params{
-		"songid": songId,
-	}
 	resp := new(SongResponse)
-	err := a.Request(sreq.MethodGet, APIGetSong, sreq.WithQuery(params)).JSON(resp)
+	err := a.Request(sreq.MethodGet, APIGetSong, sreq.WithQuery(aesCBCEncrypt(songId))).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get song: %d", resp.ErrorCode)
+		return nil, fmt.Errorf("get song: %s", resp.ErrorMessage)
 	}
 
 	return resp, nil
