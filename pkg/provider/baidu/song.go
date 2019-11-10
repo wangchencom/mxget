@@ -28,6 +28,7 @@ func GetSongRaw(songId string) (*SongResponse, error) {
 	return std.GetSongRaw(songId)
 }
 
+// 获取歌曲
 func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	resp := new(SongResponse)
 	err := a.Request(sreq.MethodGet, APIGetSong, sreq.WithQuery(aesCBCEncrypt(songId))).JSON(resp)
@@ -45,6 +46,7 @@ func GetSongsRaw(songIds ...string) (*SongsResponse, error) {
 	return std.GetSongsRaw(songIds...)
 }
 
+// 批量获取歌曲，遗留接口，不推荐使用
 func (a *API) GetSongsRaw(songIds ...string) (*SongsResponse, error) {
 	params := sreq.Params{
 		"songIds": strings.Join(songIds, ","),
