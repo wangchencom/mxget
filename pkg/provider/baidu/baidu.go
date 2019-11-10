@@ -109,7 +109,7 @@ type (
 			AlbumId string `json:"album_id"`
 			Title   string `json:"title"`
 			PicBig  string `json:"pic_big"`
-		} `json:"albuminfo"`
+		} `json:"albumInfo"`
 		SongList []*Song `json:"songlist"`
 	}
 
