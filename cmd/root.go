@@ -29,8 +29,8 @@ var CmdRoot = &cobra.Command{
     \|__|     \|__/__/ /\ __\    \|_______|\|_______|   \|__|
                   |__|/ \|__|                                
 
-A simple tool that help you download your favorite music, please
-visit https://github.com/winterssy/mxget for more detail.
+A simple tool that help you search and download your favorite music,
+please visit https://github.com/winterssy/mxget for more detail.
 `,
 	Version: Version,
 }
