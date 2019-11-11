@@ -9,6 +9,10 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+var (
+	std = New(provider.Client())
+)
+
 const (
 	APISearch         = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord"
 	APIGetSong        = "http://www.kuwo.cn/api/www/music/musicInfo"
@@ -20,10 +24,6 @@ const (
 	APIGetPlaylist    = "http://www.kuwo.cn/api/www/playlist/playListInfo"
 
 	SongDefaultBR = 128
-)
-
-var (
-	std = New(provider.Client())
 )
 
 type (

@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetSongId(copyrightId string) (string, error) {
-	return std.GetSongId(copyrightId)
-}
-
 func (a *API) GetSongId(copyrightId string) (string, error) {
 	resp, err := a.GetSongIdRaw(copyrightId)
 	if err != nil {
@@ -22,10 +18,6 @@ func (a *API) GetSongId(copyrightId string) (string, error) {
 	}
 
 	return resp.Items[0].SongId, nil
-}
-
-func GetSongIdRaw(copyrightId string) (*SongIdResponse, error) {
-	return std.GetSongIdRaw(copyrightId)
 }
 
 // 根据版权id获取歌曲id
@@ -46,10 +38,6 @@ func (a *API) GetSongIdRaw(copyrightId string) (*SongIdResponse, error) {
 	}
 
 	return resp, nil
-}
-
-func GetSong(copyrightId string) (*provider.Song, error) {
-	return std.GetSong(copyrightId)
 }
 
 func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
@@ -76,10 +64,6 @@ func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
 	return songs[0], nil
 }
 
-func GetSongRaw(songId string) (*SongResponse, error) {
-	return std.GetSongRaw(songId)
-}
-
 // 获取歌曲详情
 func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	params := sreq.Params{
@@ -100,10 +84,6 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURL(contentId string, br int) string {
-	return std.GetSongURL(contentId, br)
-}
-
 func (a *API) GetSongURL(contentId string, br int) string {
 	var _br int
 	switch br {
@@ -113,10 +93,6 @@ func (a *API) GetSongURL(contentId string, br int) string {
 		_br = 320
 	}
 	return fmt.Sprintf(SongURL, contentId, "E", codeRate[_br])
-}
-
-func GetSongURLRaw(contentId, resourceType string) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(contentId, resourceType)
 }
 
 // 获取歌曲播放地址
@@ -141,20 +117,12 @@ func (a *API) GetSongURLRaw(contentId, resourceType string) (*SongURLResponse, e
 	return resp, nil
 }
 
-func GetSongPic(songId string) (string, error) {
-	return std.GetSongPic(songId)
-}
-
 func (a *API) GetSongPic(songId string) (string, error) {
 	resp, err := a.GetSongPicRaw(songId)
 	if err != nil {
 		return "", err
 	}
 	return resp.LargePic, nil
-}
-
-func GetSongPicRaw(songId string) (*SongPicResponse, error) {
-	return std.GetSongPicRaw(songId)
 }
 
 // 获取歌曲专辑封面
@@ -177,20 +145,12 @@ func (a *API) GetSongPicRaw(songId string) (*SongPicResponse, error) {
 	return resp, nil
 }
 
-func GetSongLyric(copyrightId string) (string, error) {
-	return std.GetSongLyric(copyrightId)
-}
-
 func (a *API) GetSongLyric(copyrightId string) (string, error) {
 	resp, err := a.GetSongLyricRaw(copyrightId)
 	if err != nil {
 		return "", err
 	}
 	return resp.Lyric, nil
-}
-
-func GetSongLyricRaw(copyrightId string) (*SongLyricResponse, error) {
-	return std.GetSongLyricRaw(copyrightId)
 }
 
 // 获取歌词

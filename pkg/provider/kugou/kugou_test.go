@@ -1,9 +1,25 @@
-package kugou
+package kugou_test
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/winterssy/mxget/pkg/provider/kugou"
+)
+
+var client *kugou.API
+
+func setup() {
+	client = kugou.New(nil)
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	os.Exit(m.Run())
+}
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := SearchSongs("五月天")
+	result, err := client.SearchSongs("五月天")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -11,7 +27,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := GetSong("1571941D82D63AD614E35EAD9DB6A6A2")
+	song, err := client.GetSong("1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +35,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURL(t *testing.T) {
-	url, err := GetSongURL("1571941D82D63AD614E35EAD9DB6A6A2")
+	url, err := client.GetSongURL("1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +43,7 @@ func TestAPI_GetSongURL(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := GetSongLyric("1571941D82D63AD614E35EAD9DB6A6A2")
+	lyric, err := client.GetSongLyric("1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +51,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := GetArtist("8965")
+	artist, err := client.GetArtist("8965")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +59,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := GetAlbum("976965")
+	album, err := client.GetAlbum("976965")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +67,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := GetPlaylist("610433")
+	playlist, err := client.GetPlaylist("610433")
 	if err != nil {
 		t.Fatal(err)
 	}

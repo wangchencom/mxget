@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func LoginRaw(account string, password string) (*LoginResponse, error) {
-	return std.LoginRaw(account, password)
-}
-
 // 登录接口，account 可为邮箱/手机号码
 func (a *API) LoginRaw(account string, password string) (*LoginResponse, error) {
 	token, err := a.getToken(APILogin)

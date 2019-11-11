@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
-	return std.SearchSongs(keyword)
-}
-
 func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 	resp, err := a.SearchSongsRaw(keyword, 0, 50)
 	if err != nil {
@@ -43,10 +39,6 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		Count:   n,
 		Songs:   songs,
 	}, nil
-}
-
-func SearchSongsRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
-	return std.SearchSongsRaw(keyword, offset, limit)
 }
 
 // 搜索歌曲

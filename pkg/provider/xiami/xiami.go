@@ -10,6 +10,10 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+var (
+	std = New(provider.Client())
+)
+
 const (
 	APISearch            = "https://acs.m.xiami.com/h5/mtop.alimusic.search.searchservice.searchsongs/1.0/?appKey=23649156"
 	APIGetSongDetail     = "https://acs.m.xiami.com/h5/mtop.alimusic.music.songservice.getsongdetail/1.0/?appKey=23649156"
@@ -23,10 +27,6 @@ const (
 	APILogin             = "https://h5api.m.xiami.com/h5/mtop.alimusic.xuser.facade.xiamiuserservice.login/1.0/?appKey=23649156"
 
 	SongRequestLimit = 200
-)
-
-var (
-	std = New(provider.Client())
 )
 
 type (

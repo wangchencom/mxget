@@ -12,10 +12,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetPlaylist(playlistId string) (*provider.Playlist, error) {
-	return std.GetPlaylist(playlistId)
-}
-
 func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	id, err := strconv.Atoi(playlistId)
 	if err != nil {
@@ -73,10 +69,6 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		Count:  n,
 		Songs:  songs,
 	}, nil
-}
-
-func GetPlaylistRaw(id int) (*PlaylistResponse, error) {
-	return std.GetPlaylistRaw(id)
 }
 
 // 获取歌单

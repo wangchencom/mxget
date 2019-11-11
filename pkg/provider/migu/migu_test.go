@@ -1,9 +1,25 @@
-package migu
+package migu_test
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/winterssy/mxget/pkg/provider/migu"
+)
+
+var client *migu.API
+
+func setup() {
+	client = migu.New(nil)
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	os.Exit(m.Run())
+}
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := SearchSongs("周杰伦")
+	result, err := client.SearchSongs("周杰伦")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -11,7 +27,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := GetSong("63273402938")
+	song, err := client.GetSong("63273402938")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +35,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURLRaw(t *testing.T) {
-	resp, err := GetSongURLRaw("600908000002677565", "2")
+	resp, err := client.GetSongURLRaw("600908000002677565", "2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +43,7 @@ func TestAPI_GetSongURLRaw(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := GetSongLyric("63273402938")
+	lyric, err := client.GetSongLyric("63273402938")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +51,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetSongPic(t *testing.T) {
-	pic, err := GetSongPic("1121439251")
+	pic, err := client.GetSongPic("1121439251")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +59,7 @@ func TestAPI_GetSongPic(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := GetArtist("112")
+	artist, err := client.GetArtist("112")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +67,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := GetAlbum("1121438701")
+	album, err := client.GetAlbum("1121438701")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +75,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := GetPlaylist("159248239")
+	playlist, err := client.GetPlaylist("159248239")
 	if err != nil {
 		t.Fatal(err)
 	}

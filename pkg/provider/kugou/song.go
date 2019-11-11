@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetSong(hash string) (*provider.Song, error) {
-	return std.GetSong(hash)
-}
-
 func (a *API) GetSong(hash string) (*provider.Song, error) {
 	resp, err := a.GetSongRaw(hash)
 	if err != nil {
@@ -24,10 +20,6 @@ func (a *API) GetSong(hash string) (*provider.Song, error) {
 	a.patchSongLyric(&resp.Song)
 	songs := resolve(&resp.Song)
 	return songs[0], nil
-}
-
-func GetSongRaw(hash string) (*SongResponse, error) {
-	return std.GetSongRaw(hash)
 }
 
 // 获取歌曲详情
@@ -50,10 +42,6 @@ func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURL(hash string) (string, error) {
-	return std.GetSongURL(hash)
-}
-
 func (a *API) GetSongURL(hash string) (string, error) {
 	resp, err := a.GetSongURLRaw(hash)
 	if err != nil {
@@ -64,10 +52,6 @@ func (a *API) GetSongURL(hash string) (string, error) {
 	}
 
 	return resp.URL[rand.Intn(len(resp.URL))], nil
-}
-
-func GetSongURLRaw(hash string) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(hash)
 }
 
 // 获取歌曲播放地址
@@ -97,10 +81,6 @@ func (a *API) GetSongURLRaw(hash string) (*SongURLResponse, error) {
 	}
 
 	return resp, nil
-}
-
-func GetSongLyric(hash string) (string, error) {
-	return std.GetSongLyric(hash)
 }
 
 // 获取歌词

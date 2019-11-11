@@ -3,7 +3,6 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
-	"sync"
 
 	"github.com/winterssy/sreq"
 )
@@ -21,8 +20,7 @@ const (
 )
 
 var (
-	client *sreq.Client
-	once   sync.Once
+	std *sreq.Client
 )
 
 type (
@@ -115,16 +113,17 @@ func (p *Playlist) String() string {
 	return ToJSON(p, false)
 }
 
+func init() {
+	std = sreq.New(nil)
+	std.SetDefaultRequestOpts(
+		sreq.WithHeaders(sreq.Headers{
+			"User-Agent": UserAgent,
+		}),
+	)
+}
+
 func Client() *sreq.Client {
-	once.Do(func() {
-		client = sreq.New(nil)
-		client.SetDefaultRequestOpts(
-			sreq.WithHeaders(sreq.Headers{
-				"User-Agent": UserAgent,
-			}),
-		)
-	})
-	return client
+	return std
 }
 
 func ToJSON(data interface{}, escapeHTML bool) string {

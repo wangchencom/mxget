@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func EmailLoginRaw(email string, password string) (*LoginResponse, error) {
-	return std.EmailLoginRaw(email, password)
-}
-
 // 邮箱登录
 func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, error) {
 	passwordHash := md5.Sum([]byte(password))
@@ -34,10 +30,6 @@ func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, erro
 	}
 
 	return resp, nil
-}
-
-func CellphoneLoginRaw(countryCode int, phone int, password string) (*LoginResponse, error) {
-	return std.CellphoneLoginRaw(countryCode, phone, password)
 }
 
 // 手机登录
@@ -65,10 +57,6 @@ func (a *API) CellphoneLoginRaw(countryCode int, phone int, password string) (*L
 	return resp, nil
 }
 
-func RefreshLoginRaw() (*CommonResponse, error) {
-	return std.RefreshLoginRaw()
-}
-
 // 刷新登录状态
 func (a *API) RefreshLoginRaw() (*CommonResponse, error) {
 	resp := new(CommonResponse)
@@ -83,10 +71,6 @@ func (a *API) RefreshLoginRaw() (*CommonResponse, error) {
 	}
 
 	return resp, nil
-}
-
-func LogoutRaw() (*CommonResponse, error) {
-	return std.LogoutRaw()
 }
 
 // 退出登录

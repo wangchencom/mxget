@@ -9,10 +9,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetSong(mid string) (*provider.Song, error) {
-	return std.GetSong(mid)
-}
-
 func (a *API) GetSong(mid string) (*provider.Song, error) {
 	resp, err := a.GetSongRaw(mid)
 	if err != nil {
@@ -23,10 +19,6 @@ func (a *API) GetSong(mid string) (*provider.Song, error) {
 	a.patchSongLyric(&resp.Data)
 	songs := resolve(&resp.Data)
 	return songs[0], nil
-}
-
-func GetSongRaw(mid string) (*SongResponse, error) {
-	return std.GetSongRaw(mid)
 }
 
 // 获取歌曲详情
@@ -49,20 +41,12 @@ func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURL(mid int, br int) (string, error) {
-	return std.GetSongURL(mid, br)
-}
-
 func (a *API) GetSongURL(mid int, br int) (string, error) {
 	resp, err := a.GetSongURLRaw(mid, br)
 	if err != nil {
 		return "", err
 	}
 	return resp.URL, nil
-}
-
-func GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
-	return std.GetSongURLRaw(mid, br)
 }
 
 // 获取歌曲播放地址，br: 比特率，128/192/320 可选
@@ -93,10 +77,6 @@ func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
 	return resp, nil
 }
 
-func GetSongLyric(mid int) (string, error) {
-	return std.GetSongLyric(mid)
-}
-
 func (a *API) GetSongLyric(mid int) (string, error) {
 	resp, err := a.GetSongLyricRaw(mid)
 	if err != nil {
@@ -116,10 +96,6 @@ func (a *API) GetSongLyric(mid int) (string, error) {
 	}
 
 	return sb.String(), nil
-}
-
-func GetSongLyricRaw(mid int) (*SongLyricResponse, error) {
-	return std.GetSongLyricRaw(mid)
 }
 
 // 获取歌词

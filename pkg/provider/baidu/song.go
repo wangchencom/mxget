@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetSong(songId string) (*provider.Song, error) {
-	return std.GetSong(songId)
-}
-
 func (a *API) GetSong(songId string) (*provider.Song, error) {
 	resp, err := a.GetSongRaw(songId)
 	if err != nil {
@@ -22,10 +18,6 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 	a.patchSongLyric(&resp.SongInfo)
 	songs := resolve(&resp.SongInfo)
 	return songs[0], nil
-}
-
-func GetSongRaw(songId string) (*SongResponse, error) {
-	return std.GetSongRaw(songId)
 }
 
 // 获取歌曲
@@ -40,10 +32,6 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	}
 
 	return resp, nil
-}
-
-func GetSongsRaw(songIds ...string) (*SongsResponse, error) {
-	return std.GetSongsRaw(songIds...)
 }
 
 // 批量获取歌曲，遗留接口，不推荐使用
@@ -63,10 +51,6 @@ func (a *API) GetSongsRaw(songIds ...string) (*SongsResponse, error) {
 	return resp, nil
 }
 
-func GetSongLyric(songId string) (string, error) {
-	return std.GetSongLyric(songId)
-}
-
 func (a *API) GetSongLyric(songId string) (string, error) {
 	resp, err := a.GetSongLyricRaw(songId)
 	if err != nil {
@@ -74,10 +58,6 @@ func (a *API) GetSongLyric(songId string) (string, error) {
 	}
 
 	return resp.LrcContent, nil
-}
-
-func GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
-	return std.GetSongLyricRaw(songId)
 }
 
 // 获取歌词

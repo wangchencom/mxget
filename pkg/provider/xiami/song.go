@@ -9,10 +9,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetSong(songId string) (*provider.Song, error) {
-	return std.GetSong(songId)
-}
-
 func (a *API) GetSong(songId string) (*provider.Song, error) {
 	resp, err := a.GetSongDetailRaw(songId)
 	if err != nil {
@@ -23,10 +19,6 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 	a.patchSongLyric(_song)
 	songs := resolve(_song)
 	return songs[0], nil
-}
-
-func GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
-	return std.GetSongDetailRaw(songId)
 }
 
 // 获取歌曲详情
@@ -57,10 +49,6 @@ func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	return resp, nil
 }
 
-func GetSongLyric(songId string) (string, error) {
-	return std.GetSongLyric(songId)
-}
-
 func (a *API) GetSongLyric(songId string) (string, error) {
 	resp, err := a.GetSongLyricRaw(songId)
 	if err != nil {
@@ -74,10 +62,6 @@ func (a *API) GetSongLyric(songId string) (string, error) {
 	}
 
 	return "", errors.New("official lyric not present")
-}
-
-func GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
-	return std.GetSongLyricRaw(songId)
 }
 
 // 获取歌词

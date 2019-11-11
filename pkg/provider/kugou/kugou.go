@@ -9,6 +9,10 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+var (
+	std = New(provider.Client())
+)
+
 const (
 	APISearch           = "http://mobilecdn.kugou.com/api/v3/search/song"
 	APIGetSong          = "http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo"
@@ -20,10 +24,6 @@ const (
 	APIGetAlbumSongs    = "http://mobilecdn.kugou.com/api/v3/album/song"
 	APIGetPlaylistInfo  = "http://mobilecdn.kugou.com/api/v3/special/info"
 	APIGetPlaylistSongs = "http://mobilecdn.kugou.com/api/v3/special/song"
-)
-
-var (
-	std = New(provider.Client())
 )
 
 type (

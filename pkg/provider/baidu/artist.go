@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetArtist(tingUid string) (*provider.Artist, error) {
-	return std.GetArtist(tingUid)
-}
-
 func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
 	resp, err := a.GetArtistRaw(tingUid, 0, 50)
 	if err != nil {
@@ -30,14 +26,10 @@ func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
 	songs := resolve(resp.SongList...)
 	return &provider.Artist{
 		Name:   strings.TrimSpace(resp.ArtistInfo.Name),
-		PicURL: strings.Split(resp.ArtistInfo.AvatarBig,"@")[0],
+		PicURL: strings.Split(resp.ArtistInfo.AvatarBig, "@")[0],
 		Count:  n,
 		Songs:  songs,
 	}, nil
-}
-
-func GetArtistRaw(tingUid string, offset int, limits int) (*ArtistResponse, error) {
-	return std.GetArtistRaw(tingUid, offset, limits)
 }
 
 // 获取歌手

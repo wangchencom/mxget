@@ -15,10 +15,6 @@ const (
 	Guid = "0"
 )
 
-func GetSong(songMid string) (*provider.Song, error) {
-	return std.GetSong(songMid)
-}
-
 func (a *API) GetSong(songMid string) (*provider.Song, error) {
 	resp, err := a.GetSongRaw(songMid)
 	if err != nil {
@@ -33,10 +29,6 @@ func (a *API) GetSong(songMid string) (*provider.Song, error) {
 	a.patchSongLyric(_song)
 	songs := resolve(_song)
 	return songs[0], nil
-}
-
-func GetSongRaw(songMid string) (*SongResponse, error) {
-	return std.GetSongRaw(songMid)
 }
 
 // 获取歌曲详情
@@ -59,10 +51,6 @@ func (a *API) GetSongRaw(songMid string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func GetSongURLV1(songMid string, mediaMid string) (string, error) {
-	return std.GetSongURLV1(songMid, mediaMid)
-}
-
 func (a *API) GetSongURLV1(songMid string, mediaMid string) (string, error) {
 	resp, err := a.GetSongURLV1Raw(songMid, mediaMid)
 	if err != nil {
@@ -78,10 +66,6 @@ func (a *API) GetSongURLV1(songMid string, mediaMid string) (string, error) {
 	}
 
 	return fmt.Sprintf(SongURL, item.FileName, item.Vkey), nil
-}
-
-func GetSongURLV1Raw(songMid string, mediaMid string) (*SongURLResponseV1, error) {
-	return std.GetSongURLV1Raw(songMid, mediaMid)
 }
 
 // 获取歌曲播放地址
@@ -105,10 +89,6 @@ func (a *API) GetSongURLV1Raw(songMid string, mediaMid string) (*SongURLResponse
 	return resp, nil
 }
 
-func GetSongURLV2(songMid string) (string, error) {
-	return std.GetSongURLV2(songMid)
-}
-
 func (a *API) GetSongURLV2(songMid string) (string, error) {
 	resp, err := a.GetSongsURLV2Raw(songMid)
 	if err != nil {
@@ -130,10 +110,6 @@ func (a *API) GetSongURLV2(songMid string) (string, error) {
 		return "", errors.New("get song url: copyright protection")
 	}
 	return sip + urlInfo.PURL, nil
-}
-
-func GetSongsURLV2Raw(songMids ...string) (*SongURLResponseV2, error) {
-	return std.GetSongsURLV2Raw(songMids...)
 }
 
 // 批量获取歌曲播放地址
@@ -176,10 +152,6 @@ func (a *API) GetSongsURLV2Raw(songMids ...string) (*SongURLResponseV2, error) {
 	return resp, nil
 }
 
-func GetSongLyric(songMid string) (string, error) {
-	return std.GetSongLyric(songMid)
-}
-
 func (a *API) GetSongLyric(songMid string) (string, error) {
 	resp, err := a.GetSongLyricRaw(songMid)
 	if err != nil {
@@ -192,10 +164,6 @@ func (a *API) GetSongLyric(songMid string) (string, error) {
 	// }
 
 	return resp.Lyric, nil
-}
-
-func GetSongLyricRaw(songMid string) (*SongLyricResponse, error) {
-	return std.GetSongLyricRaw(songMid)
 }
 
 // 获取歌词

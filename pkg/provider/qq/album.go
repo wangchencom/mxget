@@ -9,10 +9,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetAlbum(albumMid string) (*provider.Album, error) {
-	return std.GetAlbum(albumMid)
-}
-
 func (a *API) GetAlbum(albumMid string) (*provider.Album, error) {
 	resp, err := a.GetAlbumRaw(albumMid)
 	if err != nil {
@@ -34,10 +30,6 @@ func (a *API) GetAlbum(albumMid string) (*provider.Album, error) {
 		Count:  n,
 		Songs:  songs,
 	}, nil
-}
-
-func GetAlbumRaw(albumMid string) (*AlbumResponse, error) {
-	return std.GetAlbumRaw(albumMid)
 }
 
 // 获取专辑

@@ -1,11 +1,25 @@
-package xiami
+package xiami_test
 
 import (
+	"os"
 	"testing"
+
+	"github.com/winterssy/mxget/pkg/provider/xiami"
 )
 
+var client *xiami.API
+
+func setup() {
+	client = xiami.New(nil)
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	os.Exit(m.Run())
+}
+
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := SearchSongs("五月天")
+	result, err := client.SearchSongs("五月天")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -13,7 +27,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := GetSong("xMPr7Lbbb28")
+	song, err := client.GetSong("xMPr7Lbbb28")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -21,7 +35,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := GetSongLyric("xMPr7Lbbb28")
+	lyric, err := client.GetSongLyric("xMPr7Lbbb28")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +43,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := GetArtist("3110")
+	artist, err := client.GetArtist("3110")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +51,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := GetAlbum("nmTM4c70144")
+	album, err := client.GetAlbum("nmTM4c70144")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,7 +59,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := GetPlaylist("8007523")
+	playlist, err := client.GetPlaylist("8007523")
 	if err != nil {
 		t.Fatal(err)
 	}

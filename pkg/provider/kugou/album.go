@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetAlbum(albumId string) (*provider.Album, error) {
-	return std.GetAlbum(albumId)
-}
-
 func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	albumInfo, err := a.GetAlbumInfoRaw(albumId)
 	if err != nil {
@@ -42,10 +38,6 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	}, nil
 }
 
-func GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
-	return std.GetAlbumInfoRaw(albumId)
-}
-
 // 获取专辑信息
 func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	params := sreq.Params{
@@ -64,10 +56,6 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	}
 
 	return resp, nil
-}
-
-func GetAlbumSongsRaw(albumId string, page int, pageSize int) (*AlbumSongsResponse, error) {
-	return std.GetAlbumSongsRaw(albumId, page, pageSize)
 }
 
 // 获取专辑歌曲，page: 页码；pageSize: 每页数量，-1获取全部

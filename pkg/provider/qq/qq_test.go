@@ -1,9 +1,25 @@
-package qq
+package qq_test
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/winterssy/mxget/pkg/provider/qq"
+)
+
+var client *qq.API
+
+func setup() {
+	client = qq.New(nil)
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	os.Exit(m.Run())
+}
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := SearchSongs("Alan Walker")
+	result, err := client.SearchSongs("Alan Walker")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -11,7 +27,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := GetSong("002Zkt5S2z8JZx")
+	song, err := client.GetSong("002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +35,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURLV1(t *testing.T) {
-	url, err := GetSongURLV1("002Zkt5S2z8JZx", "002Zkt5S2z8JZx")
+	url, err := client.GetSongURLV1("002Zkt5S2z8JZx", "002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +43,7 @@ func TestAPI_GetSongURLV1(t *testing.T) {
 }
 
 func TestAPI_GetSongURLV2(t *testing.T) {
-	url, err := GetSongURLV2("002Zkt5S2z8JZx")
+	url, err := client.GetSongURLV2("002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +51,7 @@ func TestAPI_GetSongURLV2(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := GetSongLyric("002Zkt5S2z8JZx")
+	lyric, err := client.GetSongLyric("002Zkt5S2z8JZx")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +59,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := GetArtist("000Sp0Bz4JXH0o")
+	artist, err := client.GetArtist("000Sp0Bz4JXH0o")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +67,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := GetAlbum("002fRO0N4FftzY")
+	album, err := client.GetAlbum("002fRO0N4FftzY")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +75,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := GetPlaylist("5474239760")
+	playlist, err := client.GetPlaylist("5474239760")
 	if err != nil {
 		t.Fatal(err)
 	}

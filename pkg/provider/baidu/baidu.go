@@ -8,6 +8,10 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+var (
+	std = New(provider.Client())
+)
+
 const (
 	APISearch       = "http://musicapi.qianqian.com/v1/restserver/ting?method=baidu.ting.search.merge&from=android&version=8.1.4.0&format=json&type=-1&isNew=1"
 	APIGetSong      = "http://musicapi.qianqian.com/v1/restserver/ting?method=baidu.ting.song.getInfos&format=json&from=android&version=8.1.4.0"
@@ -16,10 +20,6 @@ const (
 	APIGetArtist    = "http://musicapi.qianqian.com/v1/restserver/ting?method=baidu.ting.artist.getSongList&from=android&version=8.1.4.0&format=json&order=2"
 	APIGetAlbum     = "http://musicapi.qianqian.com/v1/restserver/ting?method=baidu.ting.album.getAlbumInfo&from=android&version=8.1.4.0&format=json"
 	APIGetPlaylist  = "http://musicapi.qianqian.com/v1/restserver/ting?method=baidu.ting.ugcdiy.getBaseInfo&from=android&version=8.1.4.0"
-)
-
-var (
-	std = New(provider.Client())
 )
 
 type (

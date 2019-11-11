@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetAlbum(albumId string) (*provider.Album, error) {
-	return std.GetAlbum(albumId)
-}
-
 func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	resp, err := a.GetAlbumRaw(albumId, 1, 9999)
 	if err != nil {
@@ -34,10 +30,6 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		Count:  n,
 		Songs:  songs,
 	}, nil
-}
-
-func GetAlbumRaw(albumId string, page int, pageSize int) (*AlbumResponse, error) {
-	return std.GetAlbumRaw(albumId, page, pageSize)
 }
 
 // 获取专辑，page: 页码； pageSize: 每页数量，如果要获取全部请设置为较大的值

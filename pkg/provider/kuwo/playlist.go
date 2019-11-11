@@ -10,10 +10,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-func GetPlaylist(playlistId string) (*provider.Playlist, error) {
-	return std.GetPlaylist(playlistId)
-}
-
 func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	resp, err := a.GetPlaylistRaw(playlistId, 1, 9999)
 	if err != nil {
@@ -34,10 +30,6 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		Count:  n,
 		Songs:  songs,
 	}, nil
-}
-
-func GetPlaylistRaw(playlistId string, page int, pageSize int) (*PlaylistResponse, error) {
-	return std.GetPlaylistRaw(playlistId, page, pageSize)
 }
 
 // 获取歌单，page: 页码； pageSize: 每页数量，如果要获取全部请设置为较大的值

@@ -1,9 +1,25 @@
-package kuwo
+package kuwo_test
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/winterssy/mxget/pkg/provider/kuwo"
+)
+
+var client *kuwo.API
+
+func setup() {
+	client = kuwo.New(nil)
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	os.Exit(m.Run())
+}
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := SearchSongs("周杰伦")
+	result, err := client.SearchSongs("周杰伦")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -11,7 +27,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := GetSong("76323299")
+	song, err := client.GetSong("76323299")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +35,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURL(t *testing.T) {
-	url, err := GetSongURL(76323299, 320)
+	url, err := client.GetSongURL(76323299, 320)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +43,7 @@ func TestAPI_GetSongURL(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := GetSongLyric(76323299)
+	lyric, err := client.GetSongLyric(76323299)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +51,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := GetArtist("336")
+	artist, err := client.GetArtist("336")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +59,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := GetAlbum("10685968")
+	album, err := client.GetAlbum("10685968")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +67,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := GetPlaylist("1085247459")
+	playlist, err := client.GetPlaylist("1085247459")
 	if err != nil {
 		t.Fatal(err)
 	}
