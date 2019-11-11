@@ -43,6 +43,39 @@ go get -u github.com/winterssy/mxget
 
 > 本项目不提供可执行程序下载，如须开箱即用，可选择 **[pymxget](https://github.com/winterssy/pymxget)** 。
 
+```
+ _____ ______      ___    ___ ________  _______  _________   
+|\   _ \  _   \   |\  \  /  /|\   ____\|\  ___ \|\___   ___\ 
+\ \  \\\__\ \  \  \ \  \/  / | \  \___|\ \   __/\|___ \  \_| 
+ \ \  \\|__| \  \  \ \    / / \ \  \  __\ \  \_|/__  \ \  \  
+  \ \  \    \ \  \  /     \/   \ \  \|\  \ \  \_|\ \  \ \  \ 
+   \ \__\    \ \__\/  /\   \    \ \_______\ \_______\  \ \__\
+    \|__|     \|__/__/ /\ __\    \|_______|\|_______|   \|__|
+                  |__|/ \|__|                                
+
+A simple tool that help you search and download your favorite music,
+please visit https://github.com/winterssy/mxget for more detail.
+
+Usage:
+  mxget [command]
+
+Available Commands:
+  album       Fetch and download album songs via its id.
+  artist      Fetch and download artist hot songs via its id.
+  config      Specify the default behavior of mxget.
+  help        Help about any command
+  playlist    Fetch and download playlist songs via its id.
+  search      Search song from the Internet.
+  serve       Run mxget as an API server.
+  song        Fetch and download song via its id.
+
+Flags:
+  -h, --help      help for mxget
+      --version   version for mxget
+
+Use "mxget [command] --help" for more information about a command.
+```
+
 ### 作为CLI使用
 
 这是 `mxget` 的基础功能，你可以通过终端调用 `mxget` 实现音乐搜索、下载功能。以网易云音乐为例，
