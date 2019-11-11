@@ -173,10 +173,6 @@ func (a *API) Platform() int {
 	return provider.KuWo
 }
 
-func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
-	return std.Request(method, url, opts...)
-}
-
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
 	// csrf 必须跟 kw_token 保持一致
 	csrf := "0"

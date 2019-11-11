@@ -239,10 +239,6 @@ func (a *API) Platform() int {
 	return provider.MiGu
 }
 
-func Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
-	return std.Request(method, url, opts...)
-}
-
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
 	defaultOpts := []sreq.RequestOption{
 		sreq.WithHeaders(sreq.Headers{
