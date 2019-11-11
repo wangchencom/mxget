@@ -8,6 +8,12 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+/*
+	注意！
+	GetSongIdRaw, GetSongPicRaw, GetSongLyricRaw 为网页版API
+	这些API限流，并发请求经常503，不适用于批量获取
+*/
+
 func (a *API) GetSongId(copyrightId string) (string, error) {
 	resp, err := a.GetSongIdRaw(copyrightId)
 	if err != nil {

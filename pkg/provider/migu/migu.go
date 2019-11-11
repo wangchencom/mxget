@@ -252,7 +252,6 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Request(method, url, opts...)
 }
 
-// 网页版API限流，并发请求经常503，不适用于批量获取
 func (a *API) patchSongInfo(songs ...*Song) {
 	c := concurrency.New(32)
 	for _, s := range songs {
