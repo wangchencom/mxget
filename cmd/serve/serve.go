@@ -14,7 +14,7 @@ var (
 
 var CmdServe = &cobra.Command{
 	Use:   "serve",
-	Short: "Run mxget as an API server.",
+	Short: "Run mxget as an API server",
 }
 
 func Run(cmd *cobra.Command, args []string) {

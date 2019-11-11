@@ -18,7 +18,7 @@ const (
 
 var CmdRoot = &cobra.Command{
 	Use:   "mxget",
-	Short: "Show help for mxget commands.",
+	Short: "Show help for mxget commands",
 	Long: `
  _____ ______      ___    ___ ________  _______  _________   
 |\   _ \  _   \   |\  \  /  /|\   ____\|\  ___ \|\___   ___\ 

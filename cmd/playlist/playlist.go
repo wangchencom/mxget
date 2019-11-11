@@ -14,7 +14,7 @@ var (
 
 var CmdPlaylist = &cobra.Command{
 	Use:   "playlist",
-	Short: "Fetch and download playlist songs via its id.",
+	Short: "Fetch and download playlist songs via its id",
 }
 
 func Run(cmd *cobra.Command, args []string) {

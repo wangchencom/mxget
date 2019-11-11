@@ -17,7 +17,7 @@ var (
 
 var CmdSet = &cobra.Command{
 	Use:   "config",
-	Short: "Specify the default behavior of mxget.",
+	Short: "Specify the default behavior of mxget",
 }
 
 func Run(cmd *cobra.Command, args []string) {

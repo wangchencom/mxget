@@ -14,7 +14,7 @@ var (
 
 var CmdArtist = &cobra.Command{
 	Use:   "artist",
-	Short: "Fetch and download artist hot songs via its id.",
+	Short: "Fetch and download artist hot songs via its id",
 }
 
 func Run(cmd *cobra.Command, args []string) {

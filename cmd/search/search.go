@@ -15,7 +15,7 @@ var (
 
 var CmdSearch = &cobra.Command{
 	Use:   "search",
-	Short: "Search song from the Internet.",
+	Short: "Search songs from the Internet",
 }
 
 func Run(cmd *cobra.Command, args []string) {

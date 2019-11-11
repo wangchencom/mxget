@@ -60,14 +60,14 @@ Usage:
   mxget [command]
 
 Available Commands:
-  album       Fetch and download album songs via its id.
-  artist      Fetch and download artist hot songs via its id.
-  config      Specify the default behavior of mxget.
+  album       Fetch and download album songs via its id
+  artist      Fetch and download artist hot songs via its id
+  config      Specify the default behavior of mxget
   help        Help about any command
-  playlist    Fetch and download playlist songs via its id.
-  search      Search song from the Internet.
-  serve       Run mxget as an API server.
-  song        Fetch and download song via its id.
+  playlist    Fetch and download playlist songs via its id
+  search      Search songs from the Internet
+  serve       Run mxget as an API server
+  song        Fetch and download single song via its id
 
 Flags:
   -h, --help      help for mxget
