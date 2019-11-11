@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-var (
-	std = New(provider.Client())
-)
-
 const (
 	APILinux          = "https://music.163.com/api/linux/forward"
 	APISearch         = "https://music.163.com/weapi/search/get"
@@ -27,6 +23,10 @@ const (
 
 	SongRequestLimit = 1000
 	SongDefaultBR    = 128
+)
+
+var (
+	std = New(provider.Client())
 )
 
 type (

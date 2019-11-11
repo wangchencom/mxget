@@ -12,10 +12,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-var (
-	std = New(provider.Client())
-)
-
 const (
 	APISearch        = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=json&platform=yqq&new_json=1"
 	APIGetSong       = "https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?format=json&platform=yqq"
@@ -31,6 +27,10 @@ const (
 	AlbumPicURL  = "https://y.gtimg.cn/music/photo_new/T002R800x800M000%s.jpg"
 
 	SongURLRequestLimit = 300
+)
+
+var (
+	std = New(provider.Client())
 )
 
 type (

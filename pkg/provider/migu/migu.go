@@ -8,10 +8,6 @@ import (
 	"github.com/winterssy/sreq"
 )
 
-var (
-	std = New(provider.Client())
-)
-
 const (
 	APISearch         = "https://app.c.nf.migu.cn/MIGUM2.0/v1.0/content/search_all.do?isCopyright=1&isCorrect=1"
 	APIGetSongId      = "http://music.migu.cn/v3/api/music/audioPlayer/songs?type=1"
@@ -29,12 +25,16 @@ const (
 	SongDefaultBR = 128
 )
 
-var codeRate = map[int]string{
-	64:  "LQ",
-	128: "PQ",
-	320: "HQ",
-	999: "SQ",
-}
+var (
+	std = New(provider.Client())
+
+	codeRate = map[int]string{
+		64:  "LQ",
+		128: "PQ",
+		320: "HQ",
+		999: "SQ",
+	}
+)
 
 type (
 	CommonResponse struct {
