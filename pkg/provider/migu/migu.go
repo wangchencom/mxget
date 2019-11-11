@@ -91,6 +91,7 @@ type (
 		Album        string    `json:"album"`
 		AlbumImgs    []ImgItem `json:"albumImgs"`
 		LrcURL       string    `json:"lrcUrl"`
+		PicURL       string    `json:"-"`
 		Lyric        string    `json:"-"`
 		URL          string    `json:"-"`
 	}
@@ -251,24 +252,24 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Request(method, url, opts...)
 }
 
-// 网页版API限流，并发请求经常503
-// func (a *API) patchSongInfo(songs ...*Song) {
-// 	c := concurrency.New(32)
-// 	for _, s := range songs {
-// 		c.Add(1)
-// 		go func(s *Song) {
-// 			picURL, err := a.GetSongPic(s.SongId)
-// 			if err == nil {
-// 				if !strings.HasPrefix(picURL, "http:") {
-// 					picURL = "http:" + picURL
-// 				}
-// 				s.PicURL = picURL
-// 			}
-// 			c.Done()
-// 		}(s)
-// 	}
-// 	c.Wait()
-// }
+// 网页版API限流，并发请求经常503，不适用于批量获取
+func (a *API) patchSongInfo(songs ...*Song) {
+	c := concurrency.New(32)
+	for _, s := range songs {
+		c.Add(1)
+		go func(s *Song) {
+			picURL, err := a.GetSongPic(s.SongId)
+			if err == nil {
+				if !strings.HasPrefix(picURL, "http:") {
+					picURL = "http:" + picURL
+				}
+				s.PicURL = picURL
+			}
+			c.Done()
+		}(s)
+	}
+	c.Wait()
+}
 
 func (a *API) patchSongURL(br int, songs ...*Song) {
 	for _, s := range songs {

@@ -206,6 +206,17 @@ func (a *API) Platform() int {
 	return provider.QQ
 }
 
+func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
+	defaultOpts := []sreq.RequestOption{
+		sreq.WithHeaders(sreq.Headers{
+			"Origin":  "https://c.y.qq.com",
+			"Referer": "https://c.y.qq.com",
+		}),
+	}
+	opts = append(opts, defaultOpts...)
+	return a.Client.Request(method, url, opts...)
+}
+
 func (a *API) patchSongURLV1(songs ...*Song) {
 	c := concurrency.New(32)
 	for _, s := range songs {
@@ -270,17 +281,6 @@ func (a *API) patchSongURLV2(songs ...*Song) {
 	for _, s := range songs {
 		s.URL = urlMap[s.Mid]
 	}
-}
-
-func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
-	defaultOpts := []sreq.RequestOption{
-		sreq.WithHeaders(sreq.Headers{
-			"Origin":  "https://c.y.qq.com",
-			"Referer": "https://c.y.qq.com",
-		}),
-	}
-	opts = append(opts, defaultOpts...)
-	return a.Client.Request(method, url, opts...)
 }
 
 func (a *API) patchSongLyric(songs ...*Song) {

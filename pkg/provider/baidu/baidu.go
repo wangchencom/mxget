@@ -191,22 +191,6 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Request(method, url, opts...)
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, 0, len(src))
-	for _, s := range src {
-		songs = append(songs, &provider.Song{
-			Name:     strings.TrimSpace(s.Title),
-			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Author, ",", "/")),
-			Album:    strings.TrimSpace(s.AlbumTitle),
-			PicURL:   strings.Split(s.PicBig, "@")[0],
-			Lyric:    s.Lyric,
-			Playable: s.URL != "",
-			URL:      s.URL,
-		})
-	}
-	return songs
-}
-
 func songURL(urls []URL) string {
 	for _, i := range urls {
 		if i.FileFormat == "mp3" {
@@ -247,4 +231,20 @@ func (a *API) patchSongLyric(songs ...*Song) {
 		}(s)
 	}
 	c.Wait()
+}
+
+func resolve(src ...*Song) []*provider.Song {
+	songs := make([]*provider.Song, 0, len(src))
+	for _, s := range src {
+		songs = append(songs, &provider.Song{
+			Name:     strings.TrimSpace(s.Title),
+			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Author, ",", "/")),
+			Album:    strings.TrimSpace(s.AlbumTitle),
+			PicURL:   strings.Split(s.PicBig, "@")[0],
+			Lyric:    s.Lyric,
+			Playable: s.URL != "",
+			URL:      s.URL,
+		})
+	}
+	return songs
 }
