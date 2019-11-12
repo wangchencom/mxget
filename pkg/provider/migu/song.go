@@ -3,6 +3,7 @@ package migu
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
@@ -46,10 +47,21 @@ func (a *API) GetSongIdRaw(copyrightId string) (*SongIdResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
-	songId, err := a.GetSongId(copyrightId)
-	if err != nil {
-		return nil, err
+func (a *API) GetSong(id string) (*provider.Song, error) {
+	/*
+		先判断id是版权id还是歌曲id，以减少1次API请求
+		测试表现版权id的长度是11位，以6开头并且可能包含字符，歌曲id为纯数字，长度不定
+		不确定是否会误判，待反馈
+	*/
+	var songId string
+	var err error
+	if len(id) > 10 && strings.HasPrefix(id, "6") {
+		songId, err = a.GetSongId(id)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		songId = id
 	}
 
 	resp, err := a.GetSongRaw(songId)
@@ -61,7 +73,8 @@ func (a *API) GetSong(copyrightId string) (*provider.Song, error) {
 	}
 
 	_song := resp.Resource[0]
-	a.patchSongURL(SongDefaultBR, _song)
+
+	// 单曲请求可调用网页版API获取歌词，不会出现乱码现象
 	lyric, err := a.GetSongLyric(_song.CopyrightId)
 	if err == nil {
 		_song.Lyric = lyric
@@ -90,15 +103,13 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongURL(contentId string, br int) string {
-	var _br int
-	switch br {
-	case 64, 128, 320, 999:
-		_br = br
-	default:
-		_br = 320
+func (a *API) GetSongURL(contentId, resourceType string) (string, error) {
+	resp, err := a.GetSongURLRaw(contentId, resourceType)
+	if err != nil {
+		return "", err
 	}
-	return fmt.Sprintf(SongURL, contentId, "E", codeRate[_br])
+
+	return resp.Data.URL, nil
 }
 
 // 获取歌曲播放地址

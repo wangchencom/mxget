@@ -19,7 +19,6 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album: no data")
 	}
 
-	a.patchSongURL(SongDefaultBR, resp.Resource[0].SongItems...)
 	a.patchSongLyric(resp.Resource[0].SongItems...)
 	songs := resolve(resp.Resource[0].SongItems...)
 	return &provider.Album{

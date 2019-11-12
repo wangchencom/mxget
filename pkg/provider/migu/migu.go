@@ -1,6 +1,7 @@
 package migu
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -270,12 +271,22 @@ func (a *API) patchSongInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchSongURL(br int, songs ...*Song) {
+func (a *API) patchSongURL(songs ...*Song) {
+	c := concurrency.New(32)
 	for _, s := range songs {
-		s.URL = a.GetSongURL(s.ContentId, br)
+		c.Add(1)
+		go func(s *Song) {
+			url, err := a.GetSongURL(s.ContentId, s.ResourceType)
+			if err == nil {
+				s.URL = url
+			}
+			c.Done()
+		}(s)
 	}
+	c.Wait()
 }
 
+// 部分歌词文本文件由于不是utf-8编码，可能会乱码，目前无解
 func (a *API) patchSongLyric(songs ...*Song) {
 	c := concurrency.New(32)
 	for _, s := range songs {
@@ -302,17 +313,29 @@ func picURL(imgs []ImgItem) string {
 	return ""
 }
 
+func songURL(contentId string, br int) string {
+	var _br int
+	switch br {
+	case 64, 128, 320, 999:
+		_br = br
+	default:
+		_br = 320
+	}
+	return fmt.Sprintf(SongURL, contentId, "E", codeRate[_br])
+}
+
 func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
+		url := songURL(s.ContentId, SongDefaultBR)
 		songs = append(songs, &provider.Song{
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singer, "|", "/")),
 			Album:    strings.TrimSpace(s.Album),
 			PicURL:   picURL(s.AlbumImgs),
 			Lyric:    s.Lyric,
-			Playable: s.URL != "",
-			URL:      s.URL,
+			Playable: url != "",
+			URL:      url,
 		})
 	}
 	return songs

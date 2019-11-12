@@ -33,7 +33,7 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 			albums = append(albums, strings.TrimSpace(a.Name))
 		}
 		songs = append(songs, &provider.SearchSongsData{
-			Id:     s.CopyrightId,
+			Id:     s.Id,
 			Name:   strings.TrimSpace(s.Name),
 			Artist: strings.Join(artists, "/"),
 			Album:  strings.Join(albums, "/"),

@@ -35,7 +35,6 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		_songs = append(_songs, &itemList[i].Song)
 	}
 
-	a.patchSongURL(SongDefaultBR, _songs...)
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Artist{

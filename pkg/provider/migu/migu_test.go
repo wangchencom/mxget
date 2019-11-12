@@ -34,8 +34,8 @@ func TestAPI_GetSong(t *testing.T) {
 	t.Log(song)
 }
 
-func TestAPI_GetSongURLRaw(t *testing.T) {
-	resp, err := client.GetSongURLRaw("600908000002677565", "2")
+func TestAPI_GetSongURL(t *testing.T) {
+	resp, err := client.GetSongURL("600908000002677565", "2")
 	if err != nil {
 		t.Fatal(err)
 	}
