@@ -260,7 +260,7 @@ func (p *LoginResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
-func (a *API) Platform() int {
+func (a *API) PlatformId() provider.PlatformId {
 	return provider.XiaMi
 }
 

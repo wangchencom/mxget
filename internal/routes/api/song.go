@@ -49,7 +49,7 @@ func getSong(c *gin.Context, client provider.API) {
 		c.JSON(500, &provider.Response{
 			Code:     500,
 			Msg:      err.Error(),
-			Platform: client.Platform(),
+			Platform: client.PlatformId(),
 		})
 		return
 	}
@@ -57,6 +57,6 @@ func getSong(c *gin.Context, client provider.API) {
 	c.JSON(200, &provider.Response{
 		Code:     200,
 		Data:     data,
-		Platform: client.Platform(),
+		Platform: client.PlatformId(),
 	})
 }

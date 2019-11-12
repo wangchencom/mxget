@@ -7,8 +7,10 @@ import (
 	"github.com/winterssy/sreq"
 )
 
+type PlatformId uint16
+
 const (
-	NetEase = 1000 + iota
+	NetEase PlatformId = 1000 + iota
 	QQ
 	MiGu
 	KuGou
@@ -72,12 +74,12 @@ type (
 		Code     int         `json:"code"`
 		Msg      string      `json:"msg,omitempty"`
 		Data     interface{} `json:"data,omitempty"`
-		Platform int         `json:"platform,omitempty"`
+		Platform PlatformId  `json:"platform,omitempty"`
 	}
 
 	API interface {
-		// 平台标识
-		Platform() int
+		// 专用识别码
+		PlatformId() PlatformId
 		// 搜索歌曲
 		SearchSongs(keyword string) (*SearchSongsResult, error)
 		// 获取单曲

@@ -34,7 +34,7 @@ var (
 )
 
 var (
-	platformIds = map[string]int{
+	platformIds = map[string]provider.PlatformId{
 		"netease":  provider.NetEase,
 		"nc":       provider.NetEase,
 		"tencent":  provider.QQ,
@@ -52,7 +52,7 @@ var (
 		"bd":       provider.BaiDu,
 	}
 
-	clients = map[int]provider.API{
+	clients = map[provider.PlatformId]provider.API{
 		provider.NetEase: netease.Client(),
 		provider.QQ:      qq.Client(),
 		provider.MiGu:    migu.Client(),
@@ -62,7 +62,7 @@ var (
 		provider.BaiDu:   baidu.Client(),
 	}
 
-	sites = map[int]string{
+	sites = map[provider.PlatformId]string{
 		provider.NetEase: "music.163.com",
 		provider.QQ:      "y.qq.com",
 		provider.MiGu:    "music.migu.cn",
@@ -75,8 +75,8 @@ var (
 
 type (
 	Config struct {
-		DownloadDir   string `json:"download_dir"`
-		MusicPlatform int    `json:"music_platform"`
+		DownloadDir   string              `json:"download_dir"`
+		MusicPlatform provider.PlatformId `json:"music_platform"`
 
 		// 预留字段，其它设置项
 		others   map[string]interface{} `json:"-"`
@@ -84,15 +84,15 @@ type (
 	}
 )
 
-func GetPlatformId(platformFlag string) int {
+func GetPlatformId(platformFlag string) provider.PlatformId {
 	return platformIds[platformFlag]
 }
 
-func GetClient(platformId int) provider.API {
+func GetClient(platformId provider.PlatformId) provider.API {
 	return clients[platformId]
 }
 
-func GetSite(platformId int) string {
+func GetSite(platformId provider.PlatformId) string {
 	return sites[platformId]
 }
 
