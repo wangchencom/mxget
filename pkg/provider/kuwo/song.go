@@ -46,6 +46,7 @@ func (a *API) GetSongURL(mid int, br int) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return resp.URL, nil
 }
 

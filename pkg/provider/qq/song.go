@@ -109,6 +109,7 @@ func (a *API) GetSongURLV2(songMid string) (string, error) {
 	if urlInfo.PURL == "" {
 		return "", errors.New("get song url: copyright protection")
 	}
+
 	return sip + urlInfo.PURL, nil
 }
 
