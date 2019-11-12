@@ -2,6 +2,7 @@ package search
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
@@ -34,20 +35,16 @@ func Run(cmd *cobra.Command, args []string) {
 		easylog.Fatal(err)
 	}
 
+	var sb strings.Builder
 	for i, s := range result.Songs {
-		fmt.Printf("[%02d] %s - %s - %s\n", i+1, s.Name, s.Artist, s.Id)
+		fmt.Fprintf(&sb, "[%02d] %s - %s - %s\n", i+1, s.Name, s.Artist, s.Id)
 	}
+	fmt.Print(sb.String())
 
 	if from != "" {
-		fmt.Printf(`
-Command: 
-    mxget song --from %s --id [id]
-`, from)
+		fmt.Printf("Command: mxget song --from %s --id [id]\n", from)
 	} else {
-		fmt.Print(`
-Command: 
-    mxget song --id [id]
-`)
+		fmt.Println("Command: mxget song --id [id]")
 	}
 }
 
