@@ -26,7 +26,7 @@ func Run(cmd *cobra.Command, args []string) {
 Current settings:
     download dir -> %s
     music platform -> %d [%s]
-`, settings.Cfg.DownloadDir, settings.Cfg.MusicPlatform, settings.GetSite(settings.Cfg.MusicPlatform)))
+`, settings.Cfg.DownloadDir, settings.Cfg.MusicPlatform, settings.GetPlatformDesc(settings.Cfg.MusicPlatform)))
 		return
 	}
 

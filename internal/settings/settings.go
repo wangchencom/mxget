@@ -52,6 +52,16 @@ var (
 		"bd":       provider.BaiDu,
 	}
 
+	platformDescs = map[provider.PlatformId]string{
+		provider.NetEase: "netease cloud music",
+		provider.QQ:      "qq music",
+		provider.MiGu:    "migu music",
+		provider.KuGou:   "kugou music",
+		provider.KuWo:    "kuwo music",
+		provider.XiaMi:   "xiami music",
+		provider.BaiDu:   "qianqian music",
+	}
+
 	clients = map[provider.PlatformId]provider.API{
 		provider.NetEase: netease.Client(),
 		provider.QQ:      qq.Client(),
@@ -60,16 +70,6 @@ var (
 		provider.KuWo:    kuwo.Client(),
 		provider.XiaMi:   xiami.Client(),
 		provider.BaiDu:   baidu.Client(),
-	}
-
-	sites = map[provider.PlatformId]string{
-		provider.NetEase: "https://music.163.com",
-		provider.QQ:      "https://y.qq.com",
-		provider.MiGu:    "http://music.migu.cn/v3",
-		provider.KuGou:   "https://www.kugou.com",
-		provider.KuWo:    "http://www.kuwo.cn",
-		provider.XiaMi:   "https://www.xiami.com",
-		provider.BaiDu:   "https://music.taihe.com",
 	}
 )
 
@@ -88,12 +88,12 @@ func GetPlatformId(platformFlag string) provider.PlatformId {
 	return platformIds[platformFlag]
 }
 
-func GetClient(platformId provider.PlatformId) provider.API {
-	return clients[platformId]
+func GetPlatformDesc(platformId provider.PlatformId) string {
+	return platformDescs[platformId]
 }
 
-func GetSite(platformId provider.PlatformId) string {
-	return sites[platformId]
+func GetClient(platformId provider.PlatformId) provider.API {
+	return clients[platformId]
 }
 
 func Init() {
@@ -154,7 +154,7 @@ func (c *Config) loadCfgFile() error {
 }
 
 func (c *Config) check() error {
-	if GetSite(c.MusicPlatform) == "" {
+	if GetPlatformDesc(c.MusicPlatform) == "" {
 		c.MusicPlatform = provider.NetEase
 		return fmt.Errorf("unexpected music platform: %d", c.MusicPlatform)
 	}

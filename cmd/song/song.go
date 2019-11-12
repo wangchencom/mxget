@@ -28,7 +28,7 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 
 	client := settings.GetClient(platformId)
-	easylog.Infof("Fetch song %s from %s", id, settings.GetSite(platformId))
+	easylog.Infof("Fetch song [%s] from [%s]", id, settings.GetPlatformDesc(platformId))
 	song, err := client.GetSong(id)
 	if err != nil {
 		easylog.Fatal(err)

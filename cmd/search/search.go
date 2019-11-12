@@ -30,6 +30,7 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 
 	client := settings.GetClient(platformId)
+	fmt.Printf("Search %q from [%s]...\n\n", keyword, settings.GetPlatformDesc(platformId))
 	result, err := client.SearchSongs(keyword)
 	if err != nil {
 		easylog.Fatal(err)
@@ -39,7 +40,7 @@ func Run(cmd *cobra.Command, args []string) {
 	for i, s := range result.Songs {
 		fmt.Fprintf(&sb, "[%02d] %s - %s - %s\n", i+1, s.Name, s.Artist, s.Id)
 	}
-	fmt.Print(sb.String())
+	fmt.Println(sb.String())
 
 	if from != "" {
 		fmt.Printf("Command: mxget song --from %s --id [id]\n", from)
