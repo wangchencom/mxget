@@ -175,14 +175,6 @@ func Client() provider.API {
 	return std
 }
 
-func (c *CommonResponse) String() string {
-	return provider.ToJSON(c, false)
-}
-
-func (e *LoginResponse) String() string {
-	return provider.ToJSON(e, false)
-}
-
 func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
@@ -209,6 +201,10 @@ func (a *AlbumResponse) String() string {
 
 func (p *PlaylistResponse) String() string {
 	return provider.ToJSON(p, false)
+}
+
+func (e *LoginResponse) String() string {
+	return provider.ToJSON(e, false)
 }
 
 func (a *API) PlatformId() provider.PlatformId {
