@@ -1,6 +1,7 @@
 package netease
 
 import (
+	"net/http"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -27,6 +28,8 @@ const (
 
 var (
 	std = New(provider.Client())
+
+	cookie *http.Cookie
 )
 
 type (
@@ -186,6 +189,10 @@ func (p *PlaylistResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
+func init() {
+	cookie, _ = createCookie()
+}
+
 func New(client *sreq.Client) *API {
 	if client == nil {
 		client = sreq.New(nil)
@@ -219,7 +226,6 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	// 如果已经登录，不需要额外设置cookie，cookie jar会自动管理
 	_, err := a.Client.FilterCookie(url, "MUSIC_U")
 	if err != nil {
-		cookie, _ := createCookie()
 		defaultOpts = append(defaultOpts, sreq.WithCookies(cookie))
 	}
 
