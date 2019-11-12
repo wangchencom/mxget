@@ -38,6 +38,7 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Artist{
+		Id:     artistInfo.Resource[0].SingerId,
 		Name:   strings.TrimSpace(artistInfo.Resource[0].Singer),
 		PicURL: picURL(artistInfo.Resource[0].Imgs),
 		Count:  len(songs),

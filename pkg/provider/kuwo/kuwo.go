@@ -2,6 +2,7 @@ package kuwo
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -232,6 +233,7 @@ func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{
+			Id:       strconv.Itoa(s.RId),
 			Name:     strings.TrimSpace(s.Name),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Artist, "&", "/")),
 			Album:    strings.TrimSpace(s.Album),

@@ -53,6 +53,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Playlist{
+		Id:     resp.Data.Data.CollectDetail.ListId,
 		Name:   strings.TrimSpace(resp.Data.Data.CollectDetail.CollectName),
 		PicURL: resp.Data.Data.CollectDetail.CollectLogo,
 		Count:  n,

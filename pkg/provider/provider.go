@@ -27,6 +27,7 @@ var (
 
 type (
 	Song struct {
+		Id       string `json:"id"`
 		Name     string `json:"name"`
 		Artist   string `json:"artist"`
 		Album    string `json:"album"`
@@ -37,6 +38,7 @@ type (
 	}
 
 	Artist struct {
+		Id     string  `json:"id"`
 		Name   string  `json:"name"`
 		PicURL string  `json:"pic_url,omitempty"`
 		Count  int     `json:"count"`
@@ -44,6 +46,7 @@ type (
 	}
 
 	Album struct {
+		Id     string  `json:"id"`
 		Name   string  `json:"name"`
 		PicURL string  `json:"pic_url,omitempty"`
 		Count  int     `json:"count"`
@@ -51,6 +54,7 @@ type (
 	}
 
 	Playlist struct {
+		Id     string  `json:"id"`
 		Name   string  `json:"name"`
 		PicURL string  `json:"pic_url,omitempty"`
 		Count  int     `json:"count"`

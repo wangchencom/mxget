@@ -329,6 +329,7 @@ func resolve(src ...*Song) []*provider.Song {
 	for _, s := range src {
 		url := songURL(s.ContentId, SongDefaultBR)
 		songs = append(songs, &provider.Song{
+			Id:       s.SongId,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singer, "|", "/")),
 			Album:    strings.TrimSpace(s.Album),

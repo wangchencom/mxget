@@ -2,6 +2,7 @@ package netease
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -270,6 +271,7 @@ func resolve(src ...*Song) []*provider.Song {
 			artists = append(artists, strings.TrimSpace(a.Name))
 		}
 		songs = append(songs, &provider.Song{
+			Id:       strconv.Itoa(s.Id),
 			Name:     strings.TrimSpace(s.Name),
 			Artist:   strings.Join(artists, "/"),
 			Album:    strings.TrimSpace(s.Album.Name),

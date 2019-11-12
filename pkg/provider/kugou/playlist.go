@@ -31,6 +31,7 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 	a.patchSongLyric(playlistSongs.Data.Info...)
 	songs := resolve(playlistSongs.Data.Info...)
 	return &provider.Playlist{
+		Id:     strconv.Itoa(playlistInfo.Data.SpecialId),
 		Name:   strings.TrimSpace(playlistInfo.Data.SpecialName),
 		PicURL: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),
 		Count:  n,

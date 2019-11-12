@@ -306,6 +306,7 @@ func resolve(src ...*Song) []*provider.Song {
 			artists = append(artists, strings.TrimSpace(a.Name))
 		}
 		songs = append(songs, &provider.Song{
+			Id:       s.Mid,
 			Name:     strings.TrimSpace(s.Title),
 			Artist:   strings.Join(artists, "/"),
 			Album:    strings.TrimSpace(s.Album.Name),

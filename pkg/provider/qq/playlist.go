@@ -27,6 +27,7 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	a.patchSongLyric(_songs...)
 	songs := resolve(_songs...)
 	return &provider.Playlist{
+		Id:     playlist.DissTid,
 		Name:   strings.TrimSpace(playlist.DissName),
 		PicURL: playlist.PicURL,
 		Count:  len(songs),

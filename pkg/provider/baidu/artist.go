@@ -25,6 +25,7 @@ func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
 	a.patchSongLyric(resp.SongList...)
 	songs := resolve(resp.SongList...)
 	return &provider.Artist{
+		Id:     resp.ArtistInfo.TingUid,
 		Name:   strings.TrimSpace(resp.ArtistInfo.Name),
 		PicURL: strings.SplitN(resp.ArtistInfo.AvatarBig, "@", 2)[0],
 		Count:  n,

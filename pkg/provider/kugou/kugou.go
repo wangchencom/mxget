@@ -285,6 +285,7 @@ func resolve(src ...*Song) []*provider.Song {
 	songs := make([]*provider.Song, 0, len(src))
 	for _, s := range src {
 		songs = append(songs, &provider.Song{
+			Id:       s.Hash,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.ChoricSinger, "、", "/")),
 			Album:    strings.TrimSpace(s.AlbumName),

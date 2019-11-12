@@ -24,6 +24,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	a.patchSongLyric(resp.SongList...)
 	songs := resolve(resp.SongList...)
 	return &provider.Album{
+		Id:     resp.AlbumInfo.AlbumId,
 		Name:   strings.TrimSpace(resp.AlbumInfo.Title),
 		PicURL: strings.SplitN(resp.AlbumInfo.PicBig, "@", 2)[0],
 		Count:  n,
