@@ -48,7 +48,7 @@ func (a *API) GetArtistRaw(tingUid string, offset int, limits int) (*ArtistRespo
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get artist: %s", resp.ErrorMessage)
+		return nil, fmt.Errorf("get artist: %v", resp.errorMessage())
 	}
 
 	return resp, nil

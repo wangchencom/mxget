@@ -140,6 +140,24 @@ type (
 	}
 )
 
+func New(client *sreq.Client) *API {
+	if client == nil {
+		client = sreq.New(nil)
+		client.SetDefaultRequestOpts(
+			sreq.WithHeaders(sreq.Headers{
+				"User-Agent": provider.UserAgent,
+			}),
+		)
+	}
+	return &API{
+		Client: client,
+	}
+}
+
+func Client() provider.API {
+	return std
+}
+
 func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
@@ -174,24 +192,6 @@ func (p *PlaylistInfoResponse) String() string {
 
 func (p *PlaylistSongsResponse) String() string {
 	return provider.ToJSON(p, false)
-}
-
-func New(client *sreq.Client) *API {
-	if client == nil {
-		client = sreq.New(nil)
-		client.SetDefaultRequestOpts(
-			sreq.WithHeaders(sreq.Headers{
-				"User-Agent": provider.UserAgent,
-			}),
-		)
-	}
-	return &API{
-		Client: client,
-	}
-}
-
-func Client() provider.API {
-	return std
 }
 
 func (a *API) Platform() int {

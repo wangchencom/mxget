@@ -53,7 +53,7 @@ func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSon
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("search songs: %s", resp.ErrorMessage)
+		return nil, fmt.Errorf("search songs: %v", resp.errorMessage())
 	}
 
 	return resp, nil

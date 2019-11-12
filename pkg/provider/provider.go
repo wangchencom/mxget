@@ -93,6 +93,19 @@ type (
 	}
 )
 
+func init() {
+	std = sreq.New(nil)
+	std.SetDefaultRequestOpts(
+		sreq.WithHeaders(sreq.Headers{
+			"User-Agent": UserAgent,
+		}),
+	)
+}
+
+func Client() *sreq.Client {
+	return std
+}
+
 func (s *SearchSongsResult) String() string {
 	return ToJSON(s, false)
 }
@@ -111,19 +124,6 @@ func (a *Album) String() string {
 
 func (p *Playlist) String() string {
 	return ToJSON(p, false)
-}
-
-func init() {
-	std = sreq.New(nil)
-	std.SetDefaultRequestOpts(
-		sreq.WithHeaders(sreq.Headers{
-			"User-Agent": UserAgent,
-		}),
-	)
-}
-
-func Client() *sreq.Client {
-	return std
 }
 
 func ToJSON(data interface{}, escapeHTML bool) string {

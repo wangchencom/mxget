@@ -28,7 +28,7 @@ func (a *API) GetSongRaw(songId string) (*SongResponse, error) {
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get song: %s", resp.ErrorMessage)
+		return nil, fmt.Errorf("get song: %v", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -72,7 +72,7 @@ func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 		return nil, err
 	}
 	if resp.ErrorCode != 0 && resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get lyric: %d", resp.ErrorCode)
+		return nil, fmt.Errorf("get lyric: %v", resp.errorMessage())
 	}
 
 	return resp, nil

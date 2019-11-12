@@ -45,7 +45,7 @@ func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 		return nil, err
 	}
 	if resp.ErrorCode != 0 && resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get album: %s", resp.ErrorMessage)
+		return nil, fmt.Errorf("get album: %v", resp.errorMessage())
 	}
 
 	return resp, nil

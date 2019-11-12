@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/concurrency"
+
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/sreq"
 )
@@ -196,6 +197,33 @@ type (
 	}
 )
 
+func New(client *sreq.Client) *API {
+	if client == nil {
+		client = sreq.New(nil)
+		client.SetDefaultRequestOpts(
+			sreq.WithHeaders(sreq.Headers{
+				"User-Agent": provider.UserAgent,
+			}),
+		)
+	}
+	return &API{
+		Client: client,
+	}
+}
+
+func Client() provider.API {
+	return std
+}
+
+func (c *CommonResponse) check() error {
+	for _, s := range c.Ret {
+		if strings.HasPrefix(s, "FAIL") {
+			return errors.New(s)
+		}
+	}
+	return nil
+}
+
 func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
@@ -232,24 +260,6 @@ func (p *LoginResponse) String() string {
 	return provider.ToJSON(p, false)
 }
 
-func New(client *sreq.Client) *API {
-	if client == nil {
-		client = sreq.New(nil)
-		client.SetDefaultRequestOpts(
-			sreq.WithHeaders(sreq.Headers{
-				"User-Agent": provider.UserAgent,
-			}),
-		)
-	}
-	return &API{
-		Client: client,
-	}
-}
-
-func Client() provider.API {
-	return std
-}
-
 func (a *API) Platform() int {
 	return provider.XiaMi
 }
@@ -280,24 +290,6 @@ func (a *API) getToken(url string) (string, error) {
 	return strings.Split(token.Value, "_")[0], nil
 }
 
-func (c *CommonResponse) check() error {
-	for _, s := range c.Ret {
-		if strings.HasPrefix(s, "FAIL") {
-			return errors.New(s)
-		}
-	}
-	return nil
-}
-
-func songURL(listenFiles []ListenFile) string {
-	for _, i := range listenFiles {
-		if i.Quality == "l" {
-			return i.URL + i.ListenFile
-		}
-	}
-	return ""
-}
-
 func (a *API) patchSongLyric(songs ...*Song) {
 	c := concurrency.New(32)
 	for _, s := range songs {
@@ -311,6 +303,15 @@ func (a *API) patchSongLyric(songs ...*Song) {
 		}(s)
 	}
 	c.Wait()
+}
+
+func songURL(listenFiles []ListenFile) string {
+	for _, i := range listenFiles {
+		if i.Quality == "l" {
+			return i.URL + i.ListenFile
+		}
+	}
+	return ""
 }
 
 func resolve(src ...*Song) []*provider.Song {

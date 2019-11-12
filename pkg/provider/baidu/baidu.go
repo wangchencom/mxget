@@ -103,6 +103,7 @@ type (
 		SongList []*Song `json:"songlist"`
 	}
 
+	// 百度的这个接口设计比较坑爹，无数据时albumInfo字段为数组类型，导致json反序列化失败
 	AlbumResponse struct {
 		CommonResponse
 		AlbumInfo struct {
@@ -130,6 +131,31 @@ type (
 	}
 )
 
+func New(client *sreq.Client) *API {
+	if client == nil {
+		client = sreq.New(nil)
+		client.SetDefaultRequestOpts(
+			sreq.WithHeaders(sreq.Headers{
+				"User-Agent": provider.UserAgent,
+			}),
+		)
+	}
+	return &API{
+		Client: client,
+	}
+}
+
+func Client() provider.API {
+	return std
+}
+
+func (c *CommonResponse) errorMessage() interface{} {
+	if c.ErrorMessage == "" {
+		return c.ErrorCode
+	}
+	return c.ErrorMessage
+}
+
 func (s *SearchSongsResponse) String() string {
 	return provider.ToJSON(s, false)
 }
@@ -156,24 +182,6 @@ func (a *AlbumResponse) String() string {
 
 func (p *PlaylistResponse) String() string {
 	return provider.ToJSON(p, false)
-}
-
-func New(client *sreq.Client) *API {
-	if client == nil {
-		client = sreq.New(nil)
-		client.SetDefaultRequestOpts(
-			sreq.WithHeaders(sreq.Headers{
-				"User-Agent": provider.UserAgent,
-			}),
-		)
-	}
-	return &API{
-		Client: client,
-	}
-}
-
-func Client() provider.API {
-	return std
 }
 
 func (a *API) Platform() int {
