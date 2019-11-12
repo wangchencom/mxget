@@ -45,18 +45,5 @@ func GetAlbumFromBaiDu(c *gin.Context) {
 func getAlbum(c *gin.Context, client provider.API) {
 	id := strings.TrimSpace(c.Param("id"))
 	data, err := client.GetAlbum(id)
-	if err != nil {
-		c.JSON(500, &provider.Response{
-			Code:     500,
-			Msg:      err.Error(),
-			Platform: client.PlatformId(),
-		})
-		return
-	}
-
-	c.JSON(200, &provider.Response{
-		Code:     200,
-		Data:     data,
-		Platform: client.PlatformId(),
-	})
+	response(c, client, data, err)
 }

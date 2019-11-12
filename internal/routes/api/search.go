@@ -45,18 +45,5 @@ func SearchSongsFromBaiDu(c *gin.Context) {
 func searchSongs(c *gin.Context, client provider.API) {
 	keyword := strings.TrimSpace(c.Param("keyword"))
 	data, err := client.SearchSongs(keyword)
-	if err != nil {
-		c.JSON(500, &provider.Response{
-			Code:     500,
-			Msg:      err.Error(),
-			Platform: client.PlatformId(),
-		})
-		return
-	}
-
-	c.JSON(200, &provider.Response{
-		Code:     200,
-		Data:     data,
-		Platform: client.PlatformId(),
-	})
+	response(c, client, data, err)
 }

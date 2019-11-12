@@ -70,13 +70,6 @@ type (
 		Songs   []*SearchSongsData `json:"songs,omitempty"`
 	}
 
-	Response struct {
-		Code     int         `json:"code"`
-		Msg      string      `json:"msg,omitempty"`
-		Data     interface{} `json:"data,omitempty"`
-		Platform PlatformId  `json:"platform,omitempty"`
-	}
-
 	API interface {
 		// 专用识别码
 		PlatformId() PlatformId

@@ -63,13 +63,13 @@ var (
 	}
 
 	sites = map[provider.PlatformId]string{
-		provider.NetEase: "music.163.com",
-		provider.QQ:      "y.qq.com",
-		provider.MiGu:    "music.migu.cn",
-		provider.KuGou:   "kugou.com",
-		provider.KuWo:    "kuwo.cn",
-		provider.XiaMi:   "xiami.com",
-		provider.BaiDu:   "music.taihe.com",
+		provider.NetEase: "https://music.163.com",
+		provider.QQ:      "https://y.qq.com",
+		provider.MiGu:    "http://music.migu.cn/v3",
+		provider.KuGou:   "https://www.kugou.com",
+		provider.KuWo:    "http://www.kuwo.cn",
+		provider.XiaMi:   "https://www.xiami.com",
+		provider.BaiDu:   "https://music.taihe.com",
 	}
 )
 
