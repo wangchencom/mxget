@@ -240,7 +240,7 @@ func resolve(src ...*Song) []*provider.Song {
 			Name:     strings.TrimSpace(s.Title),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Author, ",", "/")),
 			Album:    strings.TrimSpace(s.AlbumTitle),
-			PicURL:   strings.Split(s.PicBig, "@")[0],
+			PicURL:   strings.SplitN(s.PicBig, "@", 2)[0],
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
 			URL:      s.URL,

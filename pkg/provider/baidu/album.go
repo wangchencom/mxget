@@ -25,7 +25,7 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 	songs := resolve(resp.SongList...)
 	return &provider.Album{
 		Name:   strings.TrimSpace(resp.AlbumInfo.Title),
-		PicURL: strings.Split(resp.AlbumInfo.PicBig, "@")[0],
+		PicURL: strings.SplitN(resp.AlbumInfo.PicBig, "@", 2)[0],
 		Count:  n,
 		Songs:  songs,
 	}, nil
