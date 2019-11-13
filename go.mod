@@ -10,7 +10,7 @@ require (
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/winterssy/easylog v0.0.0-20191102150735-59430c1270ea
-	github.com/winterssy/sreq v0.0.0-20191113165115-d2524889e071
+	github.com/winterssy/sreq v0.0.0-20191113173538-e82dd8ef262e
 	golang.org/x/net v0.0.0-20191112182307-2180aed22343 // indirect
 	golang.org/x/text v0.3.2 // indirect
 )
