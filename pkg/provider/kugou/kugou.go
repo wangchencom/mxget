@@ -206,7 +206,7 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 		}),
 	}
 	opts = append(opts, defaultOpts...)
-	return a.Client.Request(method, url, opts...)
+	return a.Client.Send(method, url, opts...)
 }
 
 func (a *API) patchSongInfo(songs ...*Song) {
