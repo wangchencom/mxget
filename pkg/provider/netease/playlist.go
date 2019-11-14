@@ -31,9 +31,9 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 	tracks := resp.Playlist.Tracks
 	if n > SongRequestLimit {
 		extra := n - SongRequestLimit
-		trackIds := make([]int, 0, extra)
-		for i := SongRequestLimit; i < n; i++ {
-			trackIds = append(trackIds, resp.Playlist.TrackIds[i].Id)
+		trackIds := make([]int, extra)
+		for i, j := SongRequestLimit, 0; i < n; i, j = i+1, j+1 {
+			trackIds[j] = resp.Playlist.TrackIds[i].Id
 		}
 
 		queue := make(chan []*Song)

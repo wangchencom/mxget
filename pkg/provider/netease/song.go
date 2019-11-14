@@ -39,9 +39,9 @@ func (a *API) GetSongsRaw(songIds ...int) (*SongsResponse, error) {
 		n = SongRequestLimit
 	}
 
-	c := make([]map[string]int, 0, n)
-	for _, id := range songIds {
-		c = append(c, map[string]int{"id": id})
+	c := make([]map[string]int, n)
+	for i, id := range songIds {
+		c[i] = map[string]int{"id": id}
 	}
 	enc, _ := json.Marshal(c)
 	data := map[string]string{

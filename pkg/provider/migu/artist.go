@@ -30,9 +30,9 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 
 	itemList := artistSongs.Data.ContentItemList[0].ItemList
 	n := len(itemList)
-	_songs := make([]*Song, 0, n/2)
-	for i := 0; i < n; i += 2 {
-		_songs = append(_songs, &itemList[i].Song)
+	_songs := make([]*Song, n/2)
+	for i, j := 0, 0; i < n; i, j = i+2, j+1 {
+		_songs[j] = &itemList[i].Song
 	}
 
 	a.patchSongLyric(_songs...)

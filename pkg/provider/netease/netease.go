@@ -220,20 +220,20 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 		}),
 	}
 
+	opts = append(opts, defaultOpts...)
 	// 如果已经登录，不需要额外设置cookie，cookie jar会自动管理
 	_, err := a.Client.FilterCookie(url, "MUSIC_U")
 	if err != nil {
-		defaultOpts = append(defaultOpts, sreq.WithCookies(cookie))
+		opts = append(opts, sreq.WithCookies(cookie))
 	}
 
-	opts = append(opts, defaultOpts...)
 	return a.Client.Send(method, url, opts...)
 }
 
 func (a *API) patchSongURL(br int, songs ...*Song) {
-	ids := make([]int, 0, len(songs))
-	for _, s := range songs {
-		ids = append(ids, s.Id)
+	ids := make([]int, len(songs))
+	for i, s := range songs {
+		ids[i] = s.Id
 	}
 
 	resp, err := a.GetSongsURLRaw(br, ids...)
@@ -264,13 +264,13 @@ func (a *API) patchSongLyric(songs ...*Song) {
 }
 
 func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, 0, len(src))
-	for _, s := range src {
-		artists := make([]string, 0, len(s.Artists))
-		for _, a := range s.Artists {
-			artists = append(artists, strings.TrimSpace(a.Name))
+	songs := make([]*provider.Song, len(src))
+	for i, s := range src {
+		artists := make([]string, len(s.Artists))
+		for j, a := range s.Artists {
+			artists[j] = strings.TrimSpace(a.Name)
 		}
-		songs = append(songs, &provider.Song{
+		songs[i] = &provider.Song{
 			Id:       strconv.Itoa(s.Id),
 			Name:     strings.TrimSpace(s.Name),
 			Artist:   strings.Join(artists, "/"),
@@ -279,7 +279,7 @@ func resolve(src ...*Song) []*provider.Song {
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
 			URL:      s.URL,
-		})
+		}
 	}
 	return songs
 }

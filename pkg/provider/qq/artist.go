@@ -21,9 +21,9 @@ func (a *API) GetArtist(singerMid string) (*provider.Artist, error) {
 		return nil, errors.New("get artist: no data")
 	}
 
-	_songs := make([]*Song, 0, n)
-	for _, i := range resp.Data.List {
-		_songs = append(_songs, i.MusicData)
+	_songs := make([]*Song, n)
+	for i, v := range resp.Data.List {
+		_songs[i] = v.MusicData
 	}
 
 	a.patchSongURLV1(_songs...)

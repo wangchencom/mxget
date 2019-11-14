@@ -314,10 +314,10 @@ func songURL(listenFiles []ListenFile) string {
 }
 
 func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, 0, len(src))
-	for _, s := range src {
+	songs := make([]*provider.Song, len(src))
+	for i, s := range src {
 		url := songURL(s.ListenFiles)
-		songs = append(songs, &provider.Song{
+		songs[i] = &provider.Song{
 			Id:       s.SongId,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singers, " / ", "/")),
@@ -326,7 +326,7 @@ func resolve(src ...*Song) []*provider.Song {
 			Lyric:    s.Lyric,
 			Playable: url != "",
 			URL:      url,
-		})
+		}
 	}
 	return songs
 }

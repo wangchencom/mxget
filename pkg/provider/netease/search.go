@@ -21,18 +21,18 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		return nil, errors.New("search songs: no data")
 	}
 
-	songs := make([]*provider.SearchSongsData, 0, n)
-	for _, s := range resp.Result.Songs {
-		artists := make([]string, 0, len(s.Artists))
-		for _, a := range s.Artists {
-			artists = append(artists, strings.TrimSpace(a.Name))
+	songs := make([]*provider.SearchSongsData, n)
+	for i, s := range resp.Result.Songs {
+		artists := make([]string, len(s.Artists))
+		for j, a := range s.Artists {
+			artists[j] = strings.TrimSpace(a.Name)
 		}
-		songs = append(songs, &provider.SearchSongsData{
+		songs[i] = &provider.SearchSongsData{
 			Id:     strconv.Itoa(s.Id),
 			Name:   strings.TrimSpace(s.Name),
 			Artist: strings.Join(artists, "/"),
 			Album:  s.Album.Name,
-		})
+		}
 	}
 	return &provider.SearchSongsResult{
 		Keyword: keyword,

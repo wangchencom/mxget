@@ -282,9 +282,9 @@ func (a *API) patchAlbumInfo(songs ...*Song) {
 }
 
 func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, 0, len(src))
-	for _, s := range src {
-		songs = append(songs, &provider.Song{
+	songs := make([]*provider.Song, len(src))
+	for i, s := range src {
+		songs[i] = &provider.Song{
 			Id:       s.Hash,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.ChoricSinger, "、", "/")),
@@ -293,7 +293,7 @@ func resolve(src ...*Song) []*provider.Song {
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
 			URL:      s.URL,
-		})
+		}
 	}
 	return songs
 }
