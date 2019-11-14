@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/bogem/id3v2"
 	"github.com/winterssy/easylog"
@@ -54,7 +55,11 @@ func ConcurrentDownload(client provider.API, savePath string, songs ...*provider
 				}
 			}
 
-			err := client.Request(sreq.MethodGet, s.URL).Save(mp3FilePath)
+			err := client.
+				Request(sreq.MethodGet, s.URL,
+					sreq.WithRetry(3, 1*time.Second),
+				).
+				Save(mp3FilePath)
 			if err != nil {
 				easylog.Errorf("Download [%s] failed: %v", songInfo, err)
 				_ = os.Remove(mp3FilePath)
