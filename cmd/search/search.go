@@ -24,7 +24,7 @@ var CmdSearch = &cobra.Command{
 
 func Run(cmd *cobra.Command, args []string) {
 	if keyword == "" {
-		keyword = utils.Input("Search keyword")
+		keyword = utils.Input("Keyword")
 		fmt.Println()
 	}
 
