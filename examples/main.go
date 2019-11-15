@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/winterssy/mxget/pkg/provider/netease"
@@ -8,7 +9,7 @@ import (
 
 func main() {
 	client := netease.New(nil)
-	resp, err := client.GetSong("36990266")
+	resp, err := client.GetSong(context.Background(), "36990266")
 	if err != nil {
 		panic(err)
 	}

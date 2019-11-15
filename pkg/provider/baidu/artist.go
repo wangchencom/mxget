@@ -1,17 +1,18 @@
 package baidu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
-	resp, err := a.GetArtistRaw(tingUid, 0, 50)
+func (a *API) GetArtist(ctx context.Context, tingUid string) (*api.ArtistResponse, error) {
+	resp, err := a.GetArtistRaw(ctx, tingUid, 0, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -21,20 +22,20 @@ func (a *API) GetArtist(tingUid string) (*provider.Artist, error) {
 		return nil, errors.New("get artist: no data")
 	}
 
-	a.patchSongURL(resp.SongList...)
-	a.patchSongLyric(resp.SongList...)
+	a.patchSongsURL(ctx, resp.SongList...)
+	a.patchSongsLyric(ctx, resp.SongList...)
 	songs := resolve(resp.SongList...)
-	return &provider.Artist{
+	return &api.ArtistResponse{
 		Id:     resp.ArtistInfo.TingUid,
 		Name:   strings.TrimSpace(resp.ArtistInfo.Name),
-		PicURL: strings.SplitN(resp.ArtistInfo.AvatarBig, "@", 2)[0],
-		Count:  n,
+		PicUrl: strings.SplitN(resp.ArtistInfo.AvatarBig, "@", 2)[0],
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌手
-func (a *API) GetArtistRaw(tingUid string, offset int, limits int) (*ArtistResponse, error) {
+func (a *API) GetArtistRaw(ctx context.Context, tingUid string, offset int, limits int) (*ArtistResponse, error) {
 	params := sreq.Params{
 		"tinguid": tingUid,
 		"offset":  strconv.Itoa(offset),
@@ -44,6 +45,7 @@ func (a *API) GetArtistRaw(tingUid string, offset int, limits int) (*ArtistRespo
 	resp := new(ArtistResponse)
 	err := a.Request(sreq.MethodGet, APIGetArtist,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package xiami
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 )
 
 // 登录接口，account 可为邮箱/手机号码
-func (a *API) LoginRaw(account string, password string) (*LoginResponse, error) {
+func (a *API) LoginRaw(ctx context.Context, account string, password string) (*LoginResponse, error) {
 	token, err := a.getToken(APILogin)
 	if err != nil {
 		return nil, err
@@ -22,11 +23,16 @@ func (a *API) LoginRaw(account string, password string) (*LoginResponse, error) 
 		"password": password,
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(LoginResponse)
-	err = a.Request(sreq.MethodGet, APILogin, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APILogin,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("login: %w", err)

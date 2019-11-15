@@ -1,17 +1,18 @@
 package netease
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
-	resp, err := a.SearchSongsRaw(keyword, 0, 50)
+func (a *API) SearchSongs(ctx context.Context, keyword string) (*api.SearchSongsResponse, error) {
+	resp, err := a.SearchSongsRaw(ctx, keyword, 0, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -21,28 +22,28 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		return nil, errors.New("search songs: no data")
 	}
 
-	songs := make([]*provider.SearchSongsData, n)
+	songs := make([]*api.SongResponse, n)
 	for i, s := range resp.Result.Songs {
 		artists := make([]string, len(s.Artists))
 		for j, a := range s.Artists {
 			artists[j] = strings.TrimSpace(a.Name)
 		}
-		songs[i] = &provider.SearchSongsData{
+		songs[i] = &api.SongResponse{
 			Id:     strconv.Itoa(s.Id),
 			Name:   strings.TrimSpace(s.Name),
 			Artist: strings.Join(artists, "/"),
 			Album:  s.Album.Name,
 		}
 	}
-	return &provider.SearchSongsResult{
+	return &api.SearchSongsResponse{
 		Keyword: keyword,
-		Count:   n,
+		Count:   uint32(n),
 		Songs:   songs,
 	}, nil
 }
 
 // 搜索歌曲
-func (a *API) SearchSongsRaw(keyword string, offset int, limit int) (*SearchSongsResponse, error) {
+func (a *API) SearchSongsRaw(ctx context.Context, keyword string, offset int, limit int) (*SearchSongsResponse, error) {
 	// type: 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户,
 	// 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频
 	data := map[string]interface{}{
@@ -55,6 +56,7 @@ func (a *API) SearchSongsRaw(keyword string, offset int, limit int) (*SearchSong
 	resp := new(SearchSongsResponse)
 	err := a.Request(sreq.MethodPost, APISearch,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

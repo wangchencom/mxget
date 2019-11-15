@@ -1,15 +1,19 @@
 package song
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/cli"
 	"github.com/winterssy/mxget/internal/settings"
+	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/utils"
 )
 
 var (
-	id   string
-	from string
+	songId string
+	from   string
 )
 
 var CmdSong = &cobra.Command{
@@ -18,28 +22,32 @@ var CmdSong = &cobra.Command{
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	platformId := settings.Cfg.MusicPlatform
-	if from != "" {
-		pid := settings.GetPlatformId(from)
-		if pid == 0 {
-			easylog.Fatalf("Unexpected music platform: %q", from)
-		}
-		platformId = pid
+	if songId == "" {
+		songId = utils.Input("Song id")
 	}
 
-	client := settings.GetClient(platformId)
-	easylog.Infof("Fetch song [%s] from [%s]", id, settings.GetPlatformDesc(platformId))
-	song, err := client.GetSong(id)
+	platform := settings.Cfg.Platform
+	if from != "" {
+		platform = from
+	}
+
+	client, err := service.GetClient(platform)
 	if err != nil {
 		easylog.Fatal(err)
 	}
 
-	cli.ConcurrentDownload(client, ".", song)
+	easylog.Infof("Fetch song [%s] from [%s]", songId, service.GetDesc(platform))
+	ctx := context.Background()
+	song, err := client.GetSong(ctx, songId)
+	if err != nil {
+		easylog.Fatal(err)
+	}
+
+	cli.ConcurrentDownload(ctx, client, ".", song)
 }
 
 func init() {
-	CmdSong.Flags().StringVar(&id, "id", "", "song id")
-	CmdSong.MarkFlagRequired("id")
+	CmdSong.Flags().StringVar(&songId, "songId", "", "song songId")
 	CmdSong.Flags().StringVar(&from, "from", "", "music platform")
 	CmdSong.Flags().BoolVar(&settings.Tag, "tag", false, "update music metadata")
 	CmdSong.Flags().BoolVar(&settings.Lyric, "lyric", false, "download lyric")

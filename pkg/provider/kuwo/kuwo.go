@@ -1,12 +1,15 @@
 package kuwo
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -139,39 +142,35 @@ func Client() provider.API {
 }
 
 func (s *SearchSongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongURLResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongLyricResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (a *ArtistInfoResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *ArtistSongsResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (p *PlaylistResponse) String() string {
-	return provider.ToJSON(p, false)
-}
-
-func (a *API) PlatformId() provider.PlatformId {
-	return provider.KuWo
+	return utils.ToJSON(p, false)
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
@@ -199,12 +198,18 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Send(method, url, opts...)
 }
 
-func (a *API) patchSongURL(br int, songs ...*Song) {
+func (a *API) patchSongsURL(ctx context.Context, br int, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			url, err := a.GetSongURL(s.RId, br)
+			url, err := a.GetSongURL(ctx, s.RId, br)
 			if err == nil {
 				s.URL = url
 			}
@@ -214,12 +219,18 @@ func (a *API) patchSongURL(br int, songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchSongLyric(songs ...*Song) {
+func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			lyric, err := a.GetSongLyric(s.RId)
+			lyric, err := a.GetSongLyric(ctx, s.RId)
 			if err == nil {
 				s.Lyric = lyric
 			}
@@ -229,18 +240,18 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, len(src))
+func resolve(src ...*Song) []*api.SongResponse {
+	songs := make([]*api.SongResponse, len(src))
 	for i, s := range src {
-		songs[i] = &provider.Song{
+		songs[i] = &api.SongResponse{
 			Id:       strconv.Itoa(s.RId),
 			Name:     strings.TrimSpace(s.Name),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Artist, "&", "/")),
 			Album:    strings.TrimSpace(s.Album),
-			PicURL:   s.AlbumPic,
+			PicUrl:   s.AlbumPic,
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
-			URL:      s.URL,
+			Url:      s.URL,
 		}
 	}
 	return songs

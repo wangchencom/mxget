@@ -1,28 +1,29 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetSong(songId string) (*provider.Song, error) {
-	resp, err := a.GetSongDetailRaw(songId)
+func (a *API) GetSong(ctx context.Context, songId string) (*api.SongResponse, error) {
+	resp, err := a.GetSongDetailRaw(ctx, songId)
 	if err != nil {
 		return nil, err
 	}
 
 	_song := &resp.Data.Data.SongDetail
-	a.patchSongLyric(_song)
+	a.patchSongsLyric(ctx, _song)
 	songs := resolve(_song)
 	return songs[0], nil
 }
 
 // 获取歌曲详情
-func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
+func (a *API) GetSongDetailRaw(ctx context.Context, songId string) (*SongDetailResponse, error) {
 	token, err := a.getToken(APIGetSongDetail)
 	if err != nil {
 		return nil, err
@@ -36,11 +37,16 @@ func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 		model["songId"] = songId
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(SongDetailResponse)
-	err = a.Request(sreq.MethodGet, APIGetSongDetail, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetSongDetail,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get song detail: %w", err)
@@ -49,8 +55,8 @@ func (a *API) GetSongDetailRaw(songId string) (*SongDetailResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongLyric(songId string) (string, error) {
-	resp, err := a.GetSongLyricRaw(songId)
+func (a *API) GetSongLyric(ctx context.Context, songId string) (string, error) {
+	resp, err := a.GetSongLyricRaw(ctx, songId)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +71,7 @@ func (a *API) GetSongLyric(songId string) (string, error) {
 }
 
 // 获取歌词
-func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
+func (a *API) GetSongLyricRaw(ctx context.Context, songId string) (*SongLyricResponse, error) {
 	token, err := a.getToken(APIGetSongLyric)
 	if err != nil {
 		panic(err)
@@ -79,11 +85,16 @@ func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 		model["songId"] = songId
 	}
 	params := signPayload(token, model)
+
 	resp := new(SongLyricResponse)
-	err = a.Request(sreq.MethodGet, APIGetSongLyric, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetSongLyric,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get song lyric: %w", err)
@@ -93,7 +104,7 @@ func (a *API) GetSongLyricRaw(songId string) (*SongLyricResponse, error) {
 }
 
 // 批量获取歌曲，上限200首
-func (a *API) GetSongsRaw(songIds ...string) (*SongsResponse, error) {
+func (a *API) GetSongsRaw(ctx context.Context, songIds ...string) (*SongsResponse, error) {
 	token, err := a.getToken(APIGetSongs)
 	if err != nil {
 		return nil, err
@@ -106,11 +117,16 @@ func (a *API) GetSongsRaw(songIds ...string) (*SongsResponse, error) {
 		"songIds": songIds,
 	}
 	params := signPayload(token, model)
+
 	resp := new(SongsResponse)
-	err = a.Request(sreq.MethodGet, APIGetSongs, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetSongs,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get songs: %w", err)

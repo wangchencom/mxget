@@ -8,11 +8,14 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
+	"github.com/winterssy/mxget/pkg/service"
 )
 
 var (
-	cwd  string
-	from string
+	dir   string
+	from  string
+	show  bool
+	reset bool
 )
 
 var CmdSet = &cobra.Command{
@@ -21,35 +24,46 @@ var CmdSet = &cobra.Command{
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	if cwd == "" && from == "" {
+	if cmd.Flags().NFlag() == 0 {
+		_ = cmd.Help()
+	}
+
+	if show {
 		fmt.Print(fmt.Sprintf(`
-Current settings:
-    download dir -> %s
-    music platform -> %d [%s]
-`, settings.Cfg.DownloadDir, settings.Cfg.MusicPlatform, settings.GetPlatformDesc(settings.Cfg.MusicPlatform)))
+      download dir -> %s
+    music platform -> %s [%s]
+`, settings.Cfg.Dir, settings.Cfg.Platform, service.GetDesc(settings.Cfg.Platform)))
 		return
 	}
 
-	if cwd != "" {
-		cwd = filepath.Clean(cwd)
-		if err := os.MkdirAll(cwd, 0755); err != nil {
-			easylog.Fatalf("Can't make download dir: %v", err)
-		}
-		settings.Cfg.DownloadDir = cwd
-	}
-	if from != "" {
-		pid := settings.GetPlatformId(from)
-		if pid == 0 {
-			easylog.Fatalf("Unexpected music platform: %q", from)
-		}
-		settings.Cfg.MusicPlatform = pid
+	if reset {
+		settings.Cfg.Reset()
+		return
 	}
 
-	_ = settings.Cfg.Save()
+	if dir != "" {
+		dir = filepath.Clean(dir)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			easylog.Fatalf("Can't make download dir: %v", err)
+		}
+		settings.Cfg.Dir = dir
+	}
+	if from != "" {
+		if service.GetDesc(from) == "unknown" {
+			easylog.Fatalf("Unexpected music platform: %q", from)
+		}
+		settings.Cfg.Platform = from
+	}
+
+	if dir != "" || from != "" {
+		_ = settings.Cfg.Save()
+	}
 }
 
 func init() {
-	CmdSet.Flags().StringVar(&cwd, "cwd", "", "specify the default download directory")
+	CmdSet.Flags().StringVar(&dir, "dir", "", "specify the default download directory")
 	CmdSet.Flags().StringVar(&from, "from", "", "specify the default music platform")
+	CmdSet.Flags().BoolVar(&show, "show", false, "show current settings")
+	CmdSet.Flags().BoolVar(&reset, "reset", false, "reset default settings")
 	CmdSet.Run = Run
 }

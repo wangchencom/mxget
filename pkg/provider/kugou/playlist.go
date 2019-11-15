@@ -1,22 +1,23 @@
 package kugou
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
-	playlistInfo, err := a.GetPlaylistInfoRaw(specialId)
+func (a *API) GetPlaylist(ctx context.Context, specialId string) (*api.PlaylistResponse, error) {
+	playlistInfo, err := a.GetPlaylistInfoRaw(ctx, specialId)
 	if err != nil {
 		return nil, err
 	}
 
-	playlistSongs, err := a.GetPlaylistSongsRaw(specialId, 1, -1)
+	playlistSongs, err := a.GetPlaylistSongsRaw(ctx, specialId, 1, -1)
 	if err != nil {
 		return nil, err
 	}
@@ -26,21 +27,21 @@ func (a *API) GetPlaylist(specialId string) (*provider.Playlist, error) {
 		return nil, errors.New("get playlist songs: no data")
 	}
 
-	a.patchSongInfo(playlistSongs.Data.Info...)
-	a.patchAlbumInfo(playlistSongs.Data.Info...)
-	a.patchSongLyric(playlistSongs.Data.Info...)
+	a.patchSongInfo(ctx, playlistSongs.Data.Info...)
+	a.patchSongsInfo(ctx, playlistSongs.Data.Info...)
+	a.patchSongsLyric(ctx, playlistSongs.Data.Info...)
 	songs := resolve(playlistSongs.Data.Info...)
-	return &provider.Playlist{
+	return &api.PlaylistResponse{
 		Id:     strconv.Itoa(playlistInfo.Data.SpecialId),
 		Name:   strings.TrimSpace(playlistInfo.Data.SpecialName),
-		PicURL: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),
-		Count:  n,
+		PicUrl: strings.ReplaceAll(playlistInfo.Data.ImgURL, "{size}", "480"),
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌单信息
-func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error) {
+func (a *API) GetPlaylistInfoRaw(ctx context.Context, specialId string) (*PlaylistInfoResponse, error) {
 	params := sreq.Params{
 		"specialid": specialId,
 	}
@@ -48,6 +49,7 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 	resp := new(PlaylistInfoResponse)
 	err := a.Request(sreq.MethodGet, APIGetPlaylistInfo,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -60,7 +62,7 @@ func (a *API) GetPlaylistInfoRaw(specialId string) (*PlaylistInfoResponse, error
 }
 
 // 获取歌单歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetPlaylistSongsRaw(specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
+func (a *API) GetPlaylistSongsRaw(ctx context.Context, specialId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	params := sreq.Params{
 		"specialid": specialId,
 		"page":      strconv.Itoa(page),
@@ -70,6 +72,7 @@ func (a *API) GetPlaylistSongsRaw(specialId string, page int, pageSize int) (*Pl
 	resp := new(PlaylistSongsResponse)
 	err := a.Request(sreq.MethodGet, APIGetPlaylistSongs,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

@@ -1,24 +1,25 @@
 package netease
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
-	id, err := strconv.Atoi(playlistId)
+func (a *API) GetPlaylist(ctx context.Context, playlistId string) (*api.PlaylistResponse, error) {
+	_playlistId, err := strconv.Atoi(playlistId)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := a.GetPlaylistRaw(id)
+	resp, err := a.GetPlaylistRaw(ctx, _playlistId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,11 +39,17 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 
 		queue := make(chan []*Song)
 		wg := new(sync.WaitGroup)
+	Loop:
 		for i := 0; i < extra; i += SongRequestLimit {
+			select {
+			case <-ctx.Done():
+				break Loop
+			default:
+			}
 			songIds := trackIds[i:utils.Min(i+SongRequestLimit, extra)]
 			wg.Add(1)
 			go func() {
-				resp, err := a.GetSongsRaw(songIds...)
+				resp, err := a.GetSongsRaw(ctx, songIds...)
 				if err != nil {
 					wg.Done()
 					return
@@ -60,28 +67,29 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		wg.Wait()
 	}
 
-	a.patchSongURL(SongDefaultBR, tracks...)
-	a.patchSongLyric(tracks...)
+	a.patchSongsURL(ctx, SongDefaultBR, tracks...)
+	a.patchSongsLyric(ctx, tracks...)
 	songs := resolve(tracks...)
-	return &provider.Playlist{
+	return &api.PlaylistResponse{
 		Id:     strconv.Itoa(resp.Playlist.Id),
 		Name:   strings.TrimSpace(resp.Playlist.Name),
-		PicURL: resp.Playlist.PicURL,
-		Count:  n,
+		PicUrl: resp.Playlist.PicURL,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌单
-func (a *API) GetPlaylistRaw(id int) (*PlaylistResponse, error) {
+func (a *API) GetPlaylistRaw(ctx context.Context, playlistId int) (*PlaylistResponse, error) {
 	data := map[string]int{
-		"id": id,
+		"id": playlistId,
 		"n":  100000,
 	}
 
 	resp := new(PlaylistResponse)
 	err := a.Request(sreq.MethodPost, APIGetPlaylist,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

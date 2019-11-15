@@ -60,12 +60,12 @@ Usage:
   mxget [command]
 
 Available Commands:
-  album       Fetch and download album songs via its id
-  artist      Fetch and download artist hot songs via its id
+  album       Fetch and download album's songs via its id
+  artist      Fetch and download artist's hot songs via its id
   config      Specify the default behavior of mxget
   help        Help about any command
-  playlist    Fetch and download playlist songs via its id
-  search      Search songs from the Internet
+  playlist    Fetch and download playlist's songs via its id
+  search      Search songs from the specified music platform
   serve       Run mxget as an API server
   song        Fetch and download single song via its id
 
@@ -131,7 +131,7 @@ $ mxget song --from nc --id 36990266 --lyric
 默认情况下，`mxget` 会下载音乐到当前目录下的 `downloads` 文件夹，如果你想要更改此行为，可以这样做：
 
 ```sh
-$ mxget config --cwd [directory]
+$ mxget config --dir [directory]
 ```
 
 >  `directory` 必须为绝对路径。
@@ -168,6 +168,7 @@ $ mxget playlist --from nc --id 156934569 --limit 16
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/winterssy/mxget/pkg/provider/netease"
@@ -175,7 +176,7 @@ import (
 
 func main() {
 	client := netease.New(nil)
-	resp, err := client.GetSong("36990266")
+	resp, err := client.GetSong(context.Background(), "36990266")
 	if err != nil {
 		panic(err)
 	}

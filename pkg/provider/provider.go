@@ -1,23 +1,12 @@
 package provider
 
 import (
-	"bytes"
-	"encoding/json"
-
+	"context"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-type PlatformId uint16
-
 const (
-	NetEase PlatformId = 1000 + iota
-	QQ
-	MiGu
-	KuGou
-	KuWo
-	XiaMi
-	BaiDu
-
 	UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
 )
 
@@ -26,67 +15,17 @@ var (
 )
 
 type (
-	Song struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Artist   string `json:"artist"`
-		Album    string `json:"album"`
-		PicURL   string `json:"pic_url,omitempty"`
-		Lyric    string `json:"lyric,omitempty"`
-		Playable bool   `json:"playable"`
-		URL      string `json:"url,omitempty"`
-	}
-
-	Artist struct {
-		Id     string  `json:"id"`
-		Name   string  `json:"name"`
-		PicURL string  `json:"pic_url,omitempty"`
-		Count  int     `json:"count"`
-		Songs  []*Song `json:"songs,omitempty"`
-	}
-
-	Album struct {
-		Id     string  `json:"id"`
-		Name   string  `json:"name"`
-		PicURL string  `json:"pic_url,omitempty"`
-		Count  int     `json:"count"`
-		Songs  []*Song `json:"songs,omitempty"`
-	}
-
-	Playlist struct {
-		Id     string  `json:"id"`
-		Name   string  `json:"name"`
-		PicURL string  `json:"pic_url,omitempty"`
-		Count  int     `json:"count"`
-		Songs  []*Song `json:"songs,omitempty"`
-	}
-
-	SearchSongsData struct {
-		Id     string `json:"id"`
-		Name   string `json:"name"`
-		Artist string `json:"artist"`
-		Album  string `json:"album"`
-	}
-
-	SearchSongsResult struct {
-		Keyword string             `json:"keyword"`
-		Count   int                `json:"count"`
-		Songs   []*SearchSongsData `json:"songs,omitempty"`
-	}
-
 	API interface {
-		// 专用识别码
-		PlatformId() PlatformId
 		// 搜索歌曲
-		SearchSongs(keyword string) (*SearchSongsResult, error)
+		SearchSongs(ctx context.Context, keyword string) (*api.SearchSongsResponse, error)
 		// 获取单曲
-		GetSong(id string) (*Song, error)
+		GetSong(ctx context.Context, songId string) (*api.SongResponse, error)
 		// 获取歌手
-		GetArtist(id string) (*Artist, error)
+		GetArtist(ctx context.Context, artistId string) (*api.ArtistResponse, error)
 		// 获取专辑
-		GetAlbum(id string) (*Album, error)
+		GetAlbum(ctx context.Context, albumId string) (*api.AlbumResponse, error)
 		// 获取歌单
-		GetPlaylist(id string) (*Playlist, error)
+		GetPlaylist(ctx context.Context, playlistId string) (*api.PlaylistResponse, error)
 		// 网络请求
 		Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response
 	}
@@ -103,35 +42,4 @@ func init() {
 
 func Client() *sreq.Client {
 	return std
-}
-
-func (s *SearchSongsResult) String() string {
-	return ToJSON(s, false)
-}
-
-func (s *Song) String() string {
-	return ToJSON(s, false)
-}
-
-func (a *Artist) String() string {
-	return ToJSON(a, false)
-}
-
-func (a *Album) String() string {
-	return ToJSON(a, false)
-}
-
-func (p *Playlist) String() string {
-	return ToJSON(p, false)
-}
-
-func ToJSON(data interface{}, escapeHTML bool) string {
-	buf := &bytes.Buffer{}
-	enc := json.NewEncoder(buf)
-	enc.SetEscapeHTML(escapeHTML)
-	enc.SetIndent("", "\t")
-	if enc.Encode(data) != nil {
-		return "{}"
-	}
-	return buf.String()
 }

@@ -1,12 +1,15 @@
 package netease
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -177,39 +180,35 @@ func Client() provider.API {
 }
 
 func (s *SearchSongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongURLResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongLyricResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (a *ArtistResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (p *PlaylistResponse) String() string {
-	return provider.ToJSON(p, false)
+	return utils.ToJSON(p, false)
 }
 
 func (e *LoginResponse) String() string {
-	return provider.ToJSON(e, false)
-}
-
-func (a *API) PlatformId() provider.PlatformId {
-	return provider.NetEase
+	return utils.ToJSON(e, false)
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
@@ -230,13 +229,13 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Send(method, url, opts...)
 }
 
-func (a *API) patchSongURL(br int, songs ...*Song) {
+func (a *API) patchSongsURL(ctx context.Context, br int, songs ...*Song) {
 	ids := make([]int, len(songs))
 	for i, s := range songs {
 		ids[i] = s.Id
 	}
 
-	resp, err := a.GetSongsURLRaw(br, ids...)
+	resp, err := a.GetSongsURLRaw(ctx, br, ids...)
 	if err == nil && len(resp.Data) != 0 {
 		m := make(map[int]string, len(resp.Data))
 		for _, i := range resp.Data {
@@ -248,12 +247,18 @@ func (a *API) patchSongURL(br int, songs ...*Song) {
 	}
 }
 
-func (a *API) patchSongLyric(songs ...*Song) {
+func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			lyric, err := a.GetSongLyric(s.Id)
+			lyric, err := a.GetSongLyric(ctx, s.Id)
 			if err == nil {
 				s.Lyric = lyric
 			}
@@ -263,22 +268,22 @@ func (a *API) patchSongLyric(songs ...*Song) {
 	c.Wait()
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, len(src))
+func resolve(src ...*Song) []*api.SongResponse {
+	songs := make([]*api.SongResponse, len(src))
 	for i, s := range src {
 		artists := make([]string, len(s.Artists))
 		for j, a := range s.Artists {
 			artists[j] = strings.TrimSpace(a.Name)
 		}
-		songs[i] = &provider.Song{
+		songs[i] = &api.SongResponse{
 			Id:       strconv.Itoa(s.Id),
 			Name:     strings.TrimSpace(s.Name),
 			Artist:   strings.Join(artists, "/"),
 			Album:    strings.TrimSpace(s.Album.Name),
-			PicURL:   s.Album.PicURL,
+			PicUrl:   s.Album.PicURL,
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
-			URL:      s.URL,
+			Url:      s.URL,
 		}
 	}
 	return songs

@@ -1,22 +1,23 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetArtist(artistId string) (*provider.Artist, error) {
-	artistInfo, err := a.GetArtistInfoRaw(artistId)
+func (a *API) GetArtist(ctx context.Context, artistId string) (*api.ArtistResponse, error) {
+	artistInfo, err := a.GetArtistInfoRaw(ctx, artistId)
 	if err != nil {
 		return nil, err
 	}
 
-	artistSongs, err := a.GetArtistSongsRaw(artistId, 1, 50)
+	artistSongs, err := a.GetArtistSongsRaw(ctx, artistId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -27,19 +28,19 @@ func (a *API) GetArtist(artistId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist songs: no data")
 	}
 
-	a.patchSongLyric(_songs...)
+	a.patchSongsLyric(ctx, _songs...)
 	songs := resolve(_songs...)
-	return &provider.Artist{
+	return &api.ArtistResponse{
 		Id:     artistInfo.Data.Data.ArtistDetailVO.ArtistId,
 		Name:   strings.TrimSpace(artistInfo.Data.Data.ArtistDetailVO.ArtistName),
-		PicURL: artistInfo.Data.Data.ArtistDetailVO.ArtistLogo,
-		Count:  n,
+		PicUrl: artistInfo.Data.Data.ArtistDetailVO.ArtistLogo,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌手信息
-func (a *API) GetArtistInfoRaw(artistId string) (*ArtistInfoResponse, error) {
+func (a *API) GetArtistInfoRaw(ctx context.Context, artistId string) (*ArtistInfoResponse, error) {
 	token, err := a.getToken(APIGetArtistInfo)
 	if err != nil {
 		return nil, err
@@ -53,11 +54,16 @@ func (a *API) GetArtistInfoRaw(artistId string) (*ArtistInfoResponse, error) {
 		model["artistId"] = artistId
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(ArtistInfoResponse)
-	err = a.Request(sreq.MethodGet, APIGetArtistInfo, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetArtistInfo,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get artist info: %w", err)
@@ -67,7 +73,7 @@ func (a *API) GetArtistInfoRaw(artistId string) (*ArtistInfoResponse, error) {
 }
 
 // 获取歌手歌曲
-func (a *API) GetArtistSongsRaw(artistId string, page int, pageSize int) (*ArtistSongsResponse, error) {
+func (a *API) GetArtistSongsRaw(ctx context.Context, artistId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	token, err := a.getToken(APIGetArtistSongs)
 	if err != nil {
 		return nil, err
@@ -86,11 +92,16 @@ func (a *API) GetArtistSongsRaw(artistId string, page int, pageSize int) (*Artis
 		model["artistId"] = artistId
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(ArtistSongsResponse)
-	err = a.Request(sreq.MethodGet, APIGetArtistSongs, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetArtistSongs,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get artist songs: %w", err)

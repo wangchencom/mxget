@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,14 +12,15 @@ import (
 	"github.com/bogem/id3v2"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
-func ConcurrentDownload(client provider.API, savePath string, songs ...*provider.Song) {
-	savePath = filepath.Join(settings.Cfg.DownloadDir, utils.TrimInvalidFilePathChars(savePath))
+func ConcurrentDownload(ctx context.Context, client provider.API, savePath string, songs ...*api.SongResponse) {
+	savePath = filepath.Join(settings.Cfg.Dir, utils.TrimInvalidFilePathChars(savePath))
 	if err := os.MkdirAll(savePath, 0755); err != nil {
 		easylog.Fatal(err)
 	}
@@ -34,9 +36,15 @@ func ConcurrentDownload(client provider.API, savePath string, songs ...*provider
 	}
 
 	c := concurrency.New(limit)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
-		go func(s *provider.Song) {
+		go func(s *api.SongResponse) {
 			defer c.Done()
 			songInfo := fmt.Sprintf("%s - %s", s.Artist, s.Name)
 			if !s.Playable {
@@ -56,7 +64,8 @@ func ConcurrentDownload(client provider.API, savePath string, songs ...*provider
 			}
 
 			err := client.
-				Request(sreq.MethodGet, s.URL,
+				Request(sreq.MethodGet, s.Url,
+					sreq.WithContext(ctx),
 					sreq.WithRetry(3, 1*time.Second),
 				).
 				Save(mp3FilePath)
@@ -69,7 +78,7 @@ func ConcurrentDownload(client provider.API, savePath string, songs ...*provider
 
 			if settings.Tag {
 				easylog.Infof("Update music metadata: [%s]", songInfo)
-				writeTag(client, mp3FilePath, s)
+				writeTag(ctx, client, mp3FilePath, s)
 			}
 
 			if settings.Lyric && s.Lyric != "" {
@@ -89,7 +98,7 @@ func saveLyric(filePath string, lyric string) {
 	}
 }
 
-func writeTag(client provider.API, filePath string, song *provider.Song) {
+func writeTag(ctx context.Context, client provider.API, filePath string, song *api.SongResponse) {
 	tag, err := id3v2.Open(filePath, id3v2.Options{Parse: true})
 	if err != nil {
 		return
@@ -111,8 +120,10 @@ func writeTag(client provider.API, filePath string, song *provider.Song) {
 		tag.AddUnsynchronisedLyricsFrame(uslt)
 	}
 
-	if song.PicURL != "" {
-		pic, err := client.Request(sreq.MethodGet, song.PicURL).Raw()
+	if song.PicUrl != "" {
+		pic, err := client.Request(sreq.MethodGet, song.PicUrl,
+			sreq.WithContext(ctx),
+		).Raw()
 		if err == nil {
 			picFrame := id3v2.PictureFrame{
 				Encoding:    id3v2.EncodingUTF8,

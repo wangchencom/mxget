@@ -1,22 +1,23 @@
 package netease
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetArtist(artistId string) (*provider.Artist, error) {
-	id, err := strconv.Atoi(artistId)
+func (a *API) GetArtist(ctx context.Context, artistId string) (*api.ArtistResponse, error) {
+	_artistId, err := strconv.Atoi(artistId)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := a.GetArtistRaw(id)
+	resp, err := a.GetArtistRaw(ctx, _artistId)
 	if err != nil {
 		return nil, err
 	}
@@ -26,23 +27,24 @@ func (a *API) GetArtist(artistId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist: no data")
 	}
 
-	a.patchSongURL(SongDefaultBR, resp.HotSongs...)
-	a.patchSongLyric(resp.HotSongs...)
+	a.patchSongsURL(ctx, SongDefaultBR, resp.HotSongs...)
+	a.patchSongsLyric(ctx, resp.HotSongs...)
 	songs := resolve(resp.HotSongs...)
-	return &provider.Artist{
+	return &api.ArtistResponse{
 		Id:     strconv.Itoa(resp.Artist.Id),
 		Name:   strings.TrimSpace(resp.Artist.Name),
-		PicURL: resp.Artist.PicURL,
-		Count:  n,
+		PicUrl: resp.Artist.PicURL,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌手
-func (a *API) GetArtistRaw(id int) (*ArtistResponse, error) {
+func (a *API) GetArtistRaw(ctx context.Context, artistId int) (*ArtistResponse, error) {
 	resp := new(ArtistResponse)
-	err := a.Request(sreq.MethodPost, fmt.Sprintf(APIGetArtist, id),
+	err := a.Request(sreq.MethodPost, fmt.Sprintf(APIGetArtist, artistId),
 		sreq.WithForm(weapi(struct{}{})),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

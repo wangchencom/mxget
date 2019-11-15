@@ -1,22 +1,23 @@
 package netease
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
-	id, err := strconv.Atoi(albumId)
+func (a *API) GetAlbum(ctx context.Context, albumId string) (*api.AlbumResponse, error) {
+	_albumId, err := strconv.Atoi(albumId)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := a.GetAlbumRaw(id)
+	resp, err := a.GetAlbumRaw(ctx, _albumId)
 	if err != nil {
 		return nil, err
 	}
@@ -26,23 +27,24 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album: no data")
 	}
 
-	a.patchSongURL(SongDefaultBR, resp.Songs...)
-	a.patchSongLyric(resp.Songs...)
+	a.patchSongsURL(ctx, SongDefaultBR, resp.Songs...)
+	a.patchSongsLyric(ctx, resp.Songs...)
 	songs := resolve(resp.Songs...)
-	return &provider.Album{
+	return &api.AlbumResponse{
 		Id:     strconv.Itoa(resp.Album.Id),
 		Name:   strings.TrimSpace(resp.Album.Name),
-		PicURL: resp.Album.PicURL,
-		Count:  n,
+		PicUrl: resp.Album.PicURL,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取专辑
-func (a *API) GetAlbumRaw(id int) (*AlbumResponse, error) {
+func (a *API) GetAlbumRaw(ctx context.Context, albumId int) (*AlbumResponse, error) {
 	resp := new(AlbumResponse)
-	err := a.Request(sreq.MethodPost, fmt.Sprintf(APIGetAlbum, id),
+	err := a.Request(sreq.MethodPost, fmt.Sprintf(APIGetAlbum, albumId),
 		sreq.WithForm(weapi(struct{}{})),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

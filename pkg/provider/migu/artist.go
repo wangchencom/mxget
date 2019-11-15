@@ -1,17 +1,18 @@
 package migu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
-	artistInfo, err := a.GetArtistInfoRaw(singerId)
+func (a *API) GetArtist(ctx context.Context, singerId string) (*api.ArtistResponse, error) {
+	artistInfo, err := a.GetArtistInfoRaw(ctx, singerId)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +20,7 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist info: no data")
 	}
 
-	artistSongs, err := a.GetArtistSongsRaw(singerId, 1, 50)
+	artistSongs, err := a.GetArtistSongsRaw(ctx, singerId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -35,19 +36,19 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		_songs[j] = &itemList[i].Song
 	}
 
-	a.patchSongLyric(_songs...)
+	a.patchSongsLyric(ctx, _songs...)
 	songs := resolve(_songs...)
-	return &provider.Artist{
+	return &api.ArtistResponse{
 		Id:     artistInfo.Resource[0].SingerId,
 		Name:   strings.TrimSpace(artistInfo.Resource[0].Singer),
-		PicURL: picURL(artistInfo.Resource[0].Imgs),
-		Count:  len(songs),
+		PicUrl: picURL(artistInfo.Resource[0].Imgs),
+		Count:  uint32(len(songs)),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌手信息
-func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
+func (a *API) GetArtistInfoRaw(ctx context.Context, singerId string) (*ArtistInfoResponse, error) {
 	params := sreq.Params{
 		"resourceId": singerId,
 	}
@@ -55,6 +56,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	resp := new(ArtistInfoResponse)
 	err := a.Request(sreq.MethodGet, APIGetArtistInfo,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -67,7 +69,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 }
 
 // 获取歌手歌曲，page: 页码；pageSize: 每页数量
-func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
+func (a *API) GetArtistSongsRaw(ctx context.Context, singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	params := sreq.Params{
 		"singerId": singerId,
 		"pageNo":   strconv.Itoa(page),
@@ -77,6 +79,7 @@ func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*Artis
 	resp := new(ArtistSongsResponse)
 	err := a.Request(sreq.MethodGet, APIGetArtistSongs,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

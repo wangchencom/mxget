@@ -1,17 +1,18 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
-	resp, err := a.GetAlbumRaw(albumId)
+func (a *API) GetAlbum(ctx context.Context, albumId string) (*api.AlbumResponse, error) {
+	resp, err := a.GetAlbumRaw(ctx, albumId)
 	if err != nil {
 		return nil, err
 	}
@@ -22,19 +23,19 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album: no data")
 	}
 
-	a.patchSongLyric(_songs...)
+	a.patchSongsLyric(ctx, _songs...)
 	songs := resolve(_songs...)
-	return &provider.Album{
+	return &api.AlbumResponse{
 		Id:     resp.Data.Data.AlbumDetail.AlbumId,
 		Name:   strings.TrimSpace(resp.Data.Data.AlbumDetail.AlbumName),
-		PicURL: resp.Data.Data.AlbumDetail.AlbumLogo,
-		Count:  n,
+		PicUrl: resp.Data.Data.AlbumDetail.AlbumLogo,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取专辑
-func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
+func (a *API) GetAlbumRaw(ctx context.Context, albumId string) (*AlbumResponse, error) {
 	token, err := a.getToken(APIGetAlbum)
 	if err != nil {
 		return nil, err
@@ -48,11 +49,16 @@ func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 		model["albumId"] = albumId
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(AlbumResponse)
-	err = a.Request(sreq.MethodGet, APIGetAlbum, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetAlbum,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get album: %w", err)

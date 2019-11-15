@@ -1,45 +1,53 @@
 package artist
 
 import (
+	"context"
+
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/cli"
 	"github.com/winterssy/mxget/internal/settings"
+	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/utils"
 )
 
 var (
-	id   string
-	from string
+	artistId string
+	from     string
 )
 
 var CmdArtist = &cobra.Command{
 	Use:   "artist",
-	Short: "Fetch and download artist hot songs via its id",
+	Short: "Fetch and download artist's hot songs via its id",
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	platformId := settings.Cfg.MusicPlatform
-	if from != "" {
-		pid := settings.GetPlatformId(from)
-		if pid == 0 {
-			easylog.Fatalf("Unexpected music platform: %q", from)
-		}
-		platformId = pid
+	if artistId == "" {
+		artistId = utils.Input("Artist id")
 	}
 
-	client := settings.GetClient(platformId)
-	easylog.Infof("Fetch artist [%s] from [%s]", id, settings.GetPlatformDesc(platformId))
-	artist, err := client.GetArtist(id)
+	platform := settings.Cfg.Platform
+	if from != "" {
+		platform = from
+	}
+
+	client, err := service.GetClient(platform)
 	if err != nil {
 		easylog.Fatal(err)
 	}
 
-	cli.ConcurrentDownload(client, artist.Name, artist.Songs...)
+	easylog.Infof("Fetch artist [%s] from [%s]", artistId, service.GetDesc(platform))
+	ctx := context.Background()
+	artist, err := client.GetArtist(ctx, artistId)
+	if err != nil {
+		easylog.Fatal(err)
+	}
+
+	cli.ConcurrentDownload(ctx, client, artist.Name, artist.Songs...)
 }
 
 func init() {
-	CmdArtist.Flags().StringVar(&id, "id", "", "artist id")
-	CmdArtist.MarkFlagRequired("id")
+	CmdArtist.Flags().StringVar(&artistId, "id", "", "artist id")
 	CmdArtist.Flags().StringVar(&from, "from", "", "music platform")
 	CmdArtist.Flags().IntVar(&settings.Limit, "limit", 0, "concurrent download limit")
 	CmdArtist.Flags().BoolVar(&settings.Tag, "tag", false, "update music metadata")

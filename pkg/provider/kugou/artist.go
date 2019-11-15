@@ -1,22 +1,23 @@
 package kugou
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
-	artistInfo, err := a.GetArtistInfoRaw(singerId)
+func (a *API) GetArtist(ctx context.Context, singerId string) (*api.ArtistResponse, error) {
+	artistInfo, err := a.GetArtistInfoRaw(ctx, singerId)
 	if err != nil {
 		return nil, err
 	}
 
-	artistSongs, err := a.GetArtistSongsRaw(singerId, 1, 50)
+	artistSongs, err := a.GetArtistSongsRaw(ctx, singerId, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -26,21 +27,21 @@ func (a *API) GetArtist(singerId string) (*provider.Artist, error) {
 		return nil, errors.New("get artist songs: no data")
 	}
 
-	a.patchSongInfo(artistSongs.Data.Info...)
-	a.patchAlbumInfo(artistSongs.Data.Info...)
-	a.patchSongLyric(artistSongs.Data.Info...)
+	a.patchSongInfo(ctx, artistSongs.Data.Info...)
+	a.patchSongsInfo(ctx, artistSongs.Data.Info...)
+	a.patchSongsLyric(ctx, artistSongs.Data.Info...)
 	songs := resolve(artistSongs.Data.Info...)
-	return &provider.Artist{
+	return &api.ArtistResponse{
 		Id:     strconv.Itoa(artistInfo.Data.SingerId),
 		Name:   strings.TrimSpace(artistInfo.Data.SingerName),
-		PicURL: strings.ReplaceAll(artistInfo.Data.ImgURL, "{size}", "480"),
-		Count:  n,
+		PicUrl: strings.ReplaceAll(artistInfo.Data.ImgURL, "{size}", "480"),
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌手信息
-func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
+func (a *API) GetArtistInfoRaw(ctx context.Context, singerId string) (*ArtistInfoResponse, error) {
 	params := sreq.Params{
 		"singerid": singerId,
 	}
@@ -48,6 +49,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 	resp := new(ArtistInfoResponse)
 	err := a.Request(sreq.MethodGet, APIGetArtistInfo,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -60,7 +62,7 @@ func (a *API) GetArtistInfoRaw(singerId string) (*ArtistInfoResponse, error) {
 }
 
 // 获取歌手歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
+func (a *API) GetArtistSongsRaw(ctx context.Context, singerId string, page int, pageSize int) (*ArtistSongsResponse, error) {
 	params := sreq.Params{
 		"singerid": singerId,
 		"page":     strconv.Itoa(page),
@@ -70,6 +72,7 @@ func (a *API) GetArtistSongsRaw(singerId string, page int, pageSize int) (*Artis
 	resp := new(ArtistSongsResponse)
 	err := a.Request(sreq.MethodGet, APIGetArtistSongs,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

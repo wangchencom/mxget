@@ -1,22 +1,23 @@
 package netease
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetSong(songId string) (*provider.Song, error) {
-	id, err := strconv.Atoi(songId)
+func (a *API) GetSong(ctx context.Context, songId string) (*api.SongResponse, error) {
+	_songId, err := strconv.Atoi(songId)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := a.GetSongsRaw(id)
+	resp, err := a.GetSongsRaw(ctx, _songId)
 	if err != nil {
 		return nil, err
 	}
@@ -25,14 +26,14 @@ func (a *API) GetSong(songId string) (*provider.Song, error) {
 	}
 
 	_song := resp.Songs[0]
-	a.patchSongURL(SongDefaultBR, _song)
-	a.patchSongLyric(_song)
+	a.patchSongsURL(ctx, SongDefaultBR, _song)
+	a.patchSongsLyric(ctx, _song)
 	songs := resolve(_song)
 	return songs[0], nil
 }
 
 // 批量获取歌曲详情，上限1000首
-func (a *API) GetSongsRaw(songIds ...int) (*SongsResponse, error) {
+func (a *API) GetSongsRaw(ctx context.Context, songIds ...int) (*SongsResponse, error) {
 	n := len(songIds)
 	if n > SongRequestLimit {
 		songIds = songIds[:SongRequestLimit]
@@ -51,6 +52,7 @@ func (a *API) GetSongsRaw(songIds ...int) (*SongsResponse, error) {
 	resp := new(SongsResponse)
 	err := a.Request(sreq.MethodPost, APIGetSongs,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -62,8 +64,8 @@ func (a *API) GetSongsRaw(songIds ...int) (*SongsResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongURL(id int, br int) (string, error) {
-	resp, err := a.GetSongsURLRaw(br, id)
+func (a *API) GetSongURL(ctx context.Context, id int, br int) (string, error) {
+	resp, err := a.GetSongsURLRaw(ctx, br, id)
 	if err != nil {
 		return "", err
 	}
@@ -78,7 +80,7 @@ func (a *API) GetSongURL(id int, br int) (string, error) {
 }
 
 // 批量获取歌曲播放地址，br: 比特率，128/192/320/999
-func (a *API) GetSongsURLRaw(br int, songIds ...int) (*SongURLResponse, error) {
+func (a *API) GetSongsURLRaw(ctx context.Context, br int, songIds ...int) (*SongURLResponse, error) {
 	var _br int
 	switch br {
 	case 128, 192, 320:
@@ -96,6 +98,7 @@ func (a *API) GetSongsURLRaw(br int, songIds ...int) (*SongURLResponse, error) {
 	resp := new(SongURLResponse)
 	err := a.Request(sreq.MethodPost, APIGetSongsURL,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -107,8 +110,8 @@ func (a *API) GetSongsURLRaw(br int, songIds ...int) (*SongURLResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongLyric(id int) (string, error) {
-	resp, err := a.GetSongLyricRaw(id)
+func (a *API) GetSongLyric(ctx context.Context, songId int) (string, error) {
+	resp, err := a.GetSongLyricRaw(ctx, songId)
 	if err != nil {
 		return "", err
 	}
@@ -116,17 +119,18 @@ func (a *API) GetSongLyric(id int) (string, error) {
 }
 
 // 获取歌词
-func (a *API) GetSongLyricRaw(id int) (*SongLyricResponse, error) {
+func (a *API) GetSongLyricRaw(ctx context.Context, songId int) (*SongLyricResponse, error) {
 	data := map[string]interface{}{
 		"method": "POST",
 		"url":    "https://music.163.com/api/song/lyric?lv=-1&kv=-1&tv=-1",
 		"params": map[string]int{
-			"id": id,
+			"id": songId,
 		},
 	}
 	resp := new(SongLyricResponse)
 	err := a.Request(sreq.MethodPost, APILinux,
 		sreq.WithForm(linuxapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

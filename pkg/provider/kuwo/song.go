@@ -1,28 +1,29 @@
 package kuwo
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetSong(mid string) (*provider.Song, error) {
-	resp, err := a.GetSongRaw(mid)
+func (a *API) GetSong(ctx context.Context, mid string) (*api.SongResponse, error) {
+	resp, err := a.GetSongRaw(ctx, mid)
 	if err != nil {
 		return nil, err
 	}
 
-	a.patchSongURL(SongDefaultBR, &resp.Data)
-	a.patchSongLyric(&resp.Data)
+	a.patchSongsURL(ctx, SongDefaultBR, &resp.Data)
+	a.patchSongsLyric(ctx, &resp.Data)
 	songs := resolve(&resp.Data)
 	return songs[0], nil
 }
 
 // 获取歌曲详情
-func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
+func (a *API) GetSongRaw(ctx context.Context, mid string) (*SongResponse, error) {
 	params := sreq.Params{
 		"mid": mid,
 	}
@@ -30,6 +31,7 @@ func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
 	resp := new(SongResponse)
 	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -41,8 +43,8 @@ func (a *API) GetSongRaw(mid string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongURL(mid int, br int) (string, error) {
-	resp, err := a.GetSongURLRaw(mid, br)
+func (a *API) GetSongURL(ctx context.Context, mid int, br int) (string, error) {
+	resp, err := a.GetSongURLRaw(ctx, mid, br)
 	if err != nil {
 		return "", err
 	}
@@ -51,7 +53,7 @@ func (a *API) GetSongURL(mid int, br int) (string, error) {
 }
 
 // 获取歌曲播放地址，br: 比特率，128/192/320 可选
-func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
+func (a *API) GetSongURLRaw(ctx context.Context, mid int, br int) (*SongURLResponse, error) {
 	var _br int
 	switch br {
 	case 128, 192, 320:
@@ -67,6 +69,7 @@ func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
 	resp := new(SongURLResponse)
 	err := a.Request(sreq.MethodGet, APIGetSongURL,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -78,8 +81,8 @@ func (a *API) GetSongURLRaw(mid int, br int) (*SongURLResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongLyric(mid int) (string, error) {
-	resp, err := a.GetSongLyricRaw(mid)
+func (a *API) GetSongLyric(ctx context.Context, mid int) (string, error) {
+	resp, err := a.GetSongLyricRaw(ctx, mid)
 	if err != nil {
 		return "", err
 	}
@@ -100,7 +103,7 @@ func (a *API) GetSongLyric(mid int) (string, error) {
 }
 
 // 获取歌词
-func (a *API) GetSongLyricRaw(mid int) (*SongLyricResponse, error) {
+func (a *API) GetSongLyricRaw(ctx context.Context, mid int) (*SongLyricResponse, error) {
 	params := sreq.Params{
 		"musicId": strconv.Itoa(mid),
 	}
@@ -108,6 +111,7 @@ func (a *API) GetSongLyricRaw(mid int) (*SongLyricResponse, error) {
 	resp := new(SongLyricResponse)
 	err := a.Request(sreq.MethodGet, APIGetSongLyric,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

@@ -2,81 +2,33 @@ package settings
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/winterssy/easylog"
-	"github.com/winterssy/mxget/pkg/provider"
-	"github.com/winterssy/mxget/pkg/provider/baidu"
-	"github.com/winterssy/mxget/pkg/provider/kugou"
-	"github.com/winterssy/mxget/pkg/provider/kuwo"
-	"github.com/winterssy/mxget/pkg/provider/migu"
-	"github.com/winterssy/mxget/pkg/provider/netease"
-	"github.com/winterssy/mxget/pkg/provider/qq"
-	"github.com/winterssy/mxget/pkg/provider/xiami"
+	"github.com/winterssy/mxget/pkg/service"
 )
 
 const (
-	downloadDir = "./downloads"
+	dir      = "./downloads"
+	platform = "nc"
 )
 
 var (
-	Cfg = &Config{
-		DownloadDir:   downloadDir,
-		MusicPlatform: provider.NetEase,
-	}
+	Cfg   = &Config{}
 	Limit int
 	Tag   bool
 	Lyric bool
 	Force bool
 )
 
-var (
-	platformIds = map[string]provider.PlatformId{
-		"netease":  provider.NetEase,
-		"nc":       provider.NetEase,
-		"tencent":  provider.QQ,
-		"qq":       provider.QQ,
-		"migu":     provider.MiGu,
-		"mg":       provider.MiGu,
-		"kugou":    provider.KuGou,
-		"kg":       provider.KuGou,
-		"kuwo":     provider.KuGou,
-		"kw":       provider.KuWo,
-		"xiami":    provider.XiaMi,
-		"xm":       provider.XiaMi,
-		"qianqian": provider.BaiDu,
-		"baidu":    provider.BaiDu,
-		"bd":       provider.BaiDu,
-	}
-
-	platformDescs = map[provider.PlatformId]string{
-		provider.NetEase: "netease cloud music",
-		provider.QQ:      "qq music",
-		provider.MiGu:    "migu music",
-		provider.KuGou:   "kugou music",
-		provider.KuWo:    "kuwo music",
-		provider.XiaMi:   "xiami music",
-		provider.BaiDu:   "qianqian music",
-	}
-
-	clients = map[provider.PlatformId]provider.API{
-		provider.NetEase: netease.Client(),
-		provider.QQ:      qq.Client(),
-		provider.MiGu:    migu.Client(),
-		provider.KuGou:   kugou.Client(),
-		provider.KuWo:    kuwo.Client(),
-		provider.XiaMi:   xiami.Client(),
-		provider.BaiDu:   baidu.Client(),
-	}
-)
-
 type (
 	Config struct {
-		DownloadDir   string              `json:"download_dir"`
-		MusicPlatform provider.PlatformId `json:"music_platform"`
+		Dir      string `json:"dir"`
+		Platform string `json:"platform"`
 
 		// 预留字段，其它设置项
 		others   map[string]interface{} `json:"-"`
@@ -84,29 +36,20 @@ type (
 	}
 )
 
-func GetPlatformId(platformFlag string) provider.PlatformId {
-	return platformIds[platformFlag]
-}
-
-func GetPlatformDesc(platformId provider.PlatformId) string {
-	return platformDescs[platformId]
-}
-
-func GetClient(platformId provider.PlatformId) provider.API {
-	return clients[platformId]
-}
-
 func Init() {
 	err := Cfg.setup()
 	if err != nil {
-		Cfg.Reset()
-		easylog.Fatalf("Can't initialize settings, reset to defaults: %v", err)
+		_ = Cfg.Save()
+		easylog.Fatalf("Initialize config failed, reset to defaults: %v", err)
 	}
 }
 
 func (c *Config) setup() error {
-	c.getCfgFile()
-	err := c.loadCfgFile()
+	if c.setupConfigFile() != nil {
+		return c.initConfigFile()
+	}
+
+	err := c.loadConfigFile()
 	if err != nil {
 		return err
 	}
@@ -119,7 +62,7 @@ func (c *Config) setup() error {
 	return nil
 }
 
-func (c *Config) getCfgFile() {
+func (c *Config) setupConfigFile() error {
 	var cfgDir string
 	xdgDir := os.Getenv("XDG_CONFIG_HOME")
 	if xdgDir == "" {
@@ -133,35 +76,40 @@ func (c *Config) getCfgFile() {
 		cfgDir = filepath.Join(xdgDir, "mxget")
 	}
 
-	if os.MkdirAll(cfgDir, 0755) != nil {
+	if cfgDir == "." || os.MkdirAll(cfgDir, 0755) != nil {
 		c.filePath = ".mxget.json"
+	} else {
+		c.filePath = filepath.Join(cfgDir, "mxget.json")
 	}
 
-	c.filePath = filepath.Join(cfgDir, "mxget.json")
+	_, err := os.Stat(c.filePath)
+	return err
 }
 
-func (c *Config) loadCfgFile() error {
-	_, err := os.Stat(c.filePath)
-	if err == nil {
-		b, err := ioutil.ReadFile(c.filePath)
-		if err != nil {
-			return err
-		}
-		return json.Unmarshal(b, c)
-	}
-
+func (c *Config) initConfigFile() error {
+	c.Dir = dir
+	c.Platform = platform
 	return c.Save()
 }
 
-func (c *Config) check() error {
-	if GetPlatformDesc(c.MusicPlatform) == "" {
-		c.MusicPlatform = provider.NetEase
-		return fmt.Errorf("unexpected music platform: %d", c.MusicPlatform)
+func (c *Config) loadConfigFile() error {
+	b, err := ioutil.ReadFile(c.filePath)
+	if err != nil {
+		return err
 	}
 
-	err := os.MkdirAll(c.DownloadDir, 0755)
+	return json.Unmarshal(b, c)
+}
+
+func (c *Config) check() error {
+	if service.GetDesc(c.Platform) == "unknown" {
+		c.Platform = platform
+		return errors.New("unexpected music platform")
+	}
+
+	err := os.MkdirAll(c.Dir, 0755)
 	if err != nil {
-		c.DownloadDir = downloadDir
+		c.Dir = dir
 		return fmt.Errorf("cant't make download dir: %w", err)
 	}
 
@@ -177,7 +125,8 @@ func (c *Config) Save() error {
 	return ioutil.WriteFile(c.filePath, b, 0644)
 }
 
-// 在配置初始化异常时调用，重置异常配置为默认值
 func (c *Config) Reset() {
+	c.Dir = dir
+	c.Platform = platform
 	_ = c.Save()
 }

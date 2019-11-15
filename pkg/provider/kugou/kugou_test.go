@@ -1,16 +1,21 @@
 package kugou_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/winterssy/mxget/pkg/provider/kugou"
 )
 
-var client *kugou.API
+var (
+	client *kugou.API
+	ctx    context.Context
+)
 
 func setup() {
 	client = kugou.New(nil)
+	ctx = context.Background()
 }
 
 func TestMain(m *testing.M) {
@@ -19,7 +24,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := client.SearchSongs("五月天")
+	result, err := client.SearchSongs(ctx, "五月天")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +32,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := client.GetSong("1571941D82D63AD614E35EAD9DB6A6A2")
+	song, err := client.GetSong(ctx, "1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +40,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURL(t *testing.T) {
-	url, err := client.GetSongURL("1571941D82D63AD614E35EAD9DB6A6A2")
+	url, err := client.GetSongURL(ctx, "1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +48,7 @@ func TestAPI_GetSongURL(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := client.GetSongLyric("1571941D82D63AD614E35EAD9DB6A6A2")
+	lyric, err := client.GetSongLyric(ctx, "1571941D82D63AD614E35EAD9DB6A6A2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +56,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := client.GetArtist("8965")
+	artist, err := client.GetArtist(ctx, "8965")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +64,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := client.GetAlbum("976965")
+	album, err := client.GetAlbum(ctx, "976965")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +72,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := client.GetPlaylist("610433")
+	playlist, err := client.GetPlaylist(ctx, "610433")
 	if err != nil {
 		t.Fatal(err)
 	}

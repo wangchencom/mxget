@@ -1,15 +1,16 @@
 package serve
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
-	"github.com/winterssy/mxget/internal/routes"
+	"github.com/winterssy/mxget/internal/server"
+	"github.com/winterssy/mxget/pkg/service"
 )
 
 var (
-	port int
+	rpcPort  int
+	restPort int
 )
 
 var CmdServe = &cobra.Command{
@@ -18,14 +19,16 @@ var CmdServe = &cobra.Command{
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	gin.SetMode(gin.ReleaseMode)
-	app := gin.New()
-	routes.Init(app)
-	fmt.Printf("Server started at http://0.0.0.0:%d...\n", port)
-	app.Run(fmt.Sprintf(":%d", port))
+	ctx := context.Background()
+	srv := new(service.MusicServerImpl)
+	go func() {
+		_ = server.RunRest(ctx, rpcPort, restPort)
+	}()
+	_ = server.RunRPC(ctx, srv, rpcPort)
 }
 
 func init() {
-	CmdServe.Flags().IntVar(&port, "port", 8080, "server listening port")
+	CmdServe.Flags().IntVar(&rpcPort, "rpc-port", 8090, "rpc server listening port")
+	CmdServe.Flags().IntVar(&restPort, "rest-port", 8080, "rest server listening port")
 	CmdServe.Run = Run
 }

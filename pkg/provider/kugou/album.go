@@ -1,22 +1,23 @@
 package kugou
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
-	albumInfo, err := a.GetAlbumInfoRaw(albumId)
+func (a *API) GetAlbum(ctx context.Context, albumId string) (*api.AlbumResponse, error) {
+	albumInfo, err := a.GetAlbumInfoRaw(ctx, albumId)
 	if err != nil {
 		return nil, err
 	}
 
-	albumSongs, err := a.GetAlbumSongsRaw(albumId, 1, -1)
+	albumSongs, err := a.GetAlbumSongsRaw(ctx, albumId, 1, -1)
 	if err != nil {
 		return nil, err
 	}
@@ -26,21 +27,21 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album songs: no data")
 	}
 
-	a.patchSongInfo(albumSongs.Data.Info...)
-	a.patchAlbumInfo(albumSongs.Data.Info...)
-	a.patchSongLyric(albumSongs.Data.Info...)
+	a.patchSongInfo(ctx, albumSongs.Data.Info...)
+	a.patchSongsInfo(ctx, albumSongs.Data.Info...)
+	a.patchSongsLyric(ctx, albumSongs.Data.Info...)
 	songs := resolve(albumSongs.Data.Info...)
-	return &provider.Album{
+	return &api.AlbumResponse{
 		Id:     strconv.Itoa(albumInfo.Data.AlbumId),
 		Name:   strings.TrimSpace(albumInfo.Data.AlbumName),
-		PicURL: strings.ReplaceAll(albumInfo.Data.ImgURL, "{size}", "480"),
-		Count:  n,
+		PicUrl: strings.ReplaceAll(albumInfo.Data.ImgURL, "{size}", "480"),
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取专辑信息
-func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
+func (a *API) GetAlbumInfoRaw(ctx context.Context, albumId string) (*AlbumInfoResponse, error) {
 	params := sreq.Params{
 		"albumid": albumId,
 	}
@@ -48,6 +49,7 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 	resp := new(AlbumInfoResponse)
 	err := a.Request(sreq.MethodGet, APIGetAlbumInfo,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -60,7 +62,7 @@ func (a *API) GetAlbumInfoRaw(albumId string) (*AlbumInfoResponse, error) {
 }
 
 // 获取专辑歌曲，page: 页码；pageSize: 每页数量，-1获取全部
-func (a *API) GetAlbumSongsRaw(albumId string, page int, pageSize int) (*AlbumSongsResponse, error) {
+func (a *API) GetAlbumSongsRaw(ctx context.Context, albumId string, page int, pageSize int) (*AlbumSongsResponse, error) {
 	params := sreq.Params{
 		"albumid":  albumId,
 		"page":     strconv.Itoa(page),
@@ -70,6 +72,7 @@ func (a *API) GetAlbumSongsRaw(albumId string, page int, pageSize int) (*AlbumSo
 	resp := new(AlbumSongsResponse)
 	err := a.Request(sreq.MethodGet, APIGetAlbumSongs,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

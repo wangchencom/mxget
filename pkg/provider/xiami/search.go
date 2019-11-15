@@ -1,16 +1,17 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
-	resp, err := a.SearchSongsRaw(keyword, 1, 50)
+func (a *API) SearchSongs(ctx context.Context, keyword string) (*api.SearchSongsResponse, error) {
+	resp, err := a.SearchSongsRaw(ctx, keyword, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -20,24 +21,24 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		return nil, errors.New("search songs: no data")
 	}
 
-	songs := make([]*provider.SearchSongsData, n)
+	songs := make([]*api.SongResponse, n)
 	for i, s := range resp.Data.Data.Songs {
-		songs[i] = &provider.SearchSongsData{
+		songs[i] = &api.SongResponse{
 			Id:     s.SongId,
 			Name:   strings.TrimSpace(s.SongName),
 			Artist: strings.TrimSpace(strings.ReplaceAll(s.Singers, " / ", "/")),
 			Album:  strings.TrimSpace(s.AlbumName),
 		}
 	}
-	return &provider.SearchSongsResult{
+	return &api.SearchSongsResponse{
 		Keyword: keyword,
-		Count:   n,
+		Count:   uint32(n),
 		Songs:   songs,
 	}, nil
 }
 
 // 搜索歌曲
-func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
+func (a *API) SearchSongsRaw(ctx context.Context, keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	token, err := a.getToken(APISearch)
 	if err != nil {
 		return nil, err
@@ -51,11 +52,16 @@ func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSon
 		},
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(SearchSongsResponse)
-	err = a.Request(sreq.MethodGet, APISearch, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APISearch,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("search songs: %w", err)

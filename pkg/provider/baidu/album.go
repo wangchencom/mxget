@@ -1,16 +1,17 @@
 package baidu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
-	resp, err := a.GetAlbumRaw(albumId)
+func (a *API) GetAlbum(ctx context.Context, albumId string) (*api.AlbumResponse, error) {
+	resp, err := a.GetAlbumRaw(ctx, albumId)
 	if err != nil {
 		return nil, err
 	}
@@ -20,20 +21,20 @@ func (a *API) GetAlbum(albumId string) (*provider.Album, error) {
 		return nil, errors.New("get album: no data")
 	}
 
-	a.patchSongURL(resp.SongList...)
-	a.patchSongLyric(resp.SongList...)
+	a.patchSongsURL(ctx, resp.SongList...)
+	a.patchSongsLyric(ctx, resp.SongList...)
 	songs := resolve(resp.SongList...)
-	return &provider.Album{
+	return &api.AlbumResponse{
 		Id:     resp.AlbumInfo.AlbumId,
 		Name:   strings.TrimSpace(resp.AlbumInfo.Title),
-		PicURL: strings.SplitN(resp.AlbumInfo.PicBig, "@", 2)[0],
-		Count:  n,
+		PicUrl: strings.SplitN(resp.AlbumInfo.PicBig, "@", 2)[0],
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取专辑
-func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
+func (a *API) GetAlbumRaw(ctx context.Context, albumId string) (*AlbumResponse, error) {
 	params := sreq.Params{
 		"album_id": albumId,
 	}
@@ -41,6 +42,7 @@ func (a *API) GetAlbumRaw(albumId string) (*AlbumResponse, error) {
 	resp := new(AlbumResponse)
 	err := a.Request(sreq.MethodGet, APIGetAlbum,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

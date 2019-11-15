@@ -1,6 +1,7 @@
 package netease
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 )
 
 // 邮箱登录
-func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, error) {
+func (a *API) EmailLoginRaw(ctx context.Context, email string, password string) (*LoginResponse, error) {
 	passwordHash := md5.Sum([]byte(password))
 	password = hex.EncodeToString(passwordHash[:])
 	data := map[string]interface{}{
@@ -21,6 +22,7 @@ func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, erro
 	resp := new(LoginResponse)
 	err := a.Request(sreq.MethodPost, APIEmailLogin,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,7 @@ func (a *API) EmailLoginRaw(email string, password string) (*LoginResponse, erro
 }
 
 // 手机登录
-func (a *API) CellphoneLoginRaw(countryCode int, phone int, password string) (*LoginResponse, error) {
+func (a *API) CellphoneLoginRaw(ctx context.Context, countryCode int, phone int, password string) (*LoginResponse, error) {
 	passwordHash := md5.Sum([]byte(password))
 	password = hex.EncodeToString(passwordHash[:])
 	data := map[string]interface{}{
@@ -46,6 +48,7 @@ func (a *API) CellphoneLoginRaw(countryCode int, phone int, password string) (*L
 	resp := new(LoginResponse)
 	err := a.Request(sreq.MethodPost, APICellphoneLogin,
 		sreq.WithForm(weapi(data)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -58,10 +61,11 @@ func (a *API) CellphoneLoginRaw(countryCode int, phone int, password string) (*L
 }
 
 // 刷新登录状态
-func (a *API) RefreshLoginRaw() (*CommonResponse, error) {
+func (a *API) RefreshLoginRaw(ctx context.Context) (*CommonResponse, error) {
 	resp := new(CommonResponse)
 	err := a.Request(sreq.MethodPost, APIRefreshLogin,
 		sreq.WithForm(weapi(struct{}{})),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -74,10 +78,11 @@ func (a *API) RefreshLoginRaw() (*CommonResponse, error) {
 }
 
 // 退出登录
-func (a *API) LogoutRaw() (*CommonResponse, error) {
+func (a *API) LogoutRaw(ctx context.Context) (*CommonResponse, error) {
 	resp := new(CommonResponse)
 	err := a.Request(sreq.MethodPost, APILogout,
 		sreq.WithForm(weapi(struct{}{})),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

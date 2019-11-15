@@ -1,16 +1,17 @@
 package baidu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
-	resp, err := a.GetPlaylistRaw(playlistId)
+func (a *API) GetPlaylist(ctx context.Context, playlistId string) (*api.PlaylistResponse, error) {
+	resp, err := a.GetPlaylistRaw(ctx, playlistId)
 	if err != nil {
 		return nil, err
 	}
@@ -20,20 +21,20 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		return nil, errors.New("get playlist: no data")
 	}
 
-	a.patchSongURL(resp.Result.SongList...)
-	a.patchSongLyric(resp.Result.SongList...)
+	a.patchSongsURL(ctx, resp.Result.SongList...)
+	a.patchSongsLyric(ctx, resp.Result.SongList...)
 	songs := resolve(resp.Result.SongList...)
-	return &provider.Playlist{
+	return &api.PlaylistResponse{
 		Id:     resp.Result.Info.ListId,
 		Name:   strings.TrimSpace(resp.Result.Info.ListTitle),
-		PicURL: resp.Result.Info.ListPic,
-		Count:  n,
+		PicUrl: resp.Result.Info.ListPic,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌单
-func (a *API) GetPlaylistRaw(playlistId string) (*PlaylistResponse, error) {
+func (a *API) GetPlaylistRaw(ctx context.Context, playlistId string) (*PlaylistResponse, error) {
 	params := sreq.Params{
 		"list_id":   playlistId,
 		"withcount": "1",
@@ -43,6 +44,7 @@ func (a *API) GetPlaylistRaw(playlistId string) (*PlaylistResponse, error) {
 	resp := new(PlaylistResponse)
 	err := a.Request(sreq.MethodGet, APIGetPlaylist,
 		sreq.WithQuery(signPayload(params)),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err

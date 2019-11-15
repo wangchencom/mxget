@@ -1,12 +1,15 @@
 package search
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
+	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/utils"
 )
 
 var (
@@ -16,22 +19,27 @@ var (
 
 var CmdSearch = &cobra.Command{
 	Use:   "search",
-	Short: "Search songs from the Internet",
+	Short: "Search songs from the specified music platform",
 }
 
 func Run(cmd *cobra.Command, args []string) {
-	platformId := settings.Cfg.MusicPlatform
-	if from != "" {
-		pid := settings.GetPlatformId(from)
-		if pid == 0 {
-			easylog.Fatalf("Unexpected music platform: %q", from)
-		}
-		platformId = pid
+	if keyword == "" {
+		keyword = utils.Input("Search keyword")
+		fmt.Println()
 	}
 
-	client := settings.GetClient(platformId)
-	fmt.Printf("Search %q from [%s]...\n\n", keyword, settings.GetPlatformDesc(platformId))
-	result, err := client.SearchSongs(keyword)
+	platform := settings.Cfg.Platform
+	if from != "" {
+		platform = from
+	}
+
+	client, err := service.GetClient(platform)
+	if err != nil {
+		easylog.Fatal(err)
+	}
+
+	fmt.Printf("Search %q from [%s]...\n\n", keyword, service.GetDesc(platform))
+	result, err := client.SearchSongs(context.Background(), keyword)
 	if err != nil {
 		easylog.Fatal(err)
 	}
@@ -51,7 +59,6 @@ func Run(cmd *cobra.Command, args []string) {
 
 func init() {
 	CmdSearch.Flags().StringVarP(&keyword, "keyword", "k", "", "search keyword")
-	CmdSearch.MarkFlagRequired("keyword")
 	CmdSearch.Flags().StringVar(&from, "from", "", "music platform")
 	CmdSearch.Run = Run
 }

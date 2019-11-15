@@ -1,13 +1,17 @@
 package migu_test
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/winterssy/mxget/pkg/provider/migu"
 )
 
-var client *migu.API
+var (
+	client *migu.API
+	ctx    context.Context
+)
 
 func setup() {
 	client = migu.New(nil)
@@ -19,7 +23,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestAPI_SearchSongs(t *testing.T) {
-	result, err := client.SearchSongs("周杰伦")
+	result, err := client.SearchSongs(ctx, "周杰伦")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +31,7 @@ func TestAPI_SearchSongs(t *testing.T) {
 }
 
 func TestAPI_GetSong(t *testing.T) {
-	song, err := client.GetSong("63273402938")
+	song, err := client.GetSong(ctx, "63273402938")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +39,7 @@ func TestAPI_GetSong(t *testing.T) {
 }
 
 func TestAPI_GetSongURL(t *testing.T) {
-	resp, err := client.GetSongURL("600908000002677565", "2")
+	resp, err := client.GetSongURL(ctx, "600908000002677565", "2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +47,7 @@ func TestAPI_GetSongURL(t *testing.T) {
 }
 
 func TestAPI_GetSongLyric(t *testing.T) {
-	lyric, err := client.GetSongLyric("63273402938")
+	lyric, err := client.GetSongLyric(ctx, "63273402938")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +55,7 @@ func TestAPI_GetSongLyric(t *testing.T) {
 }
 
 func TestAPI_GetSongPic(t *testing.T) {
-	pic, err := client.GetSongPic("1121439251")
+	pic, err := client.GetSongPic(ctx, "1121439251")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +63,7 @@ func TestAPI_GetSongPic(t *testing.T) {
 }
 
 func TestAPI_GetArtist(t *testing.T) {
-	artist, err := client.GetArtist("112")
+	artist, err := client.GetArtist(ctx, "112")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +71,7 @@ func TestAPI_GetArtist(t *testing.T) {
 }
 
 func TestAPI_GetAlbum(t *testing.T) {
-	album, err := client.GetAlbum("1121438701")
+	album, err := client.GetAlbum(ctx, "1121438701")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,7 +79,7 @@ func TestAPI_GetAlbum(t *testing.T) {
 }
 
 func TestAPI_GetPlaylist(t *testing.T) {
-	playlist, err := client.GetPlaylist("159248239")
+	playlist, err := client.GetPlaylist(ctx, "159248239")
 	if err != nil {
 		t.Fatal(err)
 	}

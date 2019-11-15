@@ -1,29 +1,30 @@
 package kugou
 
 import (
+	"context"
 	"crypto/md5"
 	"errors"
 	"fmt"
 	"math/rand"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetSong(hash string) (*provider.Song, error) {
-	resp, err := a.GetSongRaw(hash)
+func (a *API) GetSong(ctx context.Context, hash string) (*api.SongResponse, error) {
+	resp, err := a.GetSongRaw(ctx, hash)
 	if err != nil {
 		return nil, err
 	}
 
-	a.patchAlbumInfo(&resp.Song)
-	a.patchSongLyric(&resp.Song)
+	a.patchSongsInfo(ctx, &resp.Song)
+	a.patchSongsLyric(ctx, &resp.Song)
 	songs := resolve(&resp.Song)
 	return songs[0], nil
 }
 
 // 获取歌曲详情
-func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
+func (a *API) GetSongRaw(ctx context.Context, hash string) (*SongResponse, error) {
 	params := sreq.Params{
 		"hash": hash,
 	}
@@ -31,6 +32,7 @@ func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	resp := new(SongResponse)
 	err := a.Request(sreq.MethodGet, APIGetSong,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -42,8 +44,8 @@ func (a *API) GetSongRaw(hash string) (*SongResponse, error) {
 	return resp, nil
 }
 
-func (a *API) GetSongURL(hash string) (string, error) {
-	resp, err := a.GetSongURLRaw(hash)
+func (a *API) GetSongURL(ctx context.Context, hash string) (string, error) {
+	resp, err := a.GetSongURLRaw(ctx, hash)
 	if err != nil {
 		return "", err
 	}
@@ -55,7 +57,7 @@ func (a *API) GetSongURL(hash string) (string, error) {
 }
 
 // 获取歌曲播放地址
-func (a *API) GetSongURLRaw(hash string) (*SongURLResponse, error) {
+func (a *API) GetSongURLRaw(ctx context.Context, hash string) (*SongURLResponse, error) {
 	data := []byte(hash + "kgcloudv2")
 	key := fmt.Sprintf("%x", md5.Sum(data))
 
@@ -67,6 +69,7 @@ func (a *API) GetSongURLRaw(hash string) (*SongURLResponse, error) {
 	resp := new(SongURLResponse)
 	err := a.Request(sreq.MethodGet, APIGetSongURL,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
@@ -84,11 +87,12 @@ func (a *API) GetSongURLRaw(hash string) (*SongURLResponse, error) {
 }
 
 // 获取歌词
-func (a *API) GetSongLyric(hash string) (string, error) {
+func (a *API) GetSongLyric(ctx context.Context, hash string) (string, error) {
 	params := sreq.Params{
 		"hash": hash,
 	}
 	return a.Request(sreq.MethodGet, APIGetSongLyric,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).Text()
 }

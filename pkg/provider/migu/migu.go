@@ -1,11 +1,14 @@
 package migu
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -198,47 +201,43 @@ func Client() provider.API {
 }
 
 func (s *SearchSongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongIdResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongURLResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongLyricResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongPicResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (a *ArtistInfoResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *ArtistSongsResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (p *PlaylistResponse) String() string {
-	return provider.ToJSON(p, false)
-}
-
-func (a *API) PlatformId() provider.PlatformId {
-	return provider.MiGu
+	return utils.ToJSON(p, false)
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
@@ -253,12 +252,18 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Send(method, url, opts...)
 }
 
-func (a *API) patchSongInfo(songs ...*Song) {
+func (a *API) patchSongsInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			picURL, err := a.GetSongPic(s.SongId)
+			picURL, err := a.GetSongPic(ctx, s.SongId)
 			if err == nil {
 				if !strings.HasPrefix(picURL, "http:") {
 					picURL = "http:" + picURL
@@ -271,12 +276,18 @@ func (a *API) patchSongInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchSongURL(songs ...*Song) {
+func (a *API) patchSongsURL(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			url, err := a.GetSongURL(s.ContentId, s.ResourceType)
+			url, err := a.GetSongURL(ctx, s.ContentId, s.ResourceType)
 			if err == nil {
 				s.URL = url
 			}
@@ -287,13 +298,21 @@ func (a *API) patchSongURL(songs ...*Song) {
 }
 
 // 部分歌词文本文件由于不是utf-8编码，可能会乱码，目前无解
-func (a *API) patchSongLyric(songs ...*Song) {
+func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
 			if s.LrcURL != "" {
-				lyric, err := a.Request(sreq.MethodGet, s.LrcURL).Text()
+				lyric, err := a.Request(sreq.MethodGet, s.LrcURL,
+					sreq.WithContext(ctx),
+				).Text()
 				if err == nil {
 					s.Lyric = lyric
 				}
@@ -324,19 +343,19 @@ func songURL(contentId string, br int) string {
 	return fmt.Sprintf(SongURL, contentId, "E", codeRate[_br])
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, len(src))
+func resolve(src ...*Song) []*api.SongResponse {
+	songs := make([]*api.SongResponse, len(src))
 	for i, s := range src {
 		url := songURL(s.ContentId, SongDefaultBR)
-		songs[i] = &provider.Song{
+		songs[i] = &api.SongResponse{
 			Id:       s.SongId,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singer, "|", "/")),
 			Album:    strings.TrimSpace(s.Album),
-			PicURL:   picURL(s.AlbumImgs),
+			PicUrl:   picURL(s.AlbumImgs),
 			Lyric:    s.Lyric,
 			Playable: url != "",
-			URL:      url,
+			Url:      url,
 		}
 	}
 	return songs

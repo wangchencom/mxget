@@ -1,11 +1,14 @@
 package kugou
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -159,43 +162,39 @@ func Client() provider.API {
 }
 
 func (s *SearchSongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongURLResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (a *ArtistInfoResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *ArtistSongsResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumInfoResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumSongsResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (p *PlaylistInfoResponse) String() string {
-	return provider.ToJSON(p, false)
+	return utils.ToJSON(p, false)
 }
 
 func (p *PlaylistSongsResponse) String() string {
-	return provider.ToJSON(p, false)
-}
-
-func (a *API) PlatformId() provider.PlatformId {
-	return provider.KuGou
+	return utils.ToJSON(p, false)
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
@@ -209,12 +208,19 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 	return a.Client.Send(method, url, opts...)
 }
 
-func (a *API) patchSongInfo(songs ...*Song) {
+func (a *API) patchSongInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
+
 		c.Add(1)
 		go func(s *Song) {
-			resp, err := a.GetSongRaw(s.Hash)
+			resp, err := a.GetSongRaw(ctx, s.Hash)
 			if err == nil {
 				s.SongName = resp.SongName
 				s.SingerId = resp.SingerId
@@ -231,46 +237,20 @@ func (a *API) patchSongInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func (a *API) patchSongURL(songs ...*Song) {
+func (a *API) patchSongsInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
-		if s.URL != "" {
-			continue
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
 		}
-		c.Add(1)
-		go func(s *Song) {
-			url, err := a.GetSongURL(s.Hash)
-			if err == nil {
-				s.URL = url
-			}
-			c.Done()
-		}(s)
-	}
-	c.Wait()
-}
 
-func (a *API) patchSongLyric(songs ...*Song) {
-	c := concurrency.New(32)
-	for _, s := range songs {
-		c.Add(1)
-		go func(s *Song) {
-			lyric, err := a.GetSongLyric(s.Hash)
-			if err == nil {
-				s.Lyric = lyric
-			}
-			c.Done()
-		}(s)
-	}
-	c.Wait()
-}
-
-func (a *API) patchAlbumInfo(songs ...*Song) {
-	c := concurrency.New(32)
-	for _, s := range songs {
 		c.Add(1)
 		go func(s *Song) {
 			if s.AlbumId != 0 {
-				resp, err := a.GetAlbumInfoRaw(strconv.Itoa(s.AlbumId))
+				resp, err := a.GetAlbumInfoRaw(ctx, strconv.Itoa(s.AlbumId))
 				if err == nil {
 					s.AlbumName = resp.Data.AlbumName
 				}
@@ -281,18 +261,65 @@ func (a *API) patchAlbumInfo(songs ...*Song) {
 	c.Wait()
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, len(src))
+func (a *API) patchSongsURL(ctx context.Context, songs ...*Song) {
+	c := concurrency.New(32)
+Loop:
+	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
+
+		if s.URL != "" {
+			continue
+		}
+		c.Add(1)
+		go func(s *Song) {
+			url, err := a.GetSongURL(ctx, s.Hash)
+			if err == nil {
+				s.URL = url
+			}
+			c.Done()
+		}(s)
+	}
+	c.Wait()
+}
+
+func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
+	c := concurrency.New(32)
+Loop:
+	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
+
+		c.Add(1)
+		go func(s *Song) {
+			lyric, err := a.GetSongLyric(ctx, s.Hash)
+			if err == nil {
+				s.Lyric = lyric
+			}
+			c.Done()
+		}(s)
+	}
+	c.Wait()
+}
+
+func resolve(src ...*Song) []*api.SongResponse {
+	songs := make([]*api.SongResponse, len(src))
 	for i, s := range src {
-		songs[i] = &provider.Song{
+		songs[i] = &api.SongResponse{
 			Id:       s.Hash,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.ChoricSinger, "、", "/")),
 			Album:    strings.TrimSpace(s.AlbumName),
-			PicURL:   strings.ReplaceAll(s.AlbumImg, "{size}", "480"),
+			PicUrl:   strings.ReplaceAll(s.AlbumImg, "{size}", "480"),
 			Lyric:    s.Lyric,
 			Playable: s.URL != "",
-			URL:      s.URL,
+			Url:      s.URL,
 		}
 	}
 	return songs

@@ -1,12 +1,15 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
 	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
@@ -224,43 +227,39 @@ func (c *CommonResponse) check() error {
 }
 
 func (s *SearchSongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongDetailResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (s *SongsResponse) String() string {
-	return provider.ToJSON(s, false)
+	return utils.ToJSON(s, false)
 }
 
 func (a *ArtistInfoResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *ArtistSongsResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (a *AlbumResponse) String() string {
-	return provider.ToJSON(a, false)
+	return utils.ToJSON(a, false)
 }
 
 func (p *PlaylistDetailResponse) String() string {
-	return provider.ToJSON(p, false)
+	return utils.ToJSON(p, false)
 }
 
 func (p *PlaylistSongsResponse) String() string {
-	return provider.ToJSON(p, false)
+	return utils.ToJSON(p, false)
 }
 
 func (p *LoginResponse) String() string {
-	return provider.ToJSON(p, false)
-}
-
-func (a *API) PlatformId() provider.PlatformId {
-	return provider.XiaMi
+	return utils.ToJSON(p, false)
 }
 
 func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sreq.Response {
@@ -289,12 +288,18 @@ func (a *API) getToken(url string) (string, error) {
 	return strings.Split(token.Value, "_")[0], nil
 }
 
-func (a *API) patchSongLyric(songs ...*Song) {
+func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
+Loop:
 	for _, s := range songs {
+		select {
+		case <-ctx.Done():
+			break Loop
+		default:
+		}
 		c.Add(1)
 		go func(s *Song) {
-			lyric, err := a.GetSongLyric(s.SongId)
+			lyric, err := a.GetSongLyric(ctx, s.SongId)
 			if err == nil {
 				s.Lyric = lyric
 			}
@@ -313,19 +318,19 @@ func songURL(listenFiles []ListenFile) string {
 	return ""
 }
 
-func resolve(src ...*Song) []*provider.Song {
-	songs := make([]*provider.Song, len(src))
+func resolve(src ...*Song) []*api.SongResponse {
+	songs := make([]*api.SongResponse, len(src))
 	for i, s := range src {
 		url := songURL(s.ListenFiles)
-		songs[i] = &provider.Song{
+		songs[i] = &api.SongResponse{
 			Id:       s.SongId,
 			Name:     strings.TrimSpace(s.SongName),
 			Artist:   strings.TrimSpace(strings.ReplaceAll(s.Singers, " / ", "/")),
 			Album:    strings.TrimSpace(s.AlbumName),
-			PicURL:   s.AlbumLogo,
+			PicUrl:   s.AlbumLogo,
 			Lyric:    s.Lyric,
 			Playable: url != "",
-			URL:      url,
+			Url:      url,
 		}
 	}
 	return songs

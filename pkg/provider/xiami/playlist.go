@@ -1,19 +1,20 @@
 package xiami
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
-	resp, err := a.GetPlaylistDetailRaw(playlistId, 1, SongRequestLimit)
+func (a *API) GetPlaylist(ctx context.Context, playlistId string) (*api.PlaylistResponse, error) {
+	resp, err := a.GetPlaylistDetailRaw(ctx, playlistId, 1, SongRequestLimit)
 	if err != nil {
 		return nil, err
 	}
@@ -28,11 +29,17 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		allSongs := resp.Data.Data.CollectDetail.AllSongs
 		queue := make(chan []*Song)
 		wg := new(sync.WaitGroup)
+	Loop:
 		for i := SongRequestLimit; i < n; i += SongRequestLimit {
+			select {
+			case <-ctx.Done():
+				break Loop
+			default:
+			}
 			songIds := allSongs[i:utils.Min(i+SongRequestLimit, n)]
 			wg.Add(1)
 			go func() {
-				resp, err := a.GetSongsRaw(songIds...)
+				resp, err := a.GetSongsRaw(ctx, songIds...)
 				if err != nil {
 					wg.Done()
 					return
@@ -50,19 +57,19 @@ func (a *API) GetPlaylist(playlistId string) (*provider.Playlist, error) {
 		wg.Wait()
 	}
 
-	a.patchSongLyric(_songs...)
+	a.patchSongsLyric(ctx, _songs...)
 	songs := resolve(_songs...)
-	return &provider.Playlist{
+	return &api.PlaylistResponse{
 		Id:     resp.Data.Data.CollectDetail.ListId,
 		Name:   strings.TrimSpace(resp.Data.Data.CollectDetail.CollectName),
-		PicURL: resp.Data.Data.CollectDetail.CollectLogo,
-		Count:  n,
+		PicUrl: resp.Data.Data.CollectDetail.CollectLogo,
+		Count:  uint32(n),
 		Songs:  songs,
 	}, nil
 }
 
 // 获取歌单详情，包含歌单信息跟歌曲
-func (a *API) GetPlaylistDetailRaw(playlistId string, page int, pageSize int) (*PlaylistDetailResponse, error) {
+func (a *API) GetPlaylistDetailRaw(ctx context.Context, playlistId string, page int, pageSize int) (*PlaylistDetailResponse, error) {
 	token, err := a.getToken(APIGetPlaylistDetail)
 	if err != nil {
 		return nil, err
@@ -76,11 +83,16 @@ func (a *API) GetPlaylistDetailRaw(playlistId string, page int, pageSize int) (*
 		},
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(PlaylistDetailResponse)
-	err = a.Request(sreq.MethodGet, APIGetPlaylistDetail, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetPlaylistDetail,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get playlist detail: %w", err)
@@ -90,7 +102,7 @@ func (a *API) GetPlaylistDetailRaw(playlistId string, page int, pageSize int) (*
 }
 
 // 获取歌单歌曲，不包含歌单信息
-func (a *API) GetPlaylistSongsRaw(playlistId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
+func (a *API) GetPlaylistSongsRaw(ctx context.Context, playlistId string, page int, pageSize int) (*PlaylistSongsResponse, error) {
 	token, err := a.getToken(APIGetPlaylistSongs)
 	if err != nil {
 		return nil, err
@@ -104,11 +116,16 @@ func (a *API) GetPlaylistSongsRaw(playlistId string, page int, pageSize int) (*P
 		},
 	}
 	params := sreq.Params(signPayload(token, model))
+
 	resp := new(PlaylistSongsResponse)
-	err = a.Request(sreq.MethodGet, APIGetPlaylistSongs, sreq.WithQuery(params)).JSON(resp)
+	err = a.Request(sreq.MethodGet, APIGetPlaylistSongs,
+		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
+	).JSON(resp)
 	if err != nil {
 		return nil, err
 	}
+
 	err = resp.check()
 	if err != nil {
 		return nil, fmt.Errorf("get playlist songs: %w", err)

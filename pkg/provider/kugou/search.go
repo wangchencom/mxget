@@ -1,17 +1,18 @@
 package kugou
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/sreq"
 )
 
-func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
-	resp, err := a.SearchSongsRaw(keyword, 1, 50)
+func (a *API) SearchSongs(ctx context.Context, keyword string) (*api.SearchSongsResponse, error) {
+	resp, err := a.SearchSongsRaw(ctx, keyword, 1, 50)
 	if err != nil {
 		return nil, err
 	}
@@ -21,24 +22,24 @@ func (a *API) SearchSongs(keyword string) (*provider.SearchSongsResult, error) {
 		return nil, errors.New("search songs: no data")
 	}
 
-	songs := make([]*provider.SearchSongsData, n)
+	songs := make([]*api.SongResponse, n)
 	for i, s := range resp.Data.Info {
-		songs[i] = &provider.SearchSongsData{
+		songs[i] = &api.SongResponse{
 			Id:     s.Hash,
 			Name:   strings.TrimSpace(s.SongName),
 			Artist: strings.TrimSpace(strings.ReplaceAll(s.SingerName, "、", "/")),
 			Album:  strings.TrimSpace(s.AlbumName),
 		}
 	}
-	return &provider.SearchSongsResult{
+	return &api.SearchSongsResponse{
 		Keyword: keyword,
-		Count:   n,
+		Count:   uint32(n),
 		Songs:   songs,
 	}, nil
 }
 
 // 搜索歌曲
-func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
+func (a *API) SearchSongsRaw(ctx context.Context, keyword string, page int, pageSize int) (*SearchSongsResponse, error) {
 	params := sreq.Params{
 		"keyword":  keyword,
 		"page":     strconv.Itoa(page),
@@ -48,6 +49,7 @@ func (a *API) SearchSongsRaw(keyword string, page int, pageSize int) (*SearchSon
 	resp := new(SearchSongsResponse)
 	err := a.Request(sreq.MethodGet, APISearch,
 		sreq.WithQuery(params),
+		sreq.WithContext(ctx),
 	).JSON(resp)
 	if err != nil {
 		return nil, err
