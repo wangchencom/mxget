@@ -47,7 +47,7 @@ func Run(cmd *cobra.Command, args []string) {
 }
 
 func init() {
-	CmdSong.Flags().StringVar(&songId, "songId", "", "song songId")
+	CmdSong.Flags().StringVar(&songId, "id", "", "song id")
 	CmdSong.Flags().StringVar(&from, "from", "", "music platform")
 	CmdSong.Flags().BoolVar(&settings.Tag, "tag", false, "update music metadata")
 	CmdSong.Flags().BoolVar(&settings.Lyric, "lyric", false, "download lyric")
