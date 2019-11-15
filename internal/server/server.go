@@ -6,9 +6,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/winterssy/mxget/pkg/api"
@@ -39,30 +36,17 @@ func init() {
 }
 
 func RunRPC(ctx context.Context, srv api.MusicServer, rpcPort int) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", rpcPort))
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", rpcPort))
 	if err != nil {
 		return err
 	}
 
 	rpcServer := grpc.NewServer()
 	api.RegisterMusicServer(rpcServer, srv)
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for range c {
-			rpcServer.GracefulStop()
-			<-ctx.Done()
-		}
-	}()
-
 	return rpcServer.Serve(lis)
 }
 
 func RunRest(ctx context.Context, rpcPort int, restPort int) error {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{
 		grpc.WithInsecure(),
@@ -76,19 +60,6 @@ func RunRest(ctx context.Context, rpcPort int, restPort int) error {
 		Addr:    fmt.Sprintf(":%d", restPort),
 		Handler: mux,
 	}
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		for range c {
-			// sig is a ^C, handle it
-		}
-
-		_, cancel := context.WithTimeout(ctx, 5*time.Second)
-		defer cancel()
-
-		_ = srv.Shutdown(ctx)
-	}()
 
 	return srv.ListenAndServe()
 }
