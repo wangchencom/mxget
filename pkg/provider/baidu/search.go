@@ -55,7 +55,7 @@ func (a *API) SearchSongsRaw(ctx context.Context, keyword string, page int, page
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("search songs: %v", resp.errorMessage())
+		return nil, fmt.Errorf("search songs: %s", resp.errorMessage())
 	}
 
 	return resp, nil

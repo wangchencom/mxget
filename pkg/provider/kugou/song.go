@@ -38,7 +38,7 @@ func (a *API) GetSongRaw(ctx context.Context, hash string) (*SongResponse, error
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get song: %s", resp.Error)
+		return nil, fmt.Errorf("get song: %s", resp.errorMessage())
 	}
 
 	return resp, nil

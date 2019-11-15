@@ -50,7 +50,7 @@ func (a *API) GetPlaylistRaw(ctx context.Context, playlistId string) (*PlaylistR
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get playlist: %v", resp.errorMessage())
+		return nil, fmt.Errorf("get playlist: %s", resp.errorMessage())
 	}
 
 	return resp, nil

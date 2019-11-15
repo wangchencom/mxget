@@ -62,7 +62,7 @@ func (a *API) GetArtistInfoRaw(ctx context.Context, singerId string) (*ArtistInf
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get artist info: %s", resp.Info)
+		return nil, fmt.Errorf("get artist info: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -85,7 +85,7 @@ func (a *API) GetArtistSongsRaw(ctx context.Context, singerId string, page int, 
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get artist songs: %s", resp.Info)
+		return nil, fmt.Errorf("get artist songs: %s", resp.errorMessage())
 	}
 
 	return resp, nil

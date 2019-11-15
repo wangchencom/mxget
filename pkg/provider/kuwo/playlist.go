@@ -51,7 +51,7 @@ func (a *API) GetPlaylistRaw(ctx context.Context, playlistId string, page int, p
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("get playlist: %s", resp.Msg)
+		return nil, fmt.Errorf("get playlist: %s", resp.errorMessage())
 	}
 
 	return resp, nil

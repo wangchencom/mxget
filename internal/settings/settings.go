@@ -2,7 +2,6 @@ package settings
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -103,8 +102,9 @@ func (c *Config) loadConfigFile() error {
 
 func (c *Config) check() error {
 	if service.GetDesc(c.Platform) == "unknown" {
+		rawPlatform := c.Platform
 		c.Platform = platform
-		return errors.New("unexpected music platform")
+		return fmt.Errorf("unexpected music platform: %q", rawPlatform)
 	}
 
 	err := os.MkdirAll(c.Dir, 0755)
@@ -126,7 +126,5 @@ func (c *Config) Save() error {
 }
 
 func (c *Config) Reset() {
-	c.Dir = dir
-	c.Platform = platform
-	_ = c.Save()
+	_ = c.initConfigFile()
 }

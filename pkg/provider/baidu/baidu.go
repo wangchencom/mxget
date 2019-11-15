@@ -2,6 +2,7 @@ package baidu
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"github.com/winterssy/mxget/pkg/api"
@@ -152,9 +153,9 @@ func Client() provider.API {
 	return std
 }
 
-func (c *CommonResponse) errorMessage() interface{} {
+func (c *CommonResponse) errorMessage() string {
 	if c.ErrorMessage == "" {
-		return c.ErrorCode
+		return strconv.Itoa(c.ErrorCode)
 	}
 	return c.ErrorMessage
 }

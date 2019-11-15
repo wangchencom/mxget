@@ -161,6 +161,13 @@ func Client() provider.API {
 	return std
 }
 
+func (c *CommonResponse) errorMessage() string {
+	if c.Error == "" {
+		return strconv.Itoa(c.ErrCode)
+	}
+	return c.Error
+}
+
 func (s *SearchSongsResponse) String() string {
 	return utils.ToJSON(s, false)
 }

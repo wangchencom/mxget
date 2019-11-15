@@ -29,7 +29,7 @@ func (a *API) GetSongRaw(ctx context.Context, songId string) (*SongResponse, err
 		return nil, err
 	}
 	if resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get song: %v", resp.errorMessage())
+		return nil, fmt.Errorf("get song: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -79,7 +79,7 @@ func (a *API) GetSongLyricRaw(ctx context.Context, songId string) (*SongLyricRes
 		return nil, err
 	}
 	if resp.ErrorCode != 0 && resp.ErrorCode != 22000 {
-		return nil, fmt.Errorf("get lyric: %v", resp.errorMessage())
+		return nil, fmt.Errorf("get lyric: %s", resp.errorMessage())
 	}
 
 	return resp, nil

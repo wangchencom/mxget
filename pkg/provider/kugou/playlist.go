@@ -55,7 +55,7 @@ func (a *API) GetPlaylistInfoRaw(ctx context.Context, specialId string) (*Playli
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get playlist info: %s", resp.Error)
+		return nil, fmt.Errorf("get playlist info: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -78,7 +78,7 @@ func (a *API) GetPlaylistSongsRaw(ctx context.Context, specialId string, page in
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get playlist songs: %s", resp.Error)
+		return nil, fmt.Errorf("get playlist songs: %s", resp.errorMessage())
 	}
 
 	return resp, nil

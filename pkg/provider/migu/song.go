@@ -67,7 +67,7 @@ func (a *API) GetSongRaw(ctx context.Context, songId string) (*SongResponse, err
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get song: %s", resp.Info)
+		return nil, fmt.Errorf("get song: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -132,7 +132,7 @@ func (a *API) GetSongURLRaw(ctx context.Context, contentId, resourceType string)
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get song url: %s", resp.Info)
+		return nil, fmt.Errorf("get song url: %s", resp.errorMessage())
 	}
 
 	return resp, nil

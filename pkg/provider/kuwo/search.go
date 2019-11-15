@@ -58,7 +58,7 @@ func (a *API) SearchSongsRaw(ctx context.Context, keyword string, page int, page
 		if resp.Code == -1 {
 			err = errors.New("search songs: no data")
 		} else {
-			err = fmt.Errorf("search songs: %s", resp.Msg)
+			err = fmt.Errorf("search songs: %s", resp.errorMessage())
 		}
 		return nil, err
 	}

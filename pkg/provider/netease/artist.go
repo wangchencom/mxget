@@ -50,7 +50,7 @@ func (a *API) GetArtistRaw(ctx context.Context, artistId int) (*ArtistResponse, 
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("get artist: %s", resp.Msg)
+		return nil, fmt.Errorf("get artist: %s", resp.errorMessage())
 	}
 
 	return resp, nil

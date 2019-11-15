@@ -46,7 +46,7 @@ func (a *API) GetAlbumRaw(ctx context.Context, albumId string) (*AlbumResponse, 
 		return nil, err
 	}
 	if resp.Code != "000000" {
-		return nil, fmt.Errorf("get album: %s", resp.Info)
+		return nil, fmt.Errorf("get album: %s", resp.errorMessage())
 	}
 
 	return resp, nil

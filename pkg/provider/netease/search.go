@@ -62,7 +62,7 @@ func (a *API) SearchSongsRaw(ctx context.Context, keyword string, offset int, li
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("search songs: %s", resp.Msg)
+		return nil, fmt.Errorf("search songs: %s", resp.errorMessage())
 	}
 
 	return resp, nil

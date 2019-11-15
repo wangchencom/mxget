@@ -28,7 +28,7 @@ func (a *API) EmailLoginRaw(ctx context.Context, email string, password string) 
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("email login: %s", resp.Msg)
+		return nil, fmt.Errorf("email login: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -54,7 +54,7 @@ func (a *API) CellphoneLoginRaw(ctx context.Context, countryCode int, phone int,
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("cellphone login: %s", resp.Msg)
+		return nil, fmt.Errorf("cellphone login: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -71,7 +71,7 @@ func (a *API) RefreshLoginRaw(ctx context.Context) (*CommonResponse, error) {
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("refresh login: %s", resp.Msg)
+		return nil, fmt.Errorf("refresh login: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -88,7 +88,7 @@ func (a *API) LogoutRaw(ctx context.Context) (*CommonResponse, error) {
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("logout: %s", resp.Msg)
+		return nil, fmt.Errorf("logout: %s", resp.errorMessage())
 	}
 
 	return resp, nil

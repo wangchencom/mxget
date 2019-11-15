@@ -50,7 +50,7 @@ func (a *API) GetAlbumRaw(ctx context.Context, albumId string, page int, pageSiz
 		return nil, err
 	}
 	if resp.Code != 200 {
-		return nil, fmt.Errorf("get album: %s", resp.Msg)
+		return nil, fmt.Errorf("get album: %s", resp.errorMessage())
 	}
 
 	return resp, nil

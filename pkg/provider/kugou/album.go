@@ -55,7 +55,7 @@ func (a *API) GetAlbumInfoRaw(ctx context.Context, albumId string) (*AlbumInfoRe
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get album info: %s", resp.Error)
+		return nil, fmt.Errorf("get album info: %s", resp.errorMessage())
 	}
 
 	return resp, nil
@@ -78,7 +78,7 @@ func (a *API) GetAlbumSongsRaw(ctx context.Context, albumId string, page int, pa
 		return nil, err
 	}
 	if resp.ErrCode != 0 {
-		return nil, fmt.Errorf("get album songs: %s", resp.Error)
+		return nil, fmt.Errorf("get album songs: %s", resp.errorMessage())
 	}
 
 	return resp, nil
