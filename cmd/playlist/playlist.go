@@ -2,6 +2,7 @@ package playlist
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
@@ -24,6 +25,7 @@ var CmdPlaylist = &cobra.Command{
 func Run(cmd *cobra.Command, args []string) {
 	if playlistId == "" {
 		playlistId = utils.Input("Playlist id")
+		fmt.Println()
 	}
 
 	platform := settings.Cfg.Platform

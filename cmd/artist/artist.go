@@ -2,6 +2,7 @@ package artist
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
@@ -24,6 +25,7 @@ var CmdArtist = &cobra.Command{
 func Run(cmd *cobra.Command, args []string) {
 	if artistId == "" {
 		artistId = utils.Input("Artist id")
+		fmt.Println()
 	}
 
 	platform := settings.Cfg.Platform

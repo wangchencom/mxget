@@ -2,6 +2,7 @@ package album
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
@@ -24,6 +25,7 @@ var CmdAlbum = &cobra.Command{
 func Run(cmd *cobra.Command, args []string) {
 	if albumId == "" {
 		albumId = utils.Input("Album id")
+		fmt.Println()
 	}
 
 	platform := settings.Cfg.Platform
