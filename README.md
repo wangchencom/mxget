@@ -201,8 +201,10 @@ Docker版：
 
 ```sh
 $ docker pull winterssy/mxget
-$ docker run -d --name mxget -p 8080:8080 winterssy/mxget
+$ docker run -d --name mxget -p 8080:8080 -p 8090:8090 winterssy/mxget
 ```
+
+> 注：`8090` 为 grpc 端口，rpc 相关功能目前还在探索开发中。`pymxget` 不支持 rpc 。
 
 请求方法均为 `GET` ，统一调用路径为 `/api/{platform}/{type}/{param}` ，示例：
 
