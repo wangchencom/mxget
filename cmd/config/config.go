@@ -26,6 +26,7 @@ var CmdSet = &cobra.Command{
 func Run(cmd *cobra.Command, args []string) {
 	if cmd.Flags().NFlag() == 0 {
 		_ = cmd.Help()
+		return
 	}
 
 	if show {
