@@ -146,7 +146,7 @@ type (
 func New(client *sreq.Client) *API {
 	if client == nil {
 		client = sreq.New(nil)
-		client.SetDefaultRequestOpts(
+		client.SetGlobalRequestOpts(
 			sreq.WithHeaders(sreq.Headers{
 				"User-Agent": provider.UserAgent,
 			}),

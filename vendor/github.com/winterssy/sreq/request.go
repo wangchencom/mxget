@@ -18,31 +18,31 @@ import (
 )
 
 const (
-	// MethodGet represents GET HTTP method
+	// MethodGet represents the GET method for HTTP.
 	MethodGet = "GET"
 
-	// MethodHead represents HEAD HTTP method
+	// MethodHead represents the HEAD method for HTTP.
 	MethodHead = "HEAD"
 
-	// MethodPost represents POST HTTP method
+	// MethodPost represents the POST method for HTTP.
 	MethodPost = "POST"
 
-	// MethodPut represents PUT HTTP method
+	// MethodPut represents the PUT method for HTTP.
 	MethodPut = "PUT"
 
-	// MethodPatch represents PATCH HTTP method
+	// MethodPatch represents the PATCH method for HTTP.
 	MethodPatch = "PATCH"
 
-	// MethodDelete represents DELETE HTTP method
+	// MethodDelete represents the DELETE method for HTTP.
 	MethodDelete = "DELETE"
 
-	// MethodConnect represents CONNECT HTTP method
+	// MethodConnect represents the CONNECT method for HTTP.
 	MethodConnect = "CONNECT"
 
-	// MethodOptions represents OPTIONS HTTP method
+	// MethodOptions represents the OPTIONS method for HTTP.
 	MethodOptions = "OPTIONS"
 
-	// MethodTrace represents TRACE HTTP method
+	// MethodTrace represents the TRACE method for HTTP.
 	MethodTrace = "TRACE"
 )
 
@@ -52,14 +52,13 @@ type (
 		// RawRequest represents the raw HTTP request.
 		RawRequest *http.Request
 
-		retryOption RetryOption
+		retryOption retryOption
 	}
 
 	// RequestOption specifies the request options, like params, form, etc.
 	RequestOption func(*Request) (*Request, error)
 
-	// RetryOption specifies the retry strategy of the HTTP request.
-	RetryOption struct {
+	retryOption struct {
 		enable     bool
 		attempts   int
 		delay      time.Duration
@@ -79,7 +78,7 @@ func (c *Client) newRequest(method string, url string, opts ...RequestOption) (*
 	}
 
 	c.mux.RLock()
-	for _, opt := range c.RequestOptions {
+	for _, opt := range c.GlobalRequestOpts {
 		req, err = opt(req)
 		if err != nil {
 			c.mux.RUnlock()
@@ -249,7 +248,7 @@ func WithHost(host string) RequestOption {
 	}
 }
 
-// WithHeaders sets headers of the HTTP request.
+// WithHeaders sets headers for the HTTP request.
 func WithHeaders(headers Headers) RequestOption {
 	return func(req *Request) (*Request, error) {
 		for k, v := range headers {
@@ -259,7 +258,7 @@ func WithHeaders(headers Headers) RequestOption {
 	}
 }
 
-// WithQuery sets query params of the HTTP request.
+// WithQuery sets query params for the HTTP request.
 func WithQuery(params Params) RequestOption {
 	return func(req *Request) (*Request, error) {
 		query := req.RawRequest.URL.Query()
@@ -271,7 +270,7 @@ func WithQuery(params Params) RequestOption {
 	}
 }
 
-// WithRaw sets raw bytes payload of the HTTP request.
+// WithRaw sets raw bytes payload for the HTTP request.
 func WithRaw(raw []byte, contentType string) RequestOption {
 	return func(req *Request) (*Request, error) {
 		r := bytes.NewBuffer(raw)
@@ -288,7 +287,7 @@ func WithRaw(raw []byte, contentType string) RequestOption {
 	}
 }
 
-// WithText sets plain text payload of the HTTP request.
+// WithText sets plain text payload for the HTTP request.
 func WithText(text string) RequestOption {
 	return func(req *Request) (*Request, error) {
 		r := bytes.NewBufferString(text)
@@ -305,7 +304,7 @@ func WithText(text string) RequestOption {
 	}
 }
 
-// WithForm sets form payload of the HTTP request.
+// WithForm sets form payload for the HTTP request.
 func WithForm(form Form) RequestOption {
 	return func(req *Request) (*Request, error) {
 		data := stdurl.Values{}
@@ -327,7 +326,7 @@ func WithForm(form Form) RequestOption {
 	}
 }
 
-// WithJSON sets json payload of the HTTP request.
+// WithJSON sets json payload for the HTTP request.
 func WithJSON(data JSON, escapeHTML bool) RequestOption {
 	return func(req *Request) (*Request, error) {
 		b, err := Marshal(data, "", "", escapeHTML)
@@ -349,7 +348,7 @@ func WithJSON(data JSON, escapeHTML bool) RequestOption {
 	}
 }
 
-// WithFiles sets files payload of the HTTP request.
+// WithFiles sets files payload for the HTTP request.
 func WithFiles(files Files) RequestOption {
 	return func(req *Request) (*Request, error) {
 		for fieldName, filePath := range files {
@@ -388,7 +387,7 @@ func WithFiles(files Files) RequestOption {
 	}
 }
 
-// WithCookies sets cookies of the HTTP request.
+// WithCookies sets cookies for the HTTP request.
 func WithCookies(cookies ...*http.Cookie) RequestOption {
 	return func(req *Request) (*Request, error) {
 		for _, c := range cookies {
@@ -398,7 +397,7 @@ func WithCookies(cookies ...*http.Cookie) RequestOption {
 	}
 }
 
-// WithBasicAuth sets basic authentication of the HTTP request.
+// WithBasicAuth sets basic authentication for the HTTP request.
 func WithBasicAuth(username string, password string) RequestOption {
 	return func(req *Request) (*Request, error) {
 		req.RawRequest.Header.Set("Authorization", "Basic "+basicAuth(username, password))
@@ -411,7 +410,7 @@ func basicAuth(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-// WithBearerToken sets bearer token of the HTTP request.
+// WithBearerToken sets bearer token for the HTTP request.
 func WithBearerToken(token string) RequestOption {
 	return func(req *Request) (*Request, error) {
 		req.RawRequest.Header.Set("Authorization", "Bearer "+token)
@@ -419,7 +418,7 @@ func WithBearerToken(token string) RequestOption {
 	}
 }
 
-// WithContext sets context of the HTTP request.
+// WithContext sets context for the HTTP request.
 func WithContext(ctx context.Context) RequestOption {
 	return func(req *Request) (*Request, error) {
 		if ctx == nil {
@@ -431,7 +430,7 @@ func WithContext(ctx context.Context) RequestOption {
 	}
 }
 
-// WithRetry sets retry strategy of the HTTP request.
+// WithRetry sets retry strategy for the HTTP request.
 func WithRetry(attempts int, delay time.Duration, conditions ...func(*Response) bool) RequestOption {
 	return func(req *Request) (*Request, error) {
 		if attempts > 1 {

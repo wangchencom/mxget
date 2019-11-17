@@ -20,8 +20,8 @@ type (
 		// RawClient specifies an HTTP client for sending HTTP requests.
 		RawClient *http.Client
 
-		// RequestOptions specifies request options that sreq uses for per HTTP request by default.
-		RequestOptions []RequestOption
+		// GlobalRequestOpts specifies the request options used by per HTTP request.
+		GlobalRequestOpts []RequestOption
 
 		mux sync.RWMutex
 	}
@@ -71,39 +71,39 @@ func New(httpClient *http.Client) *Client {
 	}
 }
 
-// SetDefaultRequestOpts sets default request options for per HTTP request.
-func SetDefaultRequestOpts(opts ...RequestOption) {
-	std.SetDefaultRequestOpts(opts...)
+// SetGlobalRequestOpts sets the global request options.
+func SetGlobalRequestOpts(opts ...RequestOption) {
+	std.SetGlobalRequestOpts(opts...)
 }
 
-// SetDefaultRequestOpts sets default request options for per HTTP request.
-func (c *Client) SetDefaultRequestOpts(opts ...RequestOption) {
+// SetGlobalRequestOpts sets the global request options.
+func (c *Client) SetGlobalRequestOpts(opts ...RequestOption) {
 	c.mux.Lock()
-	c.RequestOptions = opts
+	c.GlobalRequestOpts = opts
 	c.mux.Unlock()
 }
 
-// AddDefaultRequestOpts appends default request options for per HTTP request.
-func AddDefaultRequestOpts(opts ...RequestOption) {
-	std.AddDefaultRequestOpts(opts...)
+// AddGlobalRequestOpts appends the global request options.
+func AddGlobalRequestOpts(opts ...RequestOption) {
+	std.AddGlobalRequestOpts(opts...)
 }
 
-// AddDefaultRequestOpts appends default request options for per HTTP request.
-func (c *Client) AddDefaultRequestOpts(opts ...RequestOption) {
+// AddGlobalRequestOpts appends the global request options.
+func (c *Client) AddGlobalRequestOpts(opts ...RequestOption) {
 	c.mux.Lock()
-	c.RequestOptions = append(c.RequestOptions, opts...)
+	c.GlobalRequestOpts = append(c.GlobalRequestOpts, opts...)
 	c.mux.Unlock()
 }
 
-// ClearDefaultRequestOpts clears default request options for per HTTP request.
-func ClearDefaultRequestOpts() {
-	std.ClearDefaultRequestOpts()
+// ClearGlobalRequestOpts clears the global request options.
+func ClearGlobalRequestOpts() {
+	std.ClearGlobalRequestOpts()
 }
 
-// ClearDefaultRequestOpts clears default request options for per HTTP request.
-func (c *Client) ClearDefaultRequestOpts() {
+// ClearGlobalRequestOpts clears the global request options.
+func (c *Client) ClearGlobalRequestOpts() {
 	c.mux.Lock()
-	c.RequestOptions = nil
+	c.GlobalRequestOpts = nil
 	c.mux.Unlock()
 }
 

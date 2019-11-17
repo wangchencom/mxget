@@ -34,7 +34,7 @@ type (
 
 func init() {
 	std = sreq.New(nil)
-	std.SetDefaultRequestOpts(
+	std.SetGlobalRequestOpts(
 		sreq.WithHeaders(sreq.Headers{
 			"User-Agent": UserAgent,
 		}),

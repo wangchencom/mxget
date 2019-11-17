@@ -58,7 +58,7 @@ resp, err := sreq.Get("http://www.baidu.com").Resolve()
 - [上传文件](#上传文件)
 - [设置Basic认证](#设置Basic认证)
 - [设置Bearer令牌](#设置Bearer令牌)
-- [设置默认请求选项](#设置默认请求选项)
+- [设置全局请求选项](#设置全局请求选项)
 - [自定义HTTP客户端](#自定义HTTP客户端)
 - [并发安全](#并发安全)
 
@@ -198,12 +198,12 @@ if err != nil {
 fmt.Println(data)
 ```
 
-### 设置默认请求选项
+### 设置全局请求选项
 
-如果你希望每个HTTP请求都带上一些默认选项，可以这样做：
+如果你希望每个HTTP请求都带上一些请求选项，可以这样做：
 
 ```go
-sreq.SetDefaultRequestOpts(
+sreq.SetGlobalRequestOpts(
     sreq.WithQuery(sreq.Params{
         "defaultKey1": "defaultValue1",
         "defaultKey2": "defaultValue2",

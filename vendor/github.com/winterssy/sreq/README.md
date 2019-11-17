@@ -58,7 +58,7 @@ See more examples as follow.
 - [Upload Files](#Upload-Files)
 - [Set Basic Authentication](#Set-Basic-Authentication)
 - [Set Bearer Token](#Set-Bearer-Token)
-- [Set Default HTTP Request Options](#Set-Default-HTTP-Request-Options)
+- [Set Global Request Options](#Set-Global-Request-Options)
 - [Customize HTTP Client](#Customize-HTTP-Client)
 - [Concurrent Safe](#Concurrent-Safe)
 
@@ -198,12 +198,12 @@ if err != nil {
 fmt.Println(data)
 ```
 
-## Set Default HTTP Request Options
+## Set Global Request Options
 
-If you want to set default HTTP request options for per request, you can do like this:
+If you want to set some request options used by per HTTP request, you can do like this:
 
 ```go
-sreq.SetDefaultRequestOpts(
+sreq.SetGlobalRequestOpts(
     sreq.WithQuery(sreq.Params{
         "defaultKey1": "defaultValue1",
         "defaultKey2": "defaultValue2",
