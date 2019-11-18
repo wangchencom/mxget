@@ -131,7 +131,7 @@ $ mxget song --from nc --id 36990266 --lyric
 默认情况下，`mxget` 会下载音乐到当前目录下的 `downloads` 文件夹，如果你想要更改此行为，可以这样做：
 
 ```sh
-$ mxget config --dir [directory]
+$ mxget config --dir <directory>
 ```
 
 >  `directory` 必须为绝对路径。

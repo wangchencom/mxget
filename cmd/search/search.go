@@ -51,9 +51,9 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Println(sb.String())
 
 	if from != "" {
-		fmt.Printf("Command: mxget song --from %s --id [id]\n", from)
+		fmt.Printf("Command: mxget song --from %s --id <song id>\n", from)
 	} else {
-		fmt.Println("Command: mxget song --id [id]")
+		fmt.Println("Command: mxget song --id <song id>")
 	}
 }
 
