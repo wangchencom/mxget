@@ -210,10 +210,9 @@ func songURL(urls []URL) string {
 
 func (a *API) patchSongsURL(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)
@@ -233,10 +232,9 @@ Loop:
 
 func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)

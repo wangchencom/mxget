@@ -39,10 +39,9 @@ func (a *API) GetPlaylist(ctx context.Context, playlistId string) (*api.Playlist
 
 		queue := make(chan []*Song)
 		wg := new(sync.WaitGroup)
-	Loop:
 		for i := 0; i < extra; i += SongRequestLimit {
 			if ctx.Err() != nil {
-				break Loop
+				break
 			}
 
 			songIds := trackIds[i:utils.Min(i+SongRequestLimit, extra)]

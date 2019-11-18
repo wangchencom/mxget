@@ -36,10 +36,9 @@ func ConcurrentDownload(ctx context.Context, client provider.API, savePath strin
 	}
 
 	c := concurrency.New(limit)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)

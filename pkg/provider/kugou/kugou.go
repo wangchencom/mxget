@@ -217,10 +217,9 @@ func (a *API) Request(method string, url string, opts ...sreq.RequestOption) *sr
 
 func (a *API) patchSongInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)
@@ -244,10 +243,9 @@ Loop:
 
 func (a *API) patchSongsInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)
@@ -266,10 +264,9 @@ Loop:
 
 func (a *API) patchSongsURL(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		if s.URL != "" {
@@ -289,10 +286,9 @@ Loop:
 
 func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
-Loop:
 	for _, s := range songs {
 		if ctx.Err() != nil {
-			break Loop
+			break
 		}
 
 		c.Add(1)
