@@ -31,11 +31,10 @@ func (a *API) GetPlaylist(ctx context.Context, playlistId string) (*api.Playlist
 		wg := new(sync.WaitGroup)
 	Loop:
 		for i := SongRequestLimit; i < n; i += SongRequestLimit {
-			select {
-			case <-ctx.Done():
+			if ctx.Err() != nil {
 				break Loop
-			default:
 			}
+
 			songIds := allSongs[i:utils.Min(i+SongRequestLimit, n)]
 			wg.Add(1)
 			go func() {

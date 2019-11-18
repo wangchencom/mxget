@@ -209,11 +209,10 @@ func (a *API) patchSongsURL(ctx context.Context, br int, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			url, err := a.GetSongURL(ctx, s.RId, br)
@@ -230,11 +229,10 @@ func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			lyric, err := a.GetSongLyric(ctx, s.RId)

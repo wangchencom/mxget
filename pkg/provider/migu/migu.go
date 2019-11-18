@@ -263,11 +263,10 @@ func (a *API) patchSongsInfo(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			picURL, err := a.GetSongPic(ctx, s.SongId)
@@ -287,11 +286,10 @@ func (a *API) patchSongsURL(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			url, err := a.GetSongURL(ctx, s.ContentId, s.ResourceType)
@@ -309,11 +307,10 @@ func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			if s.LrcURL != "" {

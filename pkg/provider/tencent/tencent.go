@@ -219,11 +219,10 @@ func (a *API) patchSongsURLV1(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			url, err := a.GetSongURLV1(ctx, s.Mid, s.File.MediaMid)
@@ -255,11 +254,10 @@ func (a *API) patchSongsURLV2(ctx context.Context, songs ...*Song) {
 Loop:
 	// url长度限制，每次请求的歌曲数不能太多，分批获取
 	for i := 0; i < n; i += SongURLRequestLimit {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		ids := songMids[i:utils.Min(i+SongURLRequestLimit, n)]
 		wg.Add(1)
 		go func() {
@@ -298,11 +296,10 @@ func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 	c := concurrency.New(32)
 Loop:
 	for _, s := range songs {
-		select {
-		case <-ctx.Done():
+		if ctx.Err() != nil {
 			break Loop
-		default:
 		}
+
 		c.Add(1)
 		go func(s *Song) {
 			lyric, err := a.GetSongLyric(ctx, s.Mid)
