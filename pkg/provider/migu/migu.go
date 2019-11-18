@@ -196,7 +196,7 @@ func New(client *sreq.Client) *API {
 	}
 }
 
-func Client() provider.API {
+func Client() *API {
 	return std
 }
 
