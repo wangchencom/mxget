@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/winterssy/easylog"
-	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/provider"
 )
 
 const (
@@ -101,7 +101,7 @@ func (c *Config) loadConfigFile() error {
 }
 
 func (c *Config) check() error {
-	if service.GetDesc(c.Platform) == "unknown" {
+	if provider.GetDesc(c.Platform) == "unknown" {
 		rawPlatform := c.Platform
 		c.Platform = platform
 		return fmt.Errorf("unexpected music platform: %q", rawPlatform)

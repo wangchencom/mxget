@@ -8,7 +8,7 @@ import (
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/cli"
 	"github.com/winterssy/mxget/internal/settings"
-	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/utils"
 )
 
@@ -33,12 +33,12 @@ func Run(cmd *cobra.Command, args []string) {
 		platform = from
 	}
 
-	client, err := service.GetClient(platform)
+	client, err := provider.NewClient(platform)
 	if err != nil {
 		easylog.Fatal(err)
 	}
 
-	easylog.Infof("Fetch artist [%s] from [%s]", artistId, service.GetDesc(platform))
+	easylog.Infof("Fetch artist [%s] from [%s]", artistId, provider.GetDesc(platform))
 	ctx := context.Background()
 	artist, err := client.GetArtist(ctx, artistId)
 	if err != nil {

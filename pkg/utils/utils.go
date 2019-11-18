@@ -15,8 +15,7 @@ var (
 )
 
 func TrimInvalidFilePathChars(path string) string {
-	path = re.ReplaceAllString(path, " ")
-	return strings.TrimSpace(path)
+	return strings.TrimSpace(re.ReplaceAllString(path, " "))
 }
 
 func ToJSON(data interface{}, escapeHTML bool) string {

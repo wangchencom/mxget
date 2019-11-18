@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
-	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/provider"
 )
 
 var (
@@ -33,7 +33,7 @@ func Run(cmd *cobra.Command, args []string) {
 		fmt.Print(fmt.Sprintf(`
       download dir -> %s
     music platform -> %s [%s]
-`, settings.Cfg.Dir, settings.Cfg.Platform, service.GetDesc(settings.Cfg.Platform)))
+`, settings.Cfg.Dir, settings.Cfg.Platform, provider.GetDesc(settings.Cfg.Platform)))
 		return
 	}
 
@@ -50,7 +50,7 @@ func Run(cmd *cobra.Command, args []string) {
 		settings.Cfg.Dir = dir
 	}
 	if from != "" {
-		if service.GetDesc(from) == "unknown" {
+		if provider.GetDesc(from) == "unknown" {
 			easylog.Fatalf("Unexpected music platform: %q", from)
 		}
 		settings.Cfg.Platform = from

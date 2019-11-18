@@ -9,7 +9,7 @@ import (
 
 	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
-	"github.com/winterssy/mxget/pkg/provider"
+	"github.com/winterssy/mxget/pkg/request"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
 )
@@ -32,7 +32,7 @@ const (
 )
 
 var (
-	std = New(provider.Client())
+	std = New(request.Client())
 )
 
 type (
@@ -163,7 +163,7 @@ func New(client *sreq.Client) *API {
 		client = sreq.New(nil)
 		client.SetGlobalRequestOpts(
 			sreq.WithHeaders(sreq.Headers{
-				"User-Agent": provider.UserAgent,
+				"User-Agent": request.UserAgent,
 			}),
 		)
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/winterssy/easylog"
 	"github.com/winterssy/mxget/internal/settings"
-	"github.com/winterssy/mxget/pkg/service"
+	"github.com/winterssy/mxget/pkg/provider"
 	"github.com/winterssy/mxget/pkg/utils"
 )
 
@@ -33,12 +33,12 @@ func Run(cmd *cobra.Command, args []string) {
 		platform = from
 	}
 
-	client, err := service.GetClient(platform)
+	client, err := provider.NewClient(platform)
 	if err != nil {
 		easylog.Fatal(err)
 	}
 
-	fmt.Printf("Search %q from [%s]...\n\n", keyword, service.GetDesc(platform))
+	fmt.Printf("Search %q from [%s]...\n\n", keyword, provider.GetDesc(platform))
 	result, err := client.SearchSongs(context.Background(), keyword)
 	if err != nil {
 		easylog.Fatal(err)
