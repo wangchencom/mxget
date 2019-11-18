@@ -33,7 +33,7 @@ func Run(cmd *cobra.Command, args []string) {
 		platform = from
 	}
 
-	client, err := provider.NewClient(platform)
+	client, err := provider.GetClient(platform)
 	if err != nil {
 		easylog.Fatal(err)
 	}

@@ -32,7 +32,7 @@ type (
 	}
 )
 
-func NewClient(platform string) (API, error) {
+func GetClient(platform string) (API, error) {
 	switch platform {
 	case "netease", "nc":
 		return netease.Client(), nil

@@ -10,7 +10,7 @@ import (
 type MusicServerImpl struct{}
 
 func (m *MusicServerImpl) SearchSongs(ctx context.Context, in *api.SearchSongsRequest) (*api.SearchSongsResponse, error) {
-	client, err := provider.NewClient(in.Platform)
+	client, err := provider.GetClient(in.Platform)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func (m *MusicServerImpl) SearchSongs(ctx context.Context, in *api.SearchSongsRe
 }
 
 func (m *MusicServerImpl) GetSong(ctx context.Context, in *api.SongRequest) (*api.SongResponse, error) {
-	client, err := provider.NewClient(in.Platform)
+	client, err := provider.GetClient(in.Platform)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func (m *MusicServerImpl) GetSong(ctx context.Context, in *api.SongRequest) (*ap
 }
 
 func (m *MusicServerImpl) GetAlbum(ctx context.Context, in *api.AlbumRequest) (*api.AlbumResponse, error) {
-	client, err := provider.NewClient(in.Platform)
+	client, err := provider.GetClient(in.Platform)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (m *MusicServerImpl) GetAlbum(ctx context.Context, in *api.AlbumRequest) (*
 }
 
 func (m *MusicServerImpl) GetPlaylist(ctx context.Context, in *api.PlaylistRequest) (*api.PlaylistResponse, error) {
-	client, err := provider.NewClient(in.Platform)
+	client, err := provider.GetClient(in.Platform)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (m *MusicServerImpl) GetPlaylist(ctx context.Context, in *api.PlaylistReque
 }
 
 func (m *MusicServerImpl) GetArtist(ctx context.Context, in *api.ArtistRequest) (*api.ArtistResponse, error) {
-	client, err := provider.NewClient(in.Platform)
+	client, err := provider.GetClient(in.Platform)
 	if err != nil {
 		return nil, err
 	}
