@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/winterssy/mxget/pkg/api"
 	"github.com/winterssy/mxget/pkg/concurrency"
@@ -314,7 +315,7 @@ func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 				lyric, err := a.Request(sreq.MethodGet, s.LrcURL,
 					sreq.WithContext(ctx),
 				).Text()
-				if err == nil {
+				if err == nil && utf8.ValidString(lyric) {
 					s.Lyric = lyric
 				}
 			}
