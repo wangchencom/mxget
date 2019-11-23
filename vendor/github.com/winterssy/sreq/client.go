@@ -15,15 +15,12 @@ import (
 var std = New(nil)
 
 type (
-	// Client defines a sreq client and will be reused for per request.
+	// Client wraps the raw HTTP client and the global request options.
 	Client struct {
-		// RawClient specifies an HTTP client for sending HTTP requests.
 		RawClient *http.Client
 
-		// GlobalRequestOpts specifies the request options used by per HTTP request.
-		GlobalRequestOpts []RequestOption
-
-		mux sync.RWMutex
+		globalRequestOpts []RequestOption
+		mux               sync.RWMutex
 	}
 )
 
@@ -79,7 +76,7 @@ func SetGlobalRequestOpts(opts ...RequestOption) {
 // SetGlobalRequestOpts sets the global request options.
 func (c *Client) SetGlobalRequestOpts(opts ...RequestOption) {
 	c.mux.Lock()
-	c.GlobalRequestOpts = opts
+	c.globalRequestOpts = opts
 	c.mux.Unlock()
 }
 
@@ -91,7 +88,7 @@ func AddGlobalRequestOpts(opts ...RequestOption) {
 // AddGlobalRequestOpts appends the global request options.
 func (c *Client) AddGlobalRequestOpts(opts ...RequestOption) {
 	c.mux.Lock()
-	c.GlobalRequestOpts = append(c.GlobalRequestOpts, opts...)
+	c.globalRequestOpts = append(c.globalRequestOpts, opts...)
 	c.mux.Unlock()
 }
 
@@ -103,7 +100,7 @@ func ClearGlobalRequestOpts() {
 // ClearGlobalRequestOpts clears the global request options.
 func (c *Client) ClearGlobalRequestOpts() {
 	c.mux.Lock()
-	c.GlobalRequestOpts = nil
+	c.globalRequestOpts = nil
 	c.mux.Unlock()
 }
 

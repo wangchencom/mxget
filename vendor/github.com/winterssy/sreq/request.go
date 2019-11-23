@@ -49,7 +49,6 @@ const (
 type (
 	// Request wraps the raw HTTP request and some customized settings.
 	Request struct {
-		// RawRequest represents the raw HTTP request.
 		RawRequest *http.Request
 
 		retryOption retryOption
@@ -78,7 +77,7 @@ func (c *Client) newRequest(method string, url string, opts ...RequestOption) (*
 	}
 
 	c.mux.RLock()
-	for _, opt := range c.GlobalRequestOpts {
+	for _, opt := range c.globalRequestOpts {
 		req, err = opt(req)
 		if err != nil {
 			c.mux.RUnlock()

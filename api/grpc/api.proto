@@ -49,7 +49,7 @@ message SongResponse {
     string album = 4;
     string pic_url = 5;
     string lyric = 6;
-    bool playable = 7;
+    bool playable = 7 [(gogoproto.jsontag) = "playable"];
     string url = 8;
 }
 
