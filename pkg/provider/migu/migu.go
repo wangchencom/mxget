@@ -11,6 +11,7 @@ import (
 	"github.com/winterssy/mxget/pkg/request"
 	"github.com/winterssy/mxget/pkg/utils"
 	"github.com/winterssy/sreq"
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 const (
@@ -312,11 +313,19 @@ func (a *API) patchSongsLyric(ctx context.Context, songs ...*Song) {
 		c.Add(1)
 		go func(s *Song) {
 			if s.LrcURL != "" {
-				lyric, err := a.Request(sreq.MethodGet, s.LrcURL,
+				lrcBytes, err := a.Request(sreq.MethodGet, s.LrcURL,
 					sreq.WithContext(ctx),
-				).Text()
-				if err == nil && utf8.ValidString(lyric) {
-					s.Lyric = lyric
+				).Raw()
+				if err == nil {
+					if utf8.Valid(lrcBytes) {
+						s.Lyric = string(lrcBytes)
+					} else {
+						// GBK 编码
+						lrcBytes, err = simplifiedchinese.GB18030.NewDecoder().Bytes(lrcBytes)
+						if err == nil {
+							s.Lyric = string(lrcBytes)
+						}
+					}
 				}
 			}
 			c.Done()
