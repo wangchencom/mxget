@@ -47,7 +47,9 @@ func RunRPC(ctx context.Context, srv api.MusicServer, rpcPort int) error {
 }
 
 func RunRest(ctx context.Context, rpcPort int, restPort int) error {
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, new(runtime.JSONBuiltin)),
+	)
 	opts := []grpc.DialOption{
 		grpc.WithInsecure(),
 	}
